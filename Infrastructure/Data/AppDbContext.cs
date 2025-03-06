@@ -1,0 +1,137 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Infrastructure.Models;
+
+namespace Infrastructure.Data;
+
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    public DbSet<StatusEntity> Statuses { get; set; }
+    public DbSet<ProjectEntity> Projects { get; set; }
+    public DbSet<RoleEntity> Roles { get; set; }
+    public DbSet<UserEntity> Users { get; set; }
+    public DbSet<MemberEntity> Members { get; set; }
+    public DbSet<ClientEntity> Clients { get; set; }
+    public DbSet<NotificationEntity> Notifications { get; set; } 
+    public DbSet<FileEntity> Files { get; set; } 
+
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // ✅ Define Primary Key for User
+        modelBuilder.Entity<UserEntity>()
+            .HasKey(u => u.UserId);
+
+        modelBuilder.Entity<UserEntity>()
+            .Property(u => u.Username)
+            .IsRequired()
+            .HasMaxLength(50);
+
+        modelBuilder.Entity<UserEntity>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+        // ✅ One-to-Many: One Role → Many Users
+        modelBuilder.Entity<UserEntity>()
+            .HasOne(u => u.Role)
+            .WithMany(r => r.Users)
+            .HasForeignKey(u => u.RoleId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // ✅ One-to-Many: One User → Many Projects
+        modelBuilder.Entity<ProjectEntity>()
+            .HasOne(p => p.CreatedByUser)
+            .WithMany(u => u.CreatedProjects)
+            .HasForeignKey(p => p.CreatedByUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // ✅ Define Primary Keys
+        modelBuilder.Entity<RoleEntity>().HasKey(r => r.RoleId);
+        modelBuilder.Entity<StatusEntity>().HasKey(s => s.StatusId);
+        modelBuilder.Entity<ProjectEntity>().HasKey(p => p.ProjectId);
+        modelBuilder.Entity<MemberEntity>().HasKey(m => m.MemberId);
+        modelBuilder.Entity<ClientEntity>().HasKey(c => c.ClientId); // ✅ Added missing primary key for ClientEntity
+
+        // ✅ One-to-Many: One Status → Many Projects
+        modelBuilder.Entity<ProjectEntity>()
+            .HasOne(p => p.Status)
+            .WithMany(s => s.Projects)
+            .HasForeignKey(p => p.StatusId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ProjectEntity>()
+            .Property(p => p.Budget)
+            .HasPrecision(18, 2); // ✅ Precision: 18 digits, 2 decimal places
+
+
+        // ✅ One-to-Many: One Client → Many Projects
+        modelBuilder.Entity<ProjectEntity>()
+            .HasOne(p => p.Client)
+            .WithMany(c => c.Projects)
+            .HasForeignKey(p => p.ClientId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // ✅ Many-to-Many: Projects ↔ Members (via ProjectMemberEntity)
+        modelBuilder.Entity<ProjectMemberEntity>()
+            .HasKey(pm => new { pm.ProjectId, pm.MemberId });
+
+        modelBuilder.Entity<ProjectMemberEntity>()
+            .HasOne(pm => pm.Project)
+            .WithMany(p => p.ProjectMembers)
+            .HasForeignKey(pm => pm.ProjectId);
+
+        modelBuilder.Entity<ProjectMemberEntity>()
+            .HasOne(pm => pm.Member)
+            .WithMany(m => m.ProjectMembers)
+            .HasForeignKey(pm => pm.MemberId);
+
+        // ✅ Many-to-Many: Users ↔ Notifications (via UserNotificationEntity)
+        modelBuilder.Entity<UserNotificationEntity>()
+            .HasKey(un => new { un.UserId, un.NotificationId });
+
+        modelBuilder.Entity<UserNotificationEntity>()
+            .HasOne(un => un.User)
+            .WithMany(u => u.UserNotifications)
+            .HasForeignKey(un => un.UserId);
+
+        modelBuilder.Entity<UserNotificationEntity>()
+            .HasOne(un => un.Notification)
+            .WithMany(n => n.UserNotifications)
+            .HasForeignKey(un => un.NotificationId);
+
+        modelBuilder.Entity<NotificationEntity>()
+            .HasKey(n => n.NotificationId); // ✅ Define primary key for NotificationEntity
+
+
+        // ✅ One-to-Many: One User → Many Files
+        modelBuilder.Entity<FileEntity>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.Files)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Cascade); // Delete files if the user is deleted
+
+        modelBuilder.Entity<FileEntity>()
+            .Property(f => f.FileName)
+            .IsRequired()
+            .HasMaxLength(255);
+
+        modelBuilder.Entity<FileEntity>()
+            .Property(f => f.FilePath)
+            .IsRequired()
+            .HasMaxLength(255);
+
+        modelBuilder.Entity<FileEntity>()
+            .HasKey(f => f.FileId); // ✅ Define primary key for FileEntity
+
+
+
+        // ✅ One-to-Many: One Project → Many Files
+        modelBuilder.Entity<FileEntity>()
+            .HasOne(f => f.Project)
+            .WithMany(p => p.Files)
+            .HasForeignKey(f => f.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade); // Delete files if the project is deleted
+
+    }
+}

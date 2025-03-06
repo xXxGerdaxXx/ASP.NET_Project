@@ -1,0 +1,42 @@
+﻿@model Infrastructure.DTOs.LoginDTO
+
+<div class="form-container">
+    <div class="form-box">
+        <h2>Log In</h2>
+
+        <button class="google-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+            Log In with Google
+        </button>
+
+        <div class="divider">
+            <span>OR</span>
+        </div>
+
+        <form asp-action="Login" method="post">
+            <div class="input-group">
+                <label>Email</label>
+                <input asp-for="Email" type="email" placeholder="Your email address" required />
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input asp-for="Password" type="password" placeholder="Enter your password" required />
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" asp-for="RememberMe" />
+                <label>Remember Me</label>
+            </div>
+
+            <button type="submit" class="btn-primary">Log In</button>
+        </form>
+
+        <p class="login-link">Don't have an account? <a asp-action="Register">Sign Up</a></p>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <p class="error-message">@Html.ValidationSummary()</p>
+        }
+    </div>
+</div>

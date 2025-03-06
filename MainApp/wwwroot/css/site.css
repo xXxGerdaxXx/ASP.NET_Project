@@ -1,0 +1,147 @@
+/* Ensure full-height background */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fc; /* Light gray background */
+    font-family: 'Nunito', sans-serif;
+}
+
+/* Center form container */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Form box styling */
+.form-box {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 600px;
+    max-height: 900px;
+    height: 100%;
+    width: 100%;
+}
+
+    /* Title */
+    .form-box h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+/* Google Sign Up Button */
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: white;
+    color: #444;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    width: 100%;
+    cursor: pointer;
+}
+
+    .google-btn img {
+        height: 20px;
+    }
+
+/* OR Divider */
+.divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+    font-size: 14px;
+    color: #aaa;
+}
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #ddd;
+        margin: 0 10px;
+    }
+
+/* Input fields */
+.input-group {
+    text-align: left;
+    margin-bottom: 12px;
+}
+
+    .input-group label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        outline: none;
+    }
+
+/* Checkbox group */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+    .checkbox-group input {
+        margin-right: 8px;
+    }
+
+/* Button */
+.btn-primary {
+    display: block;
+    width: 100%;
+    background: #2D99FF;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .btn-primary:hover {
+        background: #0056b3;
+    }
+
+/* Login Link */
+.login-link {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+    .login-link a {
+        color: #007bff;
+        font-weight: bold;
+    }
+
+/* Error messages */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
