@@ -24,15 +24,22 @@
                 <input asp-for="Email" type="email" placeholder="Your email address" required />
             </div>
 
-            <div class="input-group">
-                <label>Password</label>
-                <input asp-for="Password" type="password" placeholder="Enter your password" required />
+            <div class="input-group password-group">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input id="password" type="password" placeholder="Enter your password" required />
+                    <i class="fa-solid fa-eye password-toggle" onclick="togglePassword('password')"></i>
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Confirm Password</label>
-                <input asp-for="ConfirmPassword" type="password" placeholder="Confirm your password" required />
+            <div class="input-group password-group">
+                <label for="confirm-password">Confirm Password</label>
+                <div class="password-wrapper">
+                    <input id="confirm-password" type="password" placeholder="Confirm your password" required />
+                    <i class="fa-solid fa-eye password-toggle" onclick="togglePassword('confirm-password')"></i>
+                </div>
             </div>
+
 
             <div class="checkbox-group">
                 <input type="checkbox" asp-for="AcceptTerms" required />

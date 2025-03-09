@@ -1,6 +1,9 @@
 ﻿using Business.Services;
 using Infrastructure.DTOs;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MainApp.Controllers;
 
@@ -11,20 +14,46 @@ public class AccountController(UserService userService) : Controller
     [HttpGet]
     public IActionResult Login()
     {
-        return View();
+        return LocalRedirect("/projects");
+        //return View();
     }
 
     [HttpPost]
-    public IActionResult Login(LoginDTO model)
+    public async Task<IActionResult> Login(LoginDTO loginDTO)
     {
         if (!ModelState.IsValid)
+            return View(loginDTO);
+
+        var user = await _userService.AuthenticateUserAsync(loginDTO.Email, loginDTO.Password);
+        if (user == null)
         {
-            return View(model);
+            ModelState.AddModelError("", "Invalid email or password.");
+            return View(loginDTO);
         }
 
-        // Authentication logic goes here...
+        // ✅ Create User Claims
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.RoleName)
+        };
 
-        return RedirectToAction("Index", "Home"); // Redirect to homepage after login
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var authProperties = new AuthenticationProperties { IsPersistent = loginDTO.RememberMe };
+
+        // ✅ Sign in the user
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                                      new ClaimsPrincipal(claimsIdentity),
+                                      authProperties);
+
+        return RedirectToAction("Index", "Home"); // ✅ Redirect to home page
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("Login");
     }
 
     [HttpGet]
