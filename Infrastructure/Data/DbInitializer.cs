@@ -22,8 +22,7 @@ public static class DbInitializer
         {
             var admin = new UserEntity
             {
-                FirstName = "System",
-                LastName = "Admin",
+                FullName = "System Admin", // ✅ Replaced FirstName & LastName with FullName
                 Username = "admin",
                 Email = "admin@example.com",
                 PasswordHash = PasswordHasher.HashPassword("Admin123!"),

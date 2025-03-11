@@ -1,0 +1,48 @@
+﻿@model ClientCreateFormModel
+
+<div id="add-client-modal" class="modal-overlay">
+    <div class="surface">
+        <header>
+            <h2>Create Client</h2>
+            <button id="closeAddClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+        </header>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data" novalidate>
+            <div class="form-group">
+                <label asp-for="ClientName"></label>
+                <div class="field-group">
+                    <input asp-for="ClientName">
+                    <span asp-validation-for="ClientName"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ContactPerson"></label>
+                <div class="field-group">
+                    <input asp-for="ContactPerson">
+                    <span asp-validation-for="ContactPerson"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <div class="field-group">
+                    <input asp-for="Email">
+                    <span asp-validation-for="Email"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Phone"></label>
+                <div class="field-group">
+                    <input asp-for="Phone">
+                    <span asp-validation-for="Phone"></span>
+                </div>
+            </div>
+
+            <footer>
+                <button type="submit" class="btn btn-blue">Create</button>
+            </footer>
+        </form>
+    </div>
+</div>

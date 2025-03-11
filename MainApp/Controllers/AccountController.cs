@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Infrastructure.Models;
 
 namespace MainApp.Controllers;
 
@@ -14,8 +15,7 @@ public class AccountController(UserService userService) : Controller
     [HttpGet]
     public IActionResult Login()
     {
-        return LocalRedirect("/projects");
-        //return View();
+        return View();
     }
 
     [HttpPost]
@@ -63,14 +63,14 @@ public class AccountController(UserService userService) : Controller
     }
 
     [HttpPost]
-    public IActionResult Register(UserDTO model)
+    public async Task<IActionResult> Register(UserDTO model)
     {
         if (!ModelState.IsValid)
             return View(model);
 
         try
         {
-            _userService.RegisterUser(model);
+            await _userService.RegisterUser(model);
             return RedirectToAction("Login");
         }
         catch (Exception ex)

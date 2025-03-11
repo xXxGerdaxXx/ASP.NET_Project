@@ -8,12 +8,8 @@ namespace Infrastructure.Models
         public int UserId { get; set; }  // Primary Key (Defined in Fluent API)
 
         [Required]
-        [MaxLength(50)]
-        public string FirstName { get; set; } = null!;
-
-        [Required]
-        [MaxLength(50)]
-        public string LastName { get; set; } = null!;
+        [MaxLength(100)]
+        public string FullName { get; set; } = null!; // ✅ Changed from FirstName & LastName to FullName
 
         [Required]
         [MaxLength(50)]

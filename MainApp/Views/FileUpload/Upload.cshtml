@@ -1,0 +1,60 @@
+﻿@model FileUploadViewModel
+
+@{
+    ViewBag.Title = "File Upload";
+}
+<div class="surface">
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success">@ViewBag.Message</div>
+        <a asp-action="Upload" class="btn btn-blue">Refresh</a>
+    }
+    else
+    {
+        <form asp-action="Upload" method="post" enctype="multipart/form-data">
+            <div class="image-preview-container">
+                <div id="circle-container" class="circle circle-gray">
+                    <i class="fa-duotone fa-solid fa-camera"></i>
+                </div>
+                <img id="image-preview" src="#" alt="Image Preview" class="d-none">
+            </div>
+
+            <div class="form-group">
+                <label asp-for="File"></label>
+                <input asp-for="File" accept="image/*" class="form-control">
+                <span asp-validation-for="File"></span>
+            </div>
+
+            <button type="submit" class="btn btn-blue">Upload file</button>
+        </form>
+    }
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const fileInput = document.querySelector("#File")
+        if (!fileInput) return
+
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0]
+            const circle = document.querySelector("#circle-container")
+            const img = document.querySelector("#image-preview")
+
+            if (file) {
+                const reader = new FileReader()
+
+                reader.onload = (e) => {
+                    img.src = e.target.result
+                    img.classList.remove("d-none")
+                    circle.classList.add("d-none")
+                }
+
+                reader.readAsDataURL(file)
+
+            } else {
+                img.classList.add("d-none")
+                circle.classList.remove("d-none")
+            }
+        })
+    })
+</script>

@@ -35,11 +35,16 @@ public class UserService(IUserRepository userRepository)
         // Hash password
         string passwordHash = PasswordHasher.HashPassword(userDTO.Password);
 
+        // ✅ Generate Username (First word of FullName + Random Number)
+        var nameParts = userDTO.FullName.Trim().Split(' ');
+        string firstPart = nameParts[0].ToLower();
+        string uniqueIdentifier = new Random().Next(1000, 9999).ToString(); // Random 4-digit number
+        string generatedUsername = $"{firstPart}{uniqueIdentifier}";
+
         var user = new UserEntity
         {
-            FirstName = userDTO.FirstName,
-            LastName = userDTO.LastName,
-            Username = $"{userDTO.FirstName.ToLower()}.{userDTO.LastName.ToLower()}",
+            FullName = userDTO.FullName, // ✅ Assign FullName directly
+            Username = generatedUsername, // ✅ Use new username logic
             Email = userDTO.Email,
             PasswordHash = passwordHash,
             RoleId = 2 // Default User Role
@@ -57,6 +62,8 @@ public class UserService(IUserRepository userRepository)
     {
         return await _userRepository.GetAllUsersAsync();
     }
+
+    // ✅ Authenticate User
     public async Task<UserEntity?> AuthenticateUserAsync(string email, string password)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
@@ -68,8 +75,4 @@ public class UserService(IUserRepository userRepository)
 
         return user; // ✅ Authentication successful
     }
-
-
-
-
 }

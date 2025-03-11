@@ -6,12 +6,8 @@ namespace Infrastructure.DTOs
     public class UserDTO
     {
         [Required]
-        [MaxLength(50)]
-        public string FirstName { get; set; } = null!;
-
-        [Required]
-        [MaxLength(50)]
-        public string LastName { get; set; } = null!;
+        [MaxLength(100, ErrorMessage = "Full name must be at most 100 characters.")]
+        public string FullName { get; set; } = null!;
 
         [Required]
         [EmailAddress]
