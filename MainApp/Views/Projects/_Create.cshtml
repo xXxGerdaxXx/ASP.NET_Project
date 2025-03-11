@@ -1,0 +1,65 @@
+﻿@model MainApp.Models.ProjectCreateFormModel
+
+<div id="add-Project-Modal" class="modal-overlay">
+    <div class="surface">
+        <header>
+            <h2>Create Project</h2>
+            <button class="btn-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+        </header>
+
+        <form id="projectForm" asp-action="Create" method="post" enctype="multipart/form-data" novalidate>
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name">
+                <span asp-validation-for="Name"></span>
+            </div>
+            <footer>
+                <button type="submit" class="btn btn-blue">Create</button>
+            </footer>
+        </form>
+    </div>
+</div>
+
+
+<style>
+    .search-results {
+        position: absolute;
+        background: white;
+        border: 1px solid #ddd;
+        max-height: 150px;
+        overflow-y: auto;
+        width: 100%;
+        display: none;
+    }
+
+    .search-item {
+        padding: 5px;
+        cursor: pointer;
+    }
+
+        .search-item:hover {
+            background: #f0f0f0;
+        }
+
+    .selected-members {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 5px;
+    }
+
+    .selected-member {
+        background: #2D99FF;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .selected-member span {
+            cursor: pointer;
+            font-weight: bold;
+        }
+</style>

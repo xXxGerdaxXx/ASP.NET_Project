@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "~/Views/Shared/_PortalLayout.cshtml";
+    ViewData["Title"] = "Team Members";
+}
+
+<div class="page-header">
+    <h2>Team Members</h2>
+    <div class="button-group">
+        <button id="openAddMemberModal" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Member
+        </button>
+    </div>
+</div>
+
+
+@await Html.PartialAsync("_Create")
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("JavaScript Loaded!");
+
+        const openModalButton = document.getElementById("openAddMemberModal");
+        const modal = document.getElementById("add-member-modal");
+        const closeModalButton = document.getElementById("closeAddMemberModal");
+
+        if (!openModalButton || !modal || !closeModalButton) {
+            console.error("ERROR: Some modal elements are missing!");
+            return;
+        }
+
+        openModalButton.addEventListener("click", function () {
+            console.log("Add Member Button Clicked! Opening Modal...");
+            modal.classList.add("active");
+        });
+
+        closeModalButton.addEventListener("click", function () {
+            console.log("Close Button Clicked! Closing Modal...");
+            modal.classList.remove("active");
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                console.log("Clicked outside modal! Closing...");
+                modal.classList.remove("active");
+            }
+        });
+    });
+</script>

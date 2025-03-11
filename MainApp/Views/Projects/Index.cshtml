@@ -1,0 +1,48 @@
+﻿@{
+    Layout = "_PortalLayout"; 
+    ViewData["Title"] = "Projects";
+}
+
+<div class="page-header">
+    <h2>Projects</h2>
+    <div class="button-group">
+        @await Html.PartialAsync("Partials/Components/_AddButton", "Add Project")
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        console.log("✅ JavaScript Loaded!");
+
+        const openModalButton = document.getElementById("openAddProjectModal");
+        const modal = document.getElementById("add-project-modal");
+        const closeModalButton = document.getElementById("closeAddProjectModal");
+
+        console.log("🔍 Checking Elements:");
+        console.log("openModalButton:", openModalButton);
+        console.log("modal:", modal);
+        console.log("closeModalButton:", closeModalButton);
+
+        if (!openModalButton || !modal || !closeModalButton) {
+            console.error("❌ ERROR: Some modal elements are missing!");
+            return;
+        }
+
+        openModalButton.addEventListener("click", function () {
+            console.log("✅ Add Project Button Clicked! Opening Modal...");
+            modal.classList.add("active");
+        });
+
+        closeModalButton.addEventListener("click", function () {
+            console.log("✅ Close Button Clicked! Closing Modal...");
+            modal.classList.remove("active");
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                console.log("✅ Clicked outside modal! Closing...");
+                modal.classList.remove("active");
+            }
+        });
+    });
+</script>
+

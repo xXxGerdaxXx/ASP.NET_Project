@@ -1,4 +1,10 @@
 ﻿@model string
-<button id="openModalButton" class="btn btn-add">
+
+@{
+    // Generate a unique ID based on the button text
+    var modalId = Model.Replace(" ", ""); // Example: "Add Project" → "AddProject"
+}
+
+<button id="open@modalIdModal" class="btn btn-add">
     <i class="fa-solid fa-plus"></i> @Model
 </button>

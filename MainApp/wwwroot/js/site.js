@@ -1,34 +1,26 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    console.log("JavaScript Loaded!");
+    console.log("✅ JavaScript Loaded!");
 
-    const openModalButton = document.getElementById("openAddClientModal");
-    const modal = document.getElementById("add-client-modal");
-    const closeModalButton = document.getElementById("closeAddClientModal");
-
-    console.log("Checking Elements:");
-    console.log("openModalButton:", openModalButton);
-    console.log("modal:", modal);
-    console.log("closeModalButton:", closeModalButton);
-
-    if (!openModalButton || !modal || !closeModalButton) {
-        console.error("ERROR: Some modal elements are missing!");
-        return;
-    }
-
-    openModalButton.addEventListener("click", function () {
-        console.log("Add Client Button Clicked! Opening Modal...");
-        modal.classList.add("active"); 
+    // ✅ Open Modal
+    document.querySelectorAll("[data-modal-target]").forEach(button => {
+        button.addEventListener("click", function () {
+            const modalId = this.getAttribute("data-modal-target");
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.add("active");
+        });
     });
 
-    closeModalButton.addEventListener("click", function () {
-        console.log("Close Button Clicked! Closing Modal...");
-        modal.classList.remove("active");
+    // ✅ Close Modal
+    document.querySelectorAll("[data-close-modal]").forEach(button => {
+        button.addEventListener("click", function () {
+            this.closest(".modal-overlay").classList.remove("active");
+        });
     });
 
+    // ✅ Close Modal When Clicking Outside
     window.addEventListener("click", function (event) {
-        if (event.target === modal) {
-            console.log("Clicked outside modal! Closing...");
-            modal.classList.remove("active");
+        if (event.target.classList.contains("modal-overlay")) {
+            event.target.classList.remove("active");
         }
     });
 });
