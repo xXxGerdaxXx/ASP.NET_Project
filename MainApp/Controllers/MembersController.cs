@@ -17,7 +17,7 @@ namespace MainApp.Controllers
         [HttpGet("create")]
         public IActionResult Create()
         {
-            return PartialView("_Create"); 
+            return PartialView("_Create"); // ✅ Load form as a modal
         }
 
         // POST: /members/create

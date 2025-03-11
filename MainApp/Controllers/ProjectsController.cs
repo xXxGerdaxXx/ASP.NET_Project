@@ -6,51 +6,36 @@ namespace MainApp.Controllers;
 [Route("projects")]
 public class ProjectsController : Controller
 {
-    private static List<ProjectCreateFormModel> _projects = new(); // Temporary In-Memory Storage (Replace with DB Later)
-
     [HttpGet("")]
     public IActionResult Index()
     {
-        return View(_projects); // Show all projects
+        var projects = new List<ProjectViewModel>
+    {
+        new ProjectViewModel { Name = "Alpha CRM", Description = "A customer management tool.", Status = "started" },
+        new ProjectViewModel { Name = "E-commerce App", Description = "Online shopping platform.", Status = "completed" }
+    };
+
+        return View(projects);
     }
+
 
     [HttpGet("create")]
     public IActionResult Create()
     {
-        var model = new ProjectCreateFormModel
-        {
-            StartDate = DateTime.Today,
-            EndDate = DateTime.Today.AddMonths(1) 
-        };
-        return PartialView("_Create", model); 
+        // ✅ Pass a SINGLE model, not a list!
+        return PartialView("_Create", new ProjectCreateFormModel());
     }
 
     [HttpPost("create")]
     public IActionResult Create(ProjectCreateFormModel model)
     {
         if (!ModelState.IsValid)
-            return PartialView("_Create", model); // Reload Modal with Errors
-
-        _projects.Add(model); // Store Project (Replace with DB Logic)
-
-        return RedirectToAction("Index"); // ✅ Redirect to Projects List
-    }
-
-    // ✅ Search Members API for Multi-Select (AJAX)
-    [HttpGet("search-members")]
-    public IActionResult SearchMembers(string query)
-    {
-        var members = new List<TeamMember>
         {
-            new TeamMember { Name = "Alice Johnson", AvatarUrl = "/images/alice.png" },
-            new TeamMember { Name = "Bob Smith", AvatarUrl = "/images/bob.png" },
-            new TeamMember { Name = "Charlie Brown", AvatarUrl = "/images/charlie.png" }
-        };
+            return PartialView("_Create", model); // ✅ Return same model if invalid
+        }
 
-        var results = members
-            .Where(m => m.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .ToList();
+        // TODO: Save project to database
 
-        return Json(results);
+        return Json(new { success = true });
     }
 }

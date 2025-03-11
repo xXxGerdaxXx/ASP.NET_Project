@@ -5,6 +5,6 @@
     var modalId = Model.Replace(" ", ""); // Example: "Add Project" → "AddProject"
 }
 
-<button id="open@modalIdModal" class="btn btn-add">
+<button class="btn btn-add" data-modal-target="add-project-modal">
     <i class="fa-solid fa-plus"></i> @Model
 </button>

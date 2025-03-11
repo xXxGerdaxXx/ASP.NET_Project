@@ -1,65 +1,75 @@
-﻿@model MainApp.Models.ProjectCreateFormModel
+﻿@model ProjectCreateFormModel
 
-<div id="add-Project-Modal" class="modal-overlay">
+<div id="add-project-modal" class="modal-overlay">
     <div class="surface">
         <header>
-            <h2>Create Project</h2>
-            <button class="btn-close" data-close-modal><i class="fa-solid fa-xmark"></i></button>
+            <h2>New Project</h2>
+            <button data-close-modal class="btn-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </header>
 
-        <form id="projectForm" asp-action="Create" method="post" enctype="multipart/form-data" novalidate>
+        <div class="image-preview-container">
+            <div class="circle circle-gray">
+                <i class="fa-duotone fa-camera"></i>
+            </div>
+        </div>
+
+        <form id="projectForm" action="/projects/create" method="post">
             <div class="form-group">
                 <label asp-for="Name"></label>
                 <input asp-for="Name">
                 <span asp-validation-for="Name"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="ClientId"></label>
+                <select asp-for="ClientId">
+                    <option value="">Select a client</option>
+                    <!-- Populate dynamically -->
+                </select>
+                <span asp-validation-for="ClientId"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description"></label>
+                <textarea asp-for="Description"></textarea>
+                <span asp-validation-for="Description"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StartDate"></label>
+                <input asp-for="StartDate" type="date">
+                <span asp-validation-for="StartDate"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EndDate"></label>
+                <input asp-for="EndDate" type="date">
+                <span asp-validation-for="EndDate"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Budget"></label>
+                <input asp-for="Budget" type="number" step="0.01">
+                <span asp-validation-for="Budget"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="TeamMemberSearch"></label>
+                <input asp-for="TeamMemberSearch" placeholder="Search Team Members...">
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SelectedTeamMemberIds"></label>
+                <select asp-for="SelectedTeamMemberIds" multiple>
+                    <!-- Populate dynamically -->
+                </select>
+            </div>
+
             <footer>
                 <button type="submit" class="btn btn-blue">Create</button>
             </footer>
         </form>
     </div>
 </div>
-
-
-<style>
-    .search-results {
-        position: absolute;
-        background: white;
-        border: 1px solid #ddd;
-        max-height: 150px;
-        overflow-y: auto;
-        width: 100%;
-        display: none;
-    }
-
-    .search-item {
-        padding: 5px;
-        cursor: pointer;
-    }
-
-        .search-item:hover {
-            background: #f0f0f0;
-        }
-
-    .selected-members {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        margin-top: 5px;
-    }
-
-    .selected-member {
-        background: #2D99FF;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-        .selected-member span {
-            cursor: pointer;
-            font-weight: bold;
-        }
-</style>

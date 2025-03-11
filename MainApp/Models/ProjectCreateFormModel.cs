@@ -36,8 +36,9 @@ public class ProjectCreateFormModel
     [Required(ErrorMessage = "Budget is required.")]
     [Range(0, double.MaxValue, ErrorMessage = "Budget must be a positive number.")]
     [Display(Name = "Budget", Prompt = "Enter project budget")]
-    public decimal Budget { get; set; } 
+    public decimal Budget { get; set; }
 
+    public string Status { get; set; } = "all"; // ✅ Default to "all"
 
     [Display(Name = "Project Image")]
     public IFormFile? ProjectImage { get; set; } 

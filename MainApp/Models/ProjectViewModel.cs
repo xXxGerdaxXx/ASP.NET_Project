@@ -7,6 +7,7 @@ public class ProjectViewModel
     public string Description { get; set; } = null!;
     public string Deadline { get; set; } = null!;
     public List<TeamMember> TeamMembers { get; set; } = new();
+    public string Status { get; internal set; }
 }
 
 public class TeamMember

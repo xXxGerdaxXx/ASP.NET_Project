@@ -22,12 +22,7 @@
         </div>
         <div class="top">
             @await Html.PartialAsync("Partials/Components/_SearchBar")
-
-            @if (Context.Request.Path.StartsWithSegments("/admin"))
-            {
-
-                <button id="openAddClientModal" class="btn btn-primary">Add Client</button>
-            }
+            @await Html.PartialAsync("Partials/Components/_UserMenu")
         </div>
 
         <div class="main">

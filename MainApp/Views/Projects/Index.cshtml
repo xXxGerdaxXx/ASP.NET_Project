@@ -1,48 +1,35 @@
 ﻿@{
-    Layout = "_PortalLayout"; 
+    Layout = "~/Views/Shared/_PortalLayout.cshtml";
     ViewData["Title"] = "Projects";
 }
 
 <div class="page-header">
     <h2>Projects</h2>
     <div class="button-group">
-        @await Html.PartialAsync("Partials/Components/_AddButton", "Add Project")
+        <button class="btn btn-primary" data-modal-target="add-project-modal">
+            <i class="fa-solid fa-plus"></i> Add Project
+        </button>
+
     </div>
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        console.log("✅ JavaScript Loaded!");
+@await Html.PartialAsync("_Create", new ProjectCreateFormModel())
 
-        const openModalButton = document.getElementById("openAddProjectModal");
-        const modal = document.getElementById("add-project-modal");
-        const closeModalButton = document.getElementById("closeAddProjectModal");
 
-        console.log("🔍 Checking Elements:");
-        console.log("openModalButton:", openModalButton);
-        console.log("modal:", modal);
-        console.log("closeModalButton:", closeModalButton);
+<!-- ✅ Sorting Tabs -->
+<div class="project-tabs">
+    <button class="tab active" data-filter="all">All <span>[0]</span></button>
+    <button class="tab" data-filter="started">Started <span>[0]</span></button>
+    <button class="tab" data-filter="completed">Completed <span>[0]</span></button>
+</div>
 
-        if (!openModalButton || !modal || !closeModalButton) {
-            console.error("❌ ERROR: Some modal elements are missing!");
-            return;
-        }
-
-        openModalButton.addEventListener("click", function () {
-            console.log("✅ Add Project Button Clicked! Opening Modal...");
-            modal.classList.add("active");
-        });
-
-        closeModalButton.addEventListener("click", function () {
-            console.log("✅ Close Button Clicked! Closing Modal...");
-            modal.classList.remove("active");
-        });
-
-        window.addEventListener("click", function (event) {
-            if (event.target === modal) {
-                console.log("✅ Clicked outside modal! Closing...");
-                modal.classList.remove("active");
-            }
-        });
-    });
-</script>
+<!-- ✅ Project List (Filtered Dynamically) -->
+<div id="project-list">
+    @foreach (var project in Model)
+    {
+        <div class="project-item" data-status="@project.Status.ToLower()">
+            <h4>@project.Name</h4>
+            <p>@project.Description</p>
+        </div>
+    }
+</div>
 
