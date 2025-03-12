@@ -69,3 +69,54 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const searchIcon = document.querySelector(".search-icon");
+    const searchInput = document.querySelector("#teamMemberSearch");
+    const teamMemberList = document.querySelector("#teamMemberList");
+
+    // Toggle visibility of team member list
+    searchIcon.addEventListener("click", function () {
+        teamMemberList.style.display = (teamMemberList.style.display === "block") ? "none" : "block";
+    });
+
+    // Hide the list when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!searchIcon.contains(event.target) && !searchInput.contains(event.target) && !teamMemberList.contains(event.target)) {
+            teamMemberList.style.display = "none";
+        }
+    });
+
+    // Select team member from the list
+    document.querySelectorAll(".team-member-list li").forEach(item => {
+        item.addEventListener("click", function () {
+            searchInput.value = this.textContent;
+            teamMemberList.style.display = "none";
+        });
+    });
+});
+document.addEventListener("DOMContentLoaded", function () {
+    var quill = new Quill('#quill-editor', {
+        theme: 'snow',
+        placeholder: 'Type something...',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'align': '' }, { 'align': 'center' }, { 'align': 'right' }],
+                [{ 'list': 'bullet' }, { 'list': 'ordered' }],
+                ['link']
+            ]
+        }
+    });
+
+    // Move toolbar outside, placing it after the Quill container
+    var quillContainer = document.querySelector('.ql-container');
+    var quillToolbar = document.querySelector('.ql-toolbar');
+    quillContainer.parentNode.insertBefore(quillToolbar, quillContainer.nextSibling);
+
+    // Sync Quill content with the hidden textarea before form submission
+    document.querySelector("form").onsubmit = function () {
+        document.querySelector("#description").value = quill.root.innerHTML;
+    };
+});
+

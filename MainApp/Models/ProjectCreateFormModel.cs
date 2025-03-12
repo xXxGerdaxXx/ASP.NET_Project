@@ -27,7 +27,7 @@ public class ProjectCreateFormModel
     public DateTime EndDate { get; set; }
 
     // ✅ Multi-Select Search Field for Team Members
-    [Display(Name = "Search Team Members")]
+    [Display(Name = "Members")]
     public string TeamMemberSearch { get; set; } = string.Empty;
 
     [Display(Name = "Selected Team Members")]

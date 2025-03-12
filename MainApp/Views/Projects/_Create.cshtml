@@ -1,7 +1,7 @@
 ﻿@model ProjectCreateFormModel
 
 <div id="add-project-modal" class="modal-overlay">
-    <div class="surface">
+    <div class="surface-modal">
         <header>
             <h2>New Project</h2>
             <button data-close-modal class="btn-close">
@@ -11,7 +11,7 @@
 
         <div class="image-preview-container">
             <div class="circle circle-gray">
-                <i class="fa-duotone fa-camera"></i>
+                <i class="fa-solid fa-camera"></i>
             </div>
         </div>
 
@@ -24,30 +24,61 @@
 
             <div class="form-group">
                 <label asp-for="ClientId"></label>
-                <select asp-for="ClientId">
-                    <option value="">Select a client</option>
-                    <!-- Populate dynamically -->
-                </select>
-                <span asp-validation-for="ClientId"></span>
+                <div class="client-search-container">
+                    <div class="search-input-wrapper">
+                        <input type="text" id="clientSearch" placeholder="Search Clients..." autocomplete="off">
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
                 <label asp-for="Description"></label>
-                <textarea asp-for="Description"></textarea>
+
+
+                <!-- Hidden textarea to store formatted content -->
+                <textarea asp-for="Description" id="description" name="Description" hidden></textarea>
+
+                <!-- Quill Editor -->
+                <div id="quill-editor"></div>
                 <span asp-validation-for="Description"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="StartDate"></label>
-                <input asp-for="StartDate" type="date">
-                <span asp-validation-for="StartDate"></span>
+
+
+            <div class="date-fields">
+                <div class="form-group">
+                    <label asp-for="StartDate"></label>
+                    <input asp-for="StartDate" type="date">
+                    <span asp-validation-for="StartDate"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="EndDate"></label>
+                    <input asp-for="EndDate" type="date">
+                    <span asp-validation-for="EndDate"></span>
+                </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="EndDate"></label>
-                <input asp-for="EndDate" type="date">
-                <span asp-validation-for="EndDate"></span>
+                <label asp-for="TeamMemberSearch "></label>
+            <div class="team-member-search-container">
+                <div class="search-input-wrapper">
+                    <input asp-for="TeamMemberSearch" id="teamMemberSearch" placeholder="Search Team Members...">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                </div>
+                </div>
+
+                <div id="teamMemberList" class="team-member-list">
+                    <!-- Populate dynamically -->
+                    <ul>
+                        <li data-id="1">John Doe</li>
+                        <li data-id="2">Jane Smith</li>
+                        <li data-id="3">Alice Johnson</li>
+                        <li data-id="4">Bob Williams</li>
+                    </ul>
+                </div>
             </div>
+
 
             <div class="form-group">
                 <label asp-for="Budget"></label>
@@ -55,20 +86,9 @@
                 <span asp-validation-for="Budget"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="TeamMemberSearch"></label>
-                <input asp-for="TeamMemberSearch" placeholder="Search Team Members...">
-            </div>
-
-            <div class="form-group">
-                <label asp-for="SelectedTeamMemberIds"></label>
-                <select asp-for="SelectedTeamMemberIds" multiple>
-                    <!-- Populate dynamically -->
-                </select>
-            </div>
 
             <footer>
-                <button type="submit" class="btn btn-blue">Create</button>
+                <button type="submit" class="btn btn-blue-submit">Create</button>
             </footer>
         </form>
     </div>

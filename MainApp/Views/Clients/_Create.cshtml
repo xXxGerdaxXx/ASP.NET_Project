@@ -1,11 +1,16 @@
 ﻿@model ClientCreateFormModel
 
 <div id="add-client-modal" class="modal-overlay">
-    <div class="surface">
+    <div class="surface-modal">
         <header>
-            <h2>Create Client</h2>
+            <h2>New Client</h2>
             <button id="closeAddClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
         </header>
+        <div class="image-preview-container">
+            <div class="circle circle-gray">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </div>
 
         <form asp-action="Create" method="post" enctype="multipart/form-data" novalidate>
             <div class="form-group">
@@ -40,8 +45,8 @@
                 </div>
             </div>
 
-            <footer>
-                <button type="submit" class="btn btn-blue">Create</button>
+            <footer class="modal-footer">
+                <button type="submit" class="btn-blue-submit">Create</button>
             </footer>
         </form>
     </div>
