@@ -1,10 +1,10 @@
 ﻿@model ClientCreateFormModel
 
-<div id="add-client-modal" class="modal-overlay">
+<div id="edit-client-modal" class="modal-overlay">
     <div class="surface-modal">
         <header>
-            <h2>New Client</h2>
-            <button id="closeAddClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+            <h2>Edit Client</h2>
+            <button id="closeEditClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <div class="image-preview-container">
             <div class="circle circle-gray">
@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <form asp-action="Create" method="post" enctype="multipart/form-data" novalidate>
+        <form asp-action="EditClient" method="post" enctype="multipart/form-data" novalidate asp-controller="Admin">
             <div class="form-group">
                 <label asp-for="ClientName"></label>
                 <div class="field-group">

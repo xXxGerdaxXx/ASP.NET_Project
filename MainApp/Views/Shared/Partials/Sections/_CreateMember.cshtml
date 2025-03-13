@@ -16,16 +16,19 @@
         </div>
 
         <form id="memberForm" action="/members/create" method="post">
-            <div class="form-group">
-                <label asp-for="MemberName"></label>
-                <input asp-for="MemberName">
-                <span asp-validation-for="MemberName"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="MemberSurname"></label>
-                <input asp-for="MemberSurname">
-                <span asp-validation-for="MemberSurname"></span>
+            <div class="sidebyside-fields">
+                <div class="form-group">
+                    <label asp-for="MemberName"></label>
+                    <input asp-for="MemberName">
+                    <span asp-validation-for="MemberName"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MemberSurname"></label>
+                    <input asp-for="MemberSurname">
+                    <span asp-validation-for="MemberSurname"></span>
+                </div>
             </div>
 
             <div class="form-group">

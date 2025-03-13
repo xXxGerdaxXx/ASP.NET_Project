@@ -120,3 +120,35 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    function formatDate(dateString) {
+        let date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            month: 'long', // Display full month name
+            day: 'numeric', // Display day number
+            year: 'numeric' // Display full year
+        });
+    }
+
+    function setupDateField(formattedInputId, hiddenInputId) {
+        const formattedInput = document.getElementById(formattedInputId);
+        const hiddenInput = document.getElementById(hiddenInputId);
+
+        formattedInput.addEventListener("click", function () {
+            hiddenInput.showPicker(); // Open native date picker
+        });
+
+        hiddenInput.addEventListener("change", function () {
+            formattedInput.value = formatDate(hiddenInput.value); // Format date for display
+        });
+
+        // Initialize input if a value exists
+        if (hiddenInput.value) {
+            formattedInput.value = formatDate(hiddenInput.value);
+        }
+    }
+
+    // Apply to both start and end date fields
+    setupDateField("formattedStartDate", "startDate");
+    setupDateField("formattedEndDate", "endDate");
+});

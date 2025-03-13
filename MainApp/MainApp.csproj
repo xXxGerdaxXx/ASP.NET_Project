@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Shared\Partials\Sections\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 

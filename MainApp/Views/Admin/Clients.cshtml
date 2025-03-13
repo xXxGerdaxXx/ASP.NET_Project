@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "~/Views/Shared/_PortalLayout.cshtml";
+    ViewData["Title"] = "Clients";
+}
+<partial name="Partials/Sections/_CreateClient" />
+<partial name="Partials/Sections/_EditClient" />
+
+<section id="clients">
+    <header>
+        <div class="page-header">
+            <h2>Clients</h2>
+            <div class="button-group">
+                <button id="openAddClientModal" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Add Client
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("JavaScript Loaded!");
+
+            // Open "Add Client" Modal
+            const openAddClientButton = document.getElementById("openAddClientModal");
+            const addClientModal = document.getElementById("add-client-modal");
+            const closeAddClientButton = document.getElementById("closeAddClientModal");
+
+            if (openAddClientButton && addClientModal && closeAddClientButton) {
+                openAddClientButton.addEventListener("click", function () {
+                    console.log("Add Client Button Clicked! Opening Modal...");
+                    addClientModal.classList.add("active");
+                });
+
+                closeAddClientButton.addEventListener("click", function () {
+                    console.log("Close Button Clicked! Closing Modal...");
+                    addClientModal.classList.remove("active");
+                });
+
+                window.addEventListener("click", function (event) {
+                    if (event.target === addClientModal) {
+                        console.log("Clicked outside Add Client modal! Closing...");
+                        addClientModal.classList.remove("active");
+                    }
+                });
+            } else {
+                console.error("ERROR: Add Client modal elements are missing!");
+            }
+
+            // Open "Edit Client" Modal (Fixing Selection Issue)
+            document.addEventListener("click", function (event) {
+                if (event.target.matches("[data-modal='true']")) {
+                    const modalId = event.target.getAttribute("data-target");
+                    const modal = document.querySelector(modalId);
+                    if (modal) {
+                        console.log("Edit Client Icon Clicked! Opening Modal...");
+                        modal.classList.add("active");
+                        modal.style.display = "flex"; // Ensure it's visible
+                    }
+                }
+            });
+
+            // Close "Edit Client" Modal
+            const closeEditClientButton = document.getElementById("closeEditClientModal");
+            if (closeEditClientButton) {
+                closeEditClientButton.addEventListener("click", function () {
+                    console.log("Close Button Clicked! Closing Edit Modal...");
+                    const modal = document.getElementById("edit-client-modal");
+                    modal.classList.remove("active");
+                    modal.style.display = "none";
+                });
+            } else {
+                console.error("ERROR: Close button for Edit Client modal is missing!");
+            }
+
+            // Close Modal When Clicking Outside
+            window.addEventListener("click", function (event) {
+                const editClientModal = document.getElementById("edit-client-modal");
+                if (event.target === editClientModal) {
+                    console.log("Clicked outside Edit Client modal! Closing...");
+                    editClientModal.classList.remove("active");
+                    editClientModal.style.display = "none";
+                }
+            });
+        });
+
+    </script>
+    <div class="surface">
+        <partial name="Partials/Sections/_ClientList"/>
+    </div>
+</section>
