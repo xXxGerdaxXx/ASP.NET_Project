@@ -774,44 +774,6 @@ form header {
         color: var(--gray-700);
     }
 
-/* Image Preview */
-.image-preview-container {
-    display: flex;
-    margin-left: 10rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    justify-content: center;
-    align-items: center;
-    width: 150px; /* Adjust width */
-    height: 150px; /* Adjust height */
-    border: 2px dashed var(--gray-500); /* Dashed border */
-    border-radius: 18%; /* Rounded corners */
-    padding: 10px; /* Add spacing */
-}
-
-/* Styling for the inner circle */
-.circle {
-    width: 60px; /* Adjusted size */
-    height: 60px;
-    border-radius: 50%;
-    background: var(--gray-700);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-    /* Icon inside the circle */
-    .circle i {
-        font-size: 1.5rem;
-        color: var(--gray-100);
-    }
-
-    /* Hover effect */
-    .circle:hover {
-        background: var(--gray-600);
-    }
 
 /* Form Groups */
 .form-group {
@@ -1033,25 +995,6 @@ footer {
     border-radius: 10px;
     padding: 0.5rem, 1rem;
 }
-.image-previewer {
-    border: 2px dashed var(--border-color);
-    height: 150px;
-    width: 150px;
-    margin: 2rem auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    overflow: hidden;
-}
-    .image-previewer.circle {
-        border-radius:50%;
-    }
-
-    .image-previewer.square {
-        border-radius: 16px;
-    }
-
 .notification-badge {
     position: absolute;
     top: 0px;
@@ -1236,7 +1179,6 @@ footer {
         font-size: 16px;
     }
 
-
     .input-icon-wrapper {
     position: relative;
     width: 100%;
@@ -1262,13 +1204,70 @@ footer {
         font-size: 16px;
     }
 
-
-
 .team-member-search-container{
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
+/* Image Previewer */
+.image-previewer {
+    border: 2px dashed var(--border-color);
+    height: 150px;
+    width: 150px;
+    margin: 2rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+    .image-previewer img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .image-previewer::after {
+        content: '\f044'; /* FontAwesome Camera Icon */
+        font-family: "Font Awesome 6 Free"; /* Ensure correct font is used */
+        font-weight: 900;
+        background-color: rgba(68, 68, 68, 0.6); /* Dark gray with 70% opacity */
+        color: var(--white-100);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, 70%);
+        font-size: 1.5rem;
+    }
 
+
+
+    .image-previewer.selected::after {
+        content: '\f044';
+        font-family: "Font Awesome 6 Free";
+        background-color: var(--dark-100-60);
+        font-weight: 900;
+        position: absolute;
+        bottom: 5px;
+    }
+    .image-previewer.circle {
+        border-radius: 50%;
+    }
+    .image-previewer.square {
+        border-radius: 16px;
+    }
+input[type="file"] {
+    display: none;
+}
 /* lists */
 
 .client-list {

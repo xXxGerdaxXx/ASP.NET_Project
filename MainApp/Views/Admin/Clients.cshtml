@@ -40,12 +40,6 @@
                     addClientModal.classList.remove("active");
                 });
 
-                window.addEventListener("click", function (event) {
-                    if (event.target === addClientModal) {
-                        console.log("Clicked outside Add Client modal! Closing...");
-                        addClientModal.classList.remove("active");
-                    }
-                });
             } else {
                 console.error("ERROR: Add Client modal elements are missing!");
             }
@@ -63,28 +57,7 @@
                 }
             });
 
-            // Close "Edit Client" Modal
-            const closeEditClientButton = document.getElementById("closeEditClientModal");
-            if (closeEditClientButton) {
-                closeEditClientButton.addEventListener("click", function () {
-                    console.log("Close Button Clicked! Closing Edit Modal...");
-                    const modal = document.getElementById("edit-client-modal");
-                    modal.classList.remove("active");
-                    modal.style.display = "none";
-                });
-            } else {
-                console.error("ERROR: Close button for Edit Client modal is missing!");
-            }
 
-            // Close Modal When Clicking Outside
-            window.addEventListener("click", function (event) {
-                const editClientModal = document.getElementById("edit-client-modal");
-                if (event.target === editClientModal) {
-                    console.log("Clicked outside Edit Client modal! Closing...");
-                    editClientModal.classList.remove("active");
-                    editClientModal.style.display = "none";
-                }
-            });
         });
 
     </script>

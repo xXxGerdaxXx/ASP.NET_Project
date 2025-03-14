@@ -14,24 +14,34 @@
     });
 
     // ✅ Close Modal
-    document.querySelectorAll("[data-close-modal]").forEach(button => {
-        button.addEventListener("click", function () {
-            this.closest(".modal-overlay").classList.remove("active");
-            console.log("❌ Modal closed!");
+    const closeButtons = document.querySelectorAll('[data-close="true"]');
+    closeButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const modal = button.closest('.modal-overlay');
+            if (modal) {
+                modal.style.display = 'none'; // Hide the modal
+
+                modal.querySelectorAll('form').forEach(form => {
+                    form.reset(); // Reset the form inputs
+
+                    const imagePreview = form.querySelector('.image-preview img');
+                    if (imagePreview) {
+                        imagePreview.src = ''; // Clear the image preview
+                    }
+
+                    const imagePreviewer = form.querySelector('.image-previewer'); // Fixed class selector
+                    if (imagePreviewer) {
+                        imagePreviewer.classList.remove('selected'); // Remove 'selected' class
+                    }
+                });
+            }
         });
     });
 
-    // ✅ Close Modal When Clicking Outside
-    window.addEventListener("click", function (event) {
-        if (event.target.classList.contains("modal-overlay")) {
-            event.target.classList.remove("active");
-            console.log("❌ Clicked outside modal, closing...");
-        }
-    });
-});
 
 
-document.addEventListener("DOMContentLoaded", function () {
+
+    // ✅ Notification Button (Simulating notifications)
     const notificationButton = document.getElementById("notificationsButton");
     const notificationBadge = document.querySelector(".notification-badge");
 
@@ -44,10 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("You have new notifications!");
         notificationBadge.style.display = "none"; // Hide badge after click
     });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ JavaScript Loaded!");
 
     // ✅ Filtering Projects
     document.querySelectorAll(".tab").forEach(tab => {
@@ -68,9 +74,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     });
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+    // ✅ Search Functionality for Team Members
     const searchIcon = document.querySelector(".search-icon");
     const searchInput = document.querySelector("#teamMemberSearch");
     const teamMemberList = document.querySelector("#teamMemberList");
@@ -94,8 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
             teamMemberList.style.display = "none";
         });
     });
-});
-document.addEventListener("DOMContentLoaded", function () {
+
+    // ✅ Quill Editor Initialization
     var quill = new Quill('#quill-editor', {
         theme: 'snow',
         placeholder: 'Type something...',
@@ -118,15 +123,14 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector("form").onsubmit = function () {
         document.querySelector("#description").value = quill.root.innerHTML;
     };
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+    // ✅ Date Formatting for Start and End Dates
     function formatDate(dateString) {
         let date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
-            month: 'long', // Display full month name
-            day: 'numeric', // Display day number
-            year: 'numeric' // Display full year
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
         });
     }
 
@@ -151,4 +155,63 @@ document.addEventListener("DOMContentLoaded", function () {
     // Apply to both start and end date fields
     setupDateField("formattedStartDate", "startDate");
     setupDateField("formattedEndDate", "endDate");
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.image-preview').forEach(previewer => {
+        const fileInput = previewer.querySelector('input[type="file"]');
+        const imagePreview = previewer.querySelector('img');
+
+        // Check if fileInput and imagePreview are valid
+        if (!fileInput || !imagePreview) {
+            console.error("Missing file input or image preview element.");
+            return;
+        }
+
+        // Trigger the file input click when previewer is clicked
+        previewer.addEventListener('click', () => fileInput.click());
+
+        // Handle file selection and update the preview image
+        fileInput.addEventListener('change', ({ target: { files } }) => {
+            const file = files[0];
+            if (file) {
+                processImage(file, imagePreview, previewer, previewSize);
+            }
+        });
+
+        /* Loading image function */
+        async function loadImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onerror = () => reject(new Error("Failed to load file."));
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error("Failed to load image"));
+                    img.onload = () => resolve(img);
+                    img.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Function to process and resize the image
+        async function processImage(file, imagePreview, previewer, previewSize = 150) {
+            try {
+                const img = await loadImage(file);
+                const canvas = document.createElement("canvas");
+                canvas.width = previewSize;
+                canvas.height = previewSize;
+
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, previewSize, previewSize);
+
+                // Update imagePreview to show the resized image
+                imagePreview.src = canvas.toDataURL();  // Convert canvas content to a data URL and set it as the image source
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    });
 });
