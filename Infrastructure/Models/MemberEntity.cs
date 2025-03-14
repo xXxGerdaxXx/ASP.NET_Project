@@ -2,34 +2,33 @@
 using System;
 using System.Collections.Generic;
 
-namespace Infrastructure.Models
+namespace Infrastructure.Models;
+
+public class MemberEntity
 {
-    public class MemberEntity
+    public int Id { get; set; }  // Primary Key
+
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
+    public string Address { get; set; } = null!;
+
+    public DateTime DateOfBirth { get; set; }
+    public JobTitle JobTitle { get; set; } // Enum for job title
+
+    // Many-to-Many: Members ↔ Projects (via join table)
+    public List<ProjectMemberEntity> ProjectMembers { get; set; } = new();
+
+    // **Computed Property: Age (Not stored in DB)**
+    public int Age
     {
-        public int MemberId { get; set; }  // Primary Key
-
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string PhoneNumber { get; set; } = null!;
-        public string Address { get; set; } = null!;
-
-        public DateTime DateOfBirth { get; set; }
-        public JobTitle JobTitle { get; set; } // Enum for job title
-
-        // Many-to-Many: Members ↔ Projects (via join table)
-        public List<ProjectMemberEntity> ProjectMembers { get; set; } = new();
-
-        // **Computed Property: Age (Not stored in DB)**
-        public int Age
+        get
         {
-            get
-            {
-                var today = DateTime.Today;
-                int age = today.Year - DateOfBirth.Year;
-                if (DateOfBirth.Date > today.AddYears(-age)) age--;
-                return age;
-            }
+            var today = DateTime.Today;
+            int age = today.Year - DateOfBirth.Year;
+            if (DateOfBirth.Date > today.AddYears(-age)) age--;
+            return age;
         }
     }
 }

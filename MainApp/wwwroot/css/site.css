@@ -1033,6 +1033,25 @@ footer {
     border-radius: 10px;
     padding: 0.5rem, 1rem;
 }
+.image-previewer {
+    border: 2px dashed var(--border-color);
+    height: 150px;
+    width: 150px;
+    margin: 2rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+    .image-previewer.circle {
+        border-radius:50%;
+    }
+
+    .image-previewer.square {
+        border-radius: 16px;
+    }
+
 .notification-badge {
     position: absolute;
     top: 0px;

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Infrastructure.Models;
 
-namespace Infrastructure.Interfaces
+namespace Infrastructure.Interfaces;
+
+public interface IClientRepository
 {
-    interface IClientRepository
-    {
-    }
+    Task<ClientEntity> CreateClientAsync(ClientEntity newClient); // ✅ Create
+    Task<List<ClientEntity>> GetAllClientsAsync(); // ✅ Read (Get All)
+    Task<ClientEntity?> GetClientByIdAsync(int id); // ✅ Read (Get One)
+    Task<bool> UpdateClientAsync(ClientEntity updatedClient); // ✅ Update
+    Task<bool> DeleteClientAsync(int id); // ✅ Delete
 }

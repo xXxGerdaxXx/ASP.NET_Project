@@ -8,7 +8,7 @@ namespace Infrastructure.Models;
 
 public class StatusEntity
 {
-    public int StatusId { get; set; }  // Primary Key
+    public int Id { get; set; }  // Primary Key
     public string StatusName { get; set; } = null!;
 
     // Navigation property (One Status → Many Projects)

@@ -7,7 +7,7 @@ namespace Infrastructure.Models;
 
 public class ProjectEntity
 {
-    public int ProjectId { get; set; }  // Primary Key
+    public int Id { get; set; }  // Primary Key
 
     public string ProjectName { get; set; } = null!;
     public string Description { get; set; } = null!;

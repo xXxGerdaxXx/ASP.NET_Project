@@ -12,8 +12,8 @@ public static class DbInitializer
         if (!context.Roles.Any()) // Add roles if they don't exist
         {
             context.Roles.AddRange(
-                new RoleEntity { RoleId = 1, RoleName = "Admin" },
-                new RoleEntity { RoleId = 2, RoleName = "User" }
+                new RoleEntity { Id = 1, RoleName = "Admin" },
+                new RoleEntity { Id = 2, RoleName = "User" }
             );
             context.SaveChanges();
         }

@@ -13,15 +13,15 @@ public class AppDbContext : DbContext
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<MemberEntity> Members { get; set; }
     public DbSet<ClientEntity> Clients { get; set; }
-    public DbSet<NotificationEntity> Notifications { get; set; } 
-    public DbSet<FileEntity> Files { get; set; } 
+    public DbSet<NotificationEntity> Notifications { get; set; }
+    public DbSet<FileEntity> Files { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // ✅ Define Primary Key for User
         modelBuilder.Entity<UserEntity>()
-            .HasKey(u => u.UserId);
+            .HasKey(u => u.Id);
 
         modelBuilder.Entity<UserEntity>()
             .Property(u => u.Username)
@@ -47,11 +47,11 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         // ✅ Define Primary Keys
-        modelBuilder.Entity<RoleEntity>().HasKey(r => r.RoleId);
-        modelBuilder.Entity<StatusEntity>().HasKey(s => s.StatusId);
-        modelBuilder.Entity<ProjectEntity>().HasKey(p => p.ProjectId);
-        modelBuilder.Entity<MemberEntity>().HasKey(m => m.MemberId);
-        modelBuilder.Entity<ClientEntity>().HasKey(c => c.ClientId); // ✅ Added missing primary key for ClientEntity
+        modelBuilder.Entity<RoleEntity>().HasKey(r => r.Id);
+        modelBuilder.Entity<StatusEntity>().HasKey(s => s.Id);
+        modelBuilder.Entity<ProjectEntity>().HasKey(p => p.Id);
+        modelBuilder.Entity<MemberEntity>().HasKey(m => m.Id);
+        modelBuilder.Entity<ClientEntity>().HasKey(c => c.Id); 
 
         // ✅ One-to-Many: One Status → Many Projects
         modelBuilder.Entity<ProjectEntity>()

@@ -1,29 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.Models
+namespace Infrastructure.Models;
+
+public class ClientEntity
 {
-    public class ClientEntity
-    {
-        public int ClientId { get; set; } // Primary Key
+    public int Id { get; set; } // Primary Key
 
-        [Required]
-        [MaxLength(100)]
-        public string ClientName { get; set; } = null!;
+    [Required]
+    [MaxLength(100)]
+    public string ClientName { get; set; } = null!;
 
-        [MaxLength(200)]
-        public string ContactPerson { get; set; } = null!;
+    [MaxLength(200)]
+    public string ContactPerson { get; set; } = null!;
 
-        [MaxLength(100)]
-        public string Email { get; set; } = null!;
+    [MaxLength(100)]
+    public string Email { get; set; } = null!;
 
-        [MaxLength(15)]
-        public string PhoneNumber { get; set; } = null!;
+    [MaxLength(15)]
+    public string PhoneNumber { get; set; } = null!;
 
-        [MaxLength(300)]
-        public string Address { get; set; } = null!;
+    [MaxLength(300)]
+    public string Address { get; set; } = null!;
 
-        // One Client can have multiple Projects
-        public List<ProjectEntity> Projects { get; set; } = new();
-    }
+    // One Client can have multiple Projects
+    public List<ProjectEntity> Projects { get; set; } = new();
 }
