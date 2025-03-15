@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces;
 
-public interface IClientRepository
+public interface IClientService
 {
     Task<ClientEntity> CreateClientAsync(ClientEntity newClient); // ✅ Create
     Task<List<ClientEntity>> GetAllClientsAsync(); // ✅ Read (Get All)

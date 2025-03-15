@@ -1,5 +1,5 @@
 ﻿using Infrastructure.DTOs;
-using Infrastructure.Models;
+using Infrastructure.Entities;
 using Infrastructure.Repositories;
 using Infrastructure.Helpers;
 using Infrastructure.Interfaces;

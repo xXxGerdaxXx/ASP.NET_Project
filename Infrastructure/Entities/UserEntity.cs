@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Infrastructure.Enums;
 
-namespace Infrastructure.Models;
+namespace Infrastructure.Entities;
 
 public class UserEntity
 {

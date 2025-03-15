@@ -24,7 +24,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             console.log("JavaScript Loaded!");
 
-            // Open "Add Client" Modal
+            // ✅ Open "Add Client" Modal
             const openAddClientButton = document.getElementById("openAddClientModal");
             const addClientModal = document.getElementById("add-client-modal");
             const closeAddClientButton = document.getElementById("closeAddClientModal");
@@ -33,18 +33,20 @@
                 openAddClientButton.addEventListener("click", function () {
                     console.log("Add Client Button Clicked! Opening Modal...");
                     addClientModal.classList.add("active");
+                    addClientModal.style.display = "flex"; // Ensure visibility
                 });
 
                 closeAddClientButton.addEventListener("click", function () {
                     console.log("Close Button Clicked! Closing Modal...");
                     addClientModal.classList.remove("active");
+                    addClientModal.style.display = "none";
                 });
 
             } else {
                 console.error("ERROR: Add Client modal elements are missing!");
             }
 
-            // Open "Edit Client" Modal (Fixing Selection Issue)
+            // ✅ Open "Edit Client" Modal
             document.addEventListener("click", function (event) {
                 if (event.target.matches("[data-modal='true']")) {
                     const modalId = event.target.getAttribute("data-target");
@@ -57,10 +59,25 @@
                 }
             });
 
+            // ✅ Close "Edit Client" Modal
+            const closeEditClientButton = document.querySelector("#edit-client-modal .btn-close");
+
+            if (closeEditClientButton) {
+                closeEditClientButton.addEventListener("click", function () {
+                    console.log("Close Edit Client Modal Button Clicked!");
+                    const editClientModal = document.getElementById("edit-client-modal");
+                    if (editClientModal) {
+                        editClientModal.classList.remove("active");
+                        editClientModal.style.display = "none";
+                    }
+                });
+            } else {
+                console.error("ERROR: Close Edit Client button is missing!");
+            }
 
         });
-
     </script>
+
     <div class="surface">
         <partial name="Partials/Sections/_ClientList"/>
     </div>

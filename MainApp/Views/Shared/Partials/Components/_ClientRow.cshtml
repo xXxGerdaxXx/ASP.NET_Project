@@ -1,0 +1,19 @@
+﻿@model Infrastructure.Entities.ClientEntity
+
+<tr>
+    <td class="client-check"><input type="checkbox" /></td>
+    <td class="client-info">
+        <img class="client-image" src="~/images/Avatar.svg" alt="" />
+        <div class="client-name">@Model.ClientName</div>
+        <div class="client-email">@Model.Email</div>
+    </td>
+    <td class="client-address">@Model.Address</td>
+    <td class="client-phone">@Model.PhoneNumber</td>
+    <td class="client-date">@DateTime.Now.ToString("yyyy-MM-dd")</td>
+    <td class="client-status">
+        <div class="badge success">Active</div>
+    </td>
+    <td class="client-actions">
+        <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-client-modal"></i>
+    </td>
+</tr>

@@ -1,5 +1,5 @@
 ﻿using Infrastructure.Interfaces;
-using Infrastructure.Models;
+using Infrastructure.Entities;
 
 namespace Business.Services;
 

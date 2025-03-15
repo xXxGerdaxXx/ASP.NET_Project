@@ -7,18 +7,17 @@
             <button id="closeAddClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
         </header>
 
-        <form novalidate method="post" asp-action="CreateClient" asp-controller="Admin">
+        <form id="createClientForm" method="post" action="/Clients/CreateClient" novalidate method="post">
 
             <div class="image-previewer circle">
                 <img src="" class="image-preview" />
-
                 <input asp-for="File" accept="image/*" class="hide" />
             </div>
 
             <div class="form-group">
                 <label asp-for="ClientName"></label>
                 <div class="field-group">
-                    <input asp-for="ClientName">
+                    <input name="ClientName" asp-for="ClientName">
                     <span asp-validation-for="ClientName"></span>
                 </div>
             </div>
@@ -26,7 +25,7 @@
             <div class="form-group">
                 <label asp-for="ContactPerson"></label>
                 <div class="field-group">
-                    <input asp-for="ContactPerson">
+                    <input name="ContactPerson" asp-for="ContactPerson">
                     <span asp-validation-for="ContactPerson"></span>
                 </div>
             </div>
@@ -34,7 +33,7 @@
             <div class="form-group">
                 <label asp-for="Email"></label>
                 <div class="field-group">
-                    <input asp-for="Email">
+                    <input name="Email" asp-for="Email">
                     <span asp-validation-for="Email"></span>
                 </div>
             </div>
@@ -55,34 +54,10 @@
             </div>
 
             <footer class="modal-footer">
-                <button type="submit" class="btn-blue-submit">Create</button>
+                <button type="submit" class="btn btn-submit btn-blue">Create</button>
             </footer>
+
         </form>
 
-        <script>
-            document.querySelectorAll('.image-previewer').forEach(previewer => {
-                const fileInput = previewer.querySelector('input[type="file"]');
-                const imagePreview = previewer.querySelector('img');
-
-                // Trigger file input click when the image previewer is clicked
-                previewer.addEventListener('click', () => fileInput.click());
-
-                // Handle file selection and update the image preview
-                fileInput.addEventListener('change', ({ target: { files } }) => {
-                    const file = files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            imagePreview.src = e.target.result;  // Set the preview image source
-                            imagePreview.classList.remove('hide');  // Show the image once selected
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            });
-
-
-
-        </script>
     </div>
 </div>

@@ -1,9 +1,9 @@
 ﻿using Infrastructure.Interfaces;
-using Infrastructure.Models;
+using Infrastructure.Entities;
 
-namespace Business.Services;
+namespace Infrastructure.Services;
 
-public class ClientService(IClientRepository clientRepository)
+public class ClientService(IClientRepository clientRepository) : IClientService
 {
     private readonly IClientRepository _clientRepository = clientRepository;
 
