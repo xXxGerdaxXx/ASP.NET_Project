@@ -26,7 +26,6 @@ public class ProjectCreateFormModel
     [Display(Name = "End Date")]
     public DateTime EndDate { get; set; }
 
-    // ✅ Multi-Select Search Field for Team Members
     [Display(Name = "Members")]
     public string TeamMemberSearch { get; set; } = string.Empty;
 
@@ -38,7 +37,7 @@ public class ProjectCreateFormModel
     [Display(Name = "Budget", Prompt = "Enter project budget")]
     public decimal Budget { get; set; }
 
-    public string Status { get; set; } = "all"; // ✅ Default to "all"
+    public string Status { get; set; } = "all"; 
 
     [Display(Name = "Project Image")]
     public IFormFile? ProjectImage { get; set; } 

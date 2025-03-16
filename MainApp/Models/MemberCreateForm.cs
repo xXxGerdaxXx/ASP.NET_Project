@@ -4,6 +4,10 @@ namespace MainApp.Models;
 
 public class MemberCreateForm
 {
+    [Display(Name = "Client Image", Prompt = "Select an image")]
+    [DataType(DataType.Upload)]
+    public IFormFile? File { get; set; }
+
     [Display(Name = "First Name", Prompt = "Enter member's name")]
     [Required(ErrorMessage = "Required")]
     public string MemberName { get; set; } = null!;

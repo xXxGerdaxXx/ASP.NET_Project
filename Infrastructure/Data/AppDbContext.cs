@@ -12,7 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<RoleEntity> Roles { get; set; }
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<MemberEntity> Members { get; set; }
-    public DbSet<ClientEntity> Clients { get; set; }
+    public DbSet<ClientEntity> Clients { get; set; } = default!;
     public DbSet<NotificationEntity> Notifications { get; set; }
     public DbSet<FileEntity> Files { get; set; }
 

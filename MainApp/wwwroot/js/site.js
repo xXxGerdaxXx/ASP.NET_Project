@@ -1,7 +1,9 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
+    console.log("JavaScript Loaded");
+
     const previewSize = 150;
 
-    // ✅ Open Modal
+    //  Open Modal
     document.querySelectorAll('[data-modal="true"]').forEach(button => {
         button.addEventListener('click', () => {
             const modalTarget = button.getAttribute('data-target');
@@ -10,166 +12,123 @@
         });
     });
 
-// Close modal
-const closeButtons = document.querySelectorAll('[data-close="true"]');
-closeButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const modal = button.closest('.modal');
-        if (modal) {
-            modal.style.display = 'none';
-
-            modal.querySelectorAll('form').forEach(form => {
-                form.reset();
-
-                const imagePreview = form.querySelector('.image-preview');
-                if (imagePreview) 
-                    imagePreview.src = '';
-
-                const imagePreviewer = form.querySelector('.image-previewer');
-                if (imagePreviewer) 
-                    imagePreviewer.classList.remove('selected');
-            });
-        }
+    //  Close Modal & Reset Form
+    document.querySelectorAll('[data-close="true"]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modal = button.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.querySelectorAll('form').forEach(form => {
+                    form.reset();
+                    const imagePreview = form.querySelector('.image-preview');
+                    if (imagePreview) imagePreview.src = '';
+                    const imagePreviewer = form.querySelector('.image-previewer');
+                    if (imagePreviewer) imagePreviewer.classList.remove('selected');
+                });
+            }
+        });
     });
-});
 
-
-    // ✅ Image Previewer
-    document.querySelectorAll('.image-previewer, .image-preview').forEach(previewer => {
+    // Image Previewer
+    document.querySelectorAll('.image-previewer').forEach(previewer => {
         const fileInput = previewer.querySelector('input[type="file"]');
         const imagePreview = previewer.querySelector('img');
 
         if (!fileInput || !imagePreview) {
-            console.error("Missing file input or image preview element.");
+            console.warn("⚠️ Missing file input or image preview element in:", previewer);
             return;
         }
 
         previewer.addEventListener('click', () => fileInput.click());
 
-        fileInput.addEventListener('change', async ({ target: { files } }) => {
-            const file = files[0];
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
             if (file) {
                 try {
                     await processImage(file, imagePreview, previewer, previewSize);
                 } catch (error) {
-                    console.error("Error processing image:", error);
+                    console.error("❌ Error processing image:", error);
                 }
             }
         });
     });
 
-    // handle submit forms
-    const forms = document.querySelectorAll('form');
-
-    forms.forEach(form => {
+    // Handle Form Submission (Prevent Page Reload & Update Table)
+    document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Stop full page reload
+            console.log("🚀 Form submit intercepted");
+            e.preventDefault();
 
             clearErrorMessages(form);
             const formData = new FormData(form);
 
             try {
+                console.log("📨 Sending form data to:", form.action);
                 const res = await fetch(form.action, {
                     method: 'POST',
                     body: formData
                 });
 
                 if (res.ok) {
-                    const html = await res.text();
-                    document.getElementById("clientTableBody").innerHTML = html; // ✅ Update table
+                    console.log("✅ Form submitted successfully");
+
+                    //  Reload the client list after successful submission
+                    await reloadClientList();
+
+                    //  Close Modal & Reset Form
                     const modal = form.closest('.modal');
-                    if (modal) modal.style.display = 'none'; // Close modal
-                } else if (res.status === 400) {
-                    const data = await res.json();
-                    if (data.errors) {
-                        Object.keys(data.errors).forEach(key => {
-                            let input = form.querySelector(`[name="${key}"]`);
-                            if (input) input.classList.add('input-validation-error');
-                            let span = form.querySelector(`[data-valmsg-for="${key}"]`);
-                            if (span) {
-                                span.innerText = data.errors[key].join('\n');
-                                span.classList.add('field-validation-error');
-                            }
-                        });
+                    if (modal) {
+                        modal.style.display = 'none';
+                        form.reset();
                     }
+                } else {
+                    console.error("❌ Form submission failed", res.status);
                 }
             } catch (error) {
                 console.error("❌ Error submitting form:", error);
-                alert("Failed to create client. Check console for details.");
             }
         });
     });
-});
 
-
-
-function clearErrorMessages(form) {
-    form.querySelectorAll('[data-val="true"]').forEach(input => {
-        input.classList.remove('input-validation-error');
-    })
-
-    form.querySelectorAll('[data-valmsg-for]').forEach(span => {
-        span.innerText = '';
-        span.classList.remove('field-validation-error');
-    })
-}
-
-function addErrorMessage(key, errormessage) {
-
-}
-                            
-
-
-
-    // ✅ Function to load an image
-    async function loadImage(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-
-            reader.onerror = () => reject(new Error("Failed to load file."));
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onerror = () => reject(new Error("Failed to load image"));
-                img.onload = () => resolve(img);
-                img.src = e.target.result;
-            };
-
-            reader.readAsDataURL(file);
-        });
-    }
-
-    // ✅ Function to process and resize the image
-    async function processImage(file, imagePreview, previewer, previewSize = 150) {
+    //  Reload Client List (Fetch Partial View)
+    async function reloadClientList() {
+        console.log("Reloading client list...");
         try {
-            const img = await loadImage(file);
-            const canvas = document.createElement('canvas');
-            canvas.width = previewSize;
-            canvas.height = previewSize;
+            const res = await fetch("/clients");
+            if (res.ok) {
+                const html = await res.text();
+                const clientListContainer = document.getElementById("clientListContainer");
 
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, previewSize, previewSize);
-
-            imagePreview.src = canvas.toDataURL('image/jpeg');
-            previewer.classList.add('selected');
+                if (clientListContainer) {
+                    clientListContainer.innerHTML = html;
+                    console.log("Client list updated successfully");
+                } else {
+                    console.error("Element #clientListContainer not found!");
+                }
+            } else {
+                console.error("Failed to reload client list", res.status);
+            }
         } catch (error) {
-            console.error('Failed on image processing:', error);
+            console.error("Error reloading client list:", error);
         }
     }
 
-    // ✅ Notification Button Simulation
+    //  Notification Button Simulation
     const notificationButton = document.getElementById("notificationsButton");
     const notificationBadge = document.querySelector(".notification-badge");
 
-    setTimeout(() => {
-        notificationBadge.style.display = "block";
-    }, 2000);
+    if (notificationButton && notificationBadge) {
+        setTimeout(() => {
+            notificationBadge.style.display = "block";
+        }, 2000);
 
-    notificationButton.addEventListener("click", function () {
-        alert("You have new notifications!");
-        notificationBadge.style.display = "none";
-    });
+        notificationButton.addEventListener("click", function () {
+            alert("You have new notifications!");
+            notificationBadge.style.display = "none";
+        });
+    }
 
-    // ✅ Filtering Projects
+    // Filtering Projects
     document.querySelectorAll(".tab").forEach(tab => {
         tab.addEventListener("click", function () {
             const filter = this.getAttribute("data-filter");
@@ -183,29 +142,31 @@ function addErrorMessage(key, errormessage) {
         });
     });
 
-    // ✅ Search Functionality for Team Members
+    // Search Functionality for Team Members
     const searchIcon = document.querySelector(".search-icon");
     const searchInput = document.querySelector("#teamMemberSearch");
     const teamMemberList = document.querySelector("#teamMemberList");
 
-    searchIcon.addEventListener("click", function () {
-        teamMemberList.style.display = (teamMemberList.style.display === "block") ? "none" : "block";
-    });
-
-    document.addEventListener("click", function (event) {
-        if (!searchIcon.contains(event.target) && !searchInput.contains(event.target) && !teamMemberList.contains(event.target)) {
-            teamMemberList.style.display = "none";
-        }
-    });
-
-    document.querySelectorAll(".team-member-list li").forEach(item => {
-        item.addEventListener("click", function () {
-            searchInput.value = this.textContent;
-            teamMemberList.style.display = "none";
+    if (searchIcon && searchInput && teamMemberList) {
+        searchIcon.addEventListener("click", function () {
+            teamMemberList.style.display = (teamMemberList.style.display === "block") ? "none" : "block";
         });
-    });
 
-    // ✅ Date Formatting for Start and End Dates
+        document.addEventListener("click", function (event) {
+            if (!searchIcon.contains(event.target) && !searchInput.contains(event.target) && !teamMemberList.contains(event.target)) {
+                teamMemberList.style.display = "none";
+            }
+        });
+
+        document.querySelectorAll(".team-member-list li").forEach(item => {
+            item.addEventListener("click", function () {
+                searchInput.value = this.textContent;
+                teamMemberList.style.display = "none";
+            });
+        });
+    }
+
+    // Date Formatting for Start and End Dates
     function formatDate(dateString) {
         let date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -218,6 +179,8 @@ function addErrorMessage(key, errormessage) {
     function setupDateField(formattedInputId, hiddenInputId) {
         const formattedInput = document.getElementById(formattedInputId);
         const hiddenInput = document.getElementById(hiddenInputId);
+
+        if (!formattedInput || !hiddenInput) return;
 
         formattedInput.addEventListener("click", function () {
             hiddenInput.showPicker();
@@ -235,3 +198,50 @@ function addErrorMessage(key, errormessage) {
     setupDateField("formattedStartDate", "startDate");
     setupDateField("formattedEndDate", "endDate");
 
+    // Function to Clear Error Messages
+    function clearErrorMessages(form) {
+        form.querySelectorAll('[data-val="true"]').forEach(input => {
+            input.classList.remove('input-validation-error');
+        });
+
+        form.querySelectorAll('[data-valmsg-for]').forEach(span => {
+            span.innerText = '';
+            span.classList.remove('field-validation-error');
+        });
+    }
+
+    // Function to Load an Image
+    async function loadImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onerror = () => reject(new Error("Failed to load file."));
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onerror = () => reject(new Error("Failed to load image"));
+                img.onload = () => resolve(img);
+                img.src = e.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Function to Process and Resize Image
+    async function processImage(file, imagePreview, previewer, previewSize = 150) {
+        try {
+            const img = await loadImage(file);
+            const canvas = document.createElement('canvas');
+            canvas.width = previewSize;
+            canvas.height = previewSize;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, previewSize, previewSize);
+
+            imagePreview.src = canvas.toDataURL('image/jpeg');
+            previewer.classList.add('selected');
+        } catch (error) {
+            console.error('Failed on image processing:', error);
+        }
+    }
+});

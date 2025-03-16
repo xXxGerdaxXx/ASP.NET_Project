@@ -9,10 +9,7 @@
     </td>
     <td class="client-address">@Model.Address</td>
     <td class="client-phone">@Model.PhoneNumber</td>
-    <td class="client-date">@DateTime.Now.ToString("yyyy-MM-dd")</td>
-    <td class="client-status">
-        <div class="badge success">Active</div>
-    </td>
+    <td class="client-date">@Model.CreatedAt.ToString("yyyy-MM-dd")</td>
     <td class="client-actions">
         <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-client-modal"></i>
     </td>

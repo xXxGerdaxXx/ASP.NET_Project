@@ -1,16 +1,26 @@
-﻿using MainApp.Models;
-using Microsoft.AspNetCore.Mvc;
-using Infrastructure.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Infrastructure.Interfaces;
+using Infrastructure.Entities;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using MainApp.Models;
 
-namespace MainApp.Controllers;
-
-public class ClientsController(IClientService clientService) : Controller
+[Route("clients")]
+public class ClientsController : Controller
 {
-    private readonly IClientService _clientService = clientService;
+    private readonly IClientService _clientService;
+    private readonly ILogger<ClientsController> _logger;
 
-    [HttpPost]
-    [Route("Clients")]
+    public ClientsController(IClientService clientService, ILogger<ClientsController> logger)
+    {
+        _clientService = clientService;
+        _logger = logger;
+    }
+
+    // ✅ CREATE CLIENT
+    [HttpPost("create")]
     public async Task<IActionResult> CreateClient(ClientCreateFormModel form)
     {
         if (!ModelState.IsValid)
@@ -22,7 +32,26 @@ public class ClientsController(IClientService clientService) : Controller
                     kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
                 );
 
+            _logger.LogWarning("⚠️ Form validation failed: {@Errors}", errors);
             return BadRequest(new { success = false, errors });
+        }
+
+        // ✅ Handle File Upload
+        string? avatarUrl = null;
+        if (form.File != null && form.File.Length > 0)
+        {
+            string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/clients");
+            Directory.CreateDirectory(uploadsFolder);
+
+            string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(form.File.FileName);
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await form.File.CopyToAsync(fileStream);
+            }
+
+            avatarUrl = $"/images/clients/{uniqueFileName}";
         }
 
         var newClient = new ClientEntity
@@ -30,29 +59,67 @@ public class ClientsController(IClientService clientService) : Controller
             ClientName = form.ClientName,
             ContactPerson = form.ContactPerson,
             Email = form.Email,
-            PhoneNumber = form.Phone,
-            Address = form.Address
+            PhoneNumber = form.PhoneNumber ?? "N/A",
+            Address = form.Address ?? "Unknown",
+            AvatarUrl = avatarUrl,
+            CreatedAt = DateTime.UtcNow
         };
 
-        await _clientService.CreateClientAsync(newClient);
+        try
+        {
+            await _clientService.CreateClientAsync(newClient);
+            _logger.LogInformation("✅ Client Created Successfully: {@Client}", newClient);
 
-        // ✅ Instead of redirecting, return updated HTML for client table
-        var clients = await _clientService.GetAllClientsAsync();
-        return PartialView("Partials/Sections/_ClientList", clients);
+            return Json(new { success = true }); // ✅ Return JSON for AJAX support
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Error Creating Client with Data: {@Form}", form);
+            return StatusCode(500, new { success = false, message = ex.Message });
+        }
     }
 
-
+    // ✅ FETCH CLIENT LIST
     [HttpGet]
     public async Task<IActionResult> Clients()
     {
         var clients = await _clientService.GetAllClientsAsync();
 
-        // ✅ Ensure the model is not null before passing it to the view
-        return View(clients ?? new List<ClientEntity>());
+        if (clients == null || !clients.Any())
+        {
+            _logger.LogWarning(clients == null ? "❌ Clients list is NULL!" : "⚠️ Clients list is EMPTY!");
+            clients = new List<ClientEntity>();
+        }
+        else
+        {
+            _logger.LogInformation($"✅ Retrieved {clients.Count} clients from the database.");
+        }
+
+        return PartialView("Partials/Sections/_ClientTableBody", clients); // ✅ Fixed incorrect escaping
+    }
+
+    private async Task<string?> SaveAvatarAsync(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return null;
+
+        string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/clients");
+        Directory.CreateDirectory(uploadsFolder); // Ensure the folder exists
+
+        string uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        using (var fileStream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(fileStream);
+        }
+
+        return $"/images/clients/{uniqueFileName}"; // Return relative URL for display
     }
 
 
-    [HttpPost]
+    // ✅ EDIT CLIENT
+    [HttpPost("edit")]
     public async Task<IActionResult> EditClient(ClientEditFormModel form)
     {
         if (!ModelState.IsValid)
@@ -67,133 +134,34 @@ public class ClientsController(IClientService clientService) : Controller
             return BadRequest(new { success = false, errors });
         }
 
-        var updatedClient = new ClientEntity
+        var existingClient = await _clientService.GetClientByIdAsync(form.Id);
+        if (existingClient == null)
         {
-            Id = form.Id,  // Ensure the ID is set
-            ClientName = form.ClientName,
-            ContactPerson = form.ContactPerson,
-            Email = form.Email,
-            PhoneNumber = form.Phone,
-            Address = form.Address
-        };
-
-        var success = await _clientService.UpdateClientAsync(updatedClient);
-        if (!success)
-        {
+            _logger.LogWarning("⚠️ Attempted to edit a non-existent client with ID {Id}", form.Id);
             return NotFound(new { success = false, message = "Client not found." });
         }
 
+        existingClient.ClientName = form.ClientName;
+        existingClient.ContactPerson = form.ContactPerson;
+        existingClient.Email = form.Email;
+        existingClient.PhoneNumber = form.PhoneNumber ?? existingClient.PhoneNumber;
+        existingClient.Address = form.Address ?? existingClient.Address;
+
+        // ✅ Handle Avatar Update
+        if (form.File != null && form.File.Length > 0)
+        {
+            existingClient.AvatarUrl = await SaveAvatarAsync(form.File);
+        }
+
+        var success = await _clientService.UpdateClientAsync(existingClient);
+        if (!success)
+        {
+            _logger.LogError("❌ Client update failed for ID {Id}", form.Id);
+            return StatusCode(500, new { success = false, message = "Client update failed." });
+        }
+
+        _logger.LogInformation("✅ Client Updated Successfully: {@Client}", existingClient);
         return Ok(new { success = true });
     }
+
 }
-//[Route("clients")]
-//public class ClientsController : Controller
-//{
-
-
-//    // ✅ READ - Get All Clients (Display Clients List)
-//    [HttpGet("")]
-//    public async Task<IActionResult> Index()
-//    {
-//        var clients = await _clientRepository.GetAllClientsAsync();
-//        return View(clients);  // Return a view with the list of clients
-//    }
-
-//    // ✅ CREATE - Show the Create Client Form
-//    [HttpGet("create")]
-//    public IActionResult Create()
-//    {
-//        return PartialView("_Create");  // Render as a partial view
-//    }
-
-//    // ✅ CREATE - Handle Client Form Submission
-//    [HttpPost("create")]
-//    public async Task<IActionResult> Create(ClientCreateFormModel model)
-//    {
-//        if (!ModelState.IsValid)
-//        {
-//            return PartialView("_Create", model);  // Return Partial if validation fails
-//        }
-
-//        // Convert ClientCreateFormModel to ClientEntity
-//        var newClient = new ClientEntity
-//        {
-//            ClientName = model.ClientName,
-//            ContactPerson = model.ContactPerson,
-//            Email = model.Email,
-//            PhoneNumber = model.Phone
-//        };
-
-//        // Save the client to the database
-//        await _clientRepository.CreateClientAsync(newClient);
-
-//        return RedirectToAction("Index");  // Redirect to the client list
-//    }
-
-//    // ✅ READ - Get Client by ID (For editing or viewing details)
-//    [HttpGet("edit/{id}")]
-//    public async Task<IActionResult> Edit(int id)
-//    {
-//        var client = await _clientRepository.GetClientByIdAsync(id);
-//        if (client == null)
-//        {
-//            return NotFound();  // Return 404 if client not found
-//        }
-
-//        // Convert ClientEntity to ClientCreateFormModel for editing
-//        var model = new ClientCreateFormModel
-//        {
-//            ClientName = client.ClientName,
-//            ContactPerson = client.ContactPerson,
-//            Email = client.Email,
-//            Phone = client.PhoneNumber
-//        };
-
-//        return PartialView("_Edit", model);  // Render Edit form as a partial view
-//    }
-
-//    // ✅ UPDATE - Handle the Edit Client Form Submission
-//    [HttpPost("edit")]
-//    public async Task<IActionResult> Edit(ClientCreateFormModel model)
-//    {
-//        if (!ModelState.IsValid)
-//        {
-//            return PartialView("_Edit", model);  // Return Partial if validation fails
-//        }
-
-//        // Convert ClientCreateFormModel to ClientEntity
-//        var updatedClient = new ClientEntity
-//        {
-//            Id = model.Id,  // Ensure the Id is passed and mapped
-//            ClientName = model.ClientName,
-//            ContactPerson = model.ContactPerson,
-//            Email = model.Email,
-//            PhoneNumber = model.Phone
-//        };
-
-//        // Update client in the database
-//        var success = await _clientRepository.UpdateClientAsync(updatedClient);
-
-//        if (!success)
-//        {
-//            ModelState.AddModelError("", "Failed to update client.");
-//            return PartialView("_Edit", model);  // Return Partial with error message
-//        }
-
-//        return RedirectToAction("Index");  // Redirect to client list after successful update
-//    }
-
-//    // ✅ DELETE - Delete Client by ID
-//    [HttpPost("delete/{id}")]
-//    public async Task<IActionResult> Delete(int id)
-//    {
-//        var success = await _clientRepository.DeleteClientAsync(id);
-
-//        if (!success)
-//        {
-//            ModelState.AddModelError("", "Failed to delete client.");
-//        }
-
-//        return RedirectToAction("Index");  // Redirect back to client list
-//    }
-//}

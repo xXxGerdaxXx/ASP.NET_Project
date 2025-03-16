@@ -16,7 +16,9 @@ public class ClientService(IClientRepository clientRepository) : IClientService
     // ✅ READ (Get All Clients)
     public async Task<List<ClientEntity>> GetAllClientsAsync()
     {
-        return await _clientRepository.GetAllClientsAsync();
+        var clients = await _clientRepository.GetAllClientsAsync();
+        Console.WriteLine($"🔎 ClientService retrieved {clients.Count} clients.");
+        return clients;
     }
 
     // ✅ READ (Get Client By ID)

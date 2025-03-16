@@ -1,4 +1,4 @@
-﻿@model ClientCreateFormModel
+﻿@model ClientEditFormModel
 
 <div id="edit-client-modal" class="modal-overlay">
     <div class="surface-modal">
@@ -7,11 +7,13 @@
             <button id="closeEditClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
         </header>
         <form asp-action="EditClient" method="post" enctype="multipart/form-data" novalidate asp-controller="Admin">
-            <input asp-for="Id" readonly type="hidden" />
+            <input asp-for="Id" readonly type="hidden" /> <!-- ✅ Ensure the ID is passed -->
+
             <div class="image-previewer circle">
                 <img src="" class="image-preview" />
                 <input asp-for="File" accept="image/*" class="hide" />
             </div>
+
             <div class="form-group">
                 <label asp-for="ClientName"></label>
                 <div class="field-group">
@@ -37,15 +39,23 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Phone"></label>
+                <label asp-for="PhoneNumber"></label>
                 <div class="field-group">
-                    <input asp-for="Phone">
-                    <span asp-validation-for="Phone"></span>
+                    <input asp-for="PhoneNumber">
+                    <span asp-validation-for="PhoneNumber"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address"></label>
+                <div class="field-group">
+                    <input asp-for="Address">
+                    <span asp-validation-for="Address"></span>
                 </div>
             </div>
 
             <footer class="modal-footer">
-                <button type="submit" class="btn-blue-submit">Create</button>
+                <button type="submit" class="btn-blue-submit">Update</button>
             </footer>
         </form>
     </div>

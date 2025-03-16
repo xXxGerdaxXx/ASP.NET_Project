@@ -7,7 +7,8 @@ namespace Infrastructure.Repositories;
 
 public class ClientRepository(AppDbContext context) : IClientRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly AppDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+
 
     // ✅ CREATE (Add New Client)
     public async Task<ClientEntity> CreateClientAsync(ClientEntity newClient)
@@ -17,11 +18,21 @@ public class ClientRepository(AppDbContext context) : IClientRepository
         return newClient;
     }
 
-    // ✅ READ (Get All Clients)
     public async Task<List<ClientEntity>> GetAllClientsAsync()
     {
-        return await _context.Clients.ToListAsync();
+        var clients = await _context.Clients.ToListAsync();
+
+        Console.WriteLine($"📢 Repository retrieved {clients.Count} clients.");
+
+        if (clients.Count == 0)
+        {
+            Console.WriteLine("⚠️ No clients found in the database!");
+        }
+
+        return clients;
     }
+
+
 
     // ✅ READ (Get Client By ID)
     public async Task<ClientEntity?> GetClientByIdAsync(int id)

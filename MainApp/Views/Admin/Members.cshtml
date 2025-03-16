@@ -13,9 +13,10 @@
             </div>
         </div>
     </header>
-    @await Html.PartialAsync("~/Views/Shared/Partials/Sections/_CreateMember.cshtml")
+    <partial name="Partials/Sections/_CreateMember" />
 
-@*     <script>
+
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
             console.log("JavaScript Loaded!");
 
@@ -39,5 +40,5 @@
             });
 
         });
-    </script> *@
+    </script>
 </section>

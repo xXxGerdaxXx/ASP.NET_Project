@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<Infrastructure.Entities.ClientEntity>
+
+@{
     Layout = "~/Views/Shared/_PortalLayout.cshtml";
     ViewData["Title"] = "Clients";
 }
@@ -17,14 +19,16 @@
             </div>
         </div>
     </header>
+    <div class="surface">
+        <partial name="~/Views/Shared/Partials/Sections/_ClientList.cshtml" model="Model" />
 
-
+    </div>
+</section>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             console.log("JavaScript Loaded!");
 
-            // ✅ Open "Add Client" Modal
             const openAddClientButton = document.getElementById("openAddClientModal");
             const addClientModal = document.getElementById("add-client-modal");
             const closeAddClientButton = document.getElementById("closeAddClientModal");
@@ -33,7 +37,7 @@
                 openAddClientButton.addEventListener("click", function () {
                     console.log("Add Client Button Clicked! Opening Modal...");
                     addClientModal.classList.add("active");
-                    addClientModal.style.display = "flex"; // Ensure visibility
+                    addClientModal.style.display = "flex"; 
                 });
 
                 closeAddClientButton.addEventListener("click", function () {
@@ -46,7 +50,6 @@
                 console.error("ERROR: Add Client modal elements are missing!");
             }
 
-            // ✅ Open "Edit Client" Modal
             document.addEventListener("click", function (event) {
                 if (event.target.matches("[data-modal='true']")) {
                     const modalId = event.target.getAttribute("data-target");
@@ -54,12 +57,11 @@
                     if (modal) {
                         console.log("Edit Client Icon Clicked! Opening Modal...");
                         modal.classList.add("active");
-                        modal.style.display = "flex"; // Ensure it's visible
+                        modal.style.display = "flex"; 
                     }
                 }
             });
 
-            // ✅ Close "Edit Client" Modal
             const closeEditClientButton = document.querySelector("#edit-client-modal .btn-close");
 
             if (closeEditClientButton) {
@@ -78,7 +80,5 @@
         });
     </script>
 
-    <div class="surface">
-        <partial name="Partials/Sections/_ClientList"/>
-    </div>
-</section>
+
+

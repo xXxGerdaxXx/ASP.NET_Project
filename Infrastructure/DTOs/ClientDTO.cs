@@ -24,4 +24,8 @@ public class ClientDto
 
     [MaxLength(300)]
     public string Address { get; set; } = null!;
+
+    public string? AvatarUrl { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }

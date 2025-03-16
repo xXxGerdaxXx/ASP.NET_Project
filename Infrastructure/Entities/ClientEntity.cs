@@ -23,6 +23,9 @@ public class ClientEntity
     [MaxLength(300)]
     public string Address { get; set; } = null!;
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Auto-set when created
+
+    public string? AvatarUrl { get; set; }
     // One Client can have multiple Projects
     public List<ProjectEntity> Projects { get; set; } = new();
 }
