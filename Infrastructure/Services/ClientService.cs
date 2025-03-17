@@ -7,35 +7,81 @@ public class ClientService(IClientRepository clientRepository) : IClientService
 {
     private readonly IClientRepository _clientRepository = clientRepository;
 
-    // ✅ CREATE (Add New Client)
-    public async Task<ClientEntity> CreateClientAsync(ClientEntity newClient)
+    // Create (Returns Created Client or Null)
+    public async Task<ClientEntity?> CreateClientAsync(ClientEntity newClient)
     {
-        return await _clientRepository.CreateClientAsync(newClient);
+        if (newClient == null)
+        {
+            Console.WriteLine("Attempted to create a null client.");
+            return null;
+        }
+
+        var createdClient = await _clientRepository.CreateClientAsync(newClient);
+        return createdClient ?? null;
     }
 
-    // ✅ READ (Get All Clients)
+    // Read (Get All Clients, Always Returns a List)
     public async Task<List<ClientEntity>> GetAllClientsAsync()
     {
-        var clients = await _clientRepository.GetAllClientsAsync();
-        Console.WriteLine($"🔎 ClientService retrieved {clients.Count} clients.");
+        var clients = await _clientRepository.GetAllClientsAsync() ?? new List<ClientEntity>();
+        Console.WriteLine($"ClientService retrieved {clients.Count} clients.");
         return clients;
     }
 
-    // ✅ READ (Get Client By ID)
+    // Read (Get Client By ID, Returns Null if Not Found)
     public async Task<ClientEntity?> GetClientByIdAsync(int id)
     {
-        return await _clientRepository.GetClientByIdAsync(id);
+        if (id <= 0)
+        {
+            Console.WriteLine("Invalid client ID.");
+            return null;
+        }
+
+        var client = await _clientRepository.GetClientByIdAsync(id);
+        if (client == null)
+        {
+            Console.WriteLine($"Client with ID {id} not found.");
+        }
+
+        return client;
     }
 
-    // ✅ UPDATE (Edit Client Details)
-    public async Task<bool> UpdateClientAsync(ClientEntity updatedClient)
+    // Update (Returns Updated Client or Null)
+    public async Task<ClientEntity?> UpdateClientAsync(ClientEntity updatedClient)
     {
-        return await _clientRepository.UpdateClientAsync(updatedClient);
+        if (updatedClient == null || updatedClient.Id <= 0)
+        {
+            Console.WriteLine("Invalid client update request.");
+            return null;
+        }
+
+        var existingClient = await _clientRepository.GetClientByIdAsync(updatedClient.Id);
+        if (existingClient == null)
+        {
+            Console.WriteLine($"Cannot update. Client with ID {updatedClient.Id} not found.");
+            return null;
+        }
+
+        var success = await _clientRepository.UpdateClientAsync(updatedClient);
+        return success ? updatedClient : null;
     }
 
-    // ✅ DELETE (Remove Client)
+    // Delete (Returns True if Deleted, False if Not Found)
     public async Task<bool> DeleteClientAsync(int id)
     {
+        if (id <= 0)
+        {
+            Console.WriteLine("Invalid client ID for deletion.");
+            return false;
+        }
+
+        var existingClient = await _clientRepository.GetClientByIdAsync(id);
+        if (existingClient == null)
+        {
+            Console.WriteLine($"Cannot delete. Client with ID {id} not found.");
+            return false;
+        }
+
         return await _clientRepository.DeleteClientAsync(id);
     }
 }

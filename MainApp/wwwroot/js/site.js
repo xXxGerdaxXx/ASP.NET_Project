@@ -63,14 +63,14 @@
             const formData = new FormData(form);
 
             try {
-                console.log("📨 Sending form data to:", form.action);
+                console.log("Sending form data to:", form.action);
                 const res = await fetch(form.action, {
                     method: 'POST',
                     body: formData
                 });
 
                 if (res.ok) {
-                    console.log("✅ Form submitted successfully");
+                    console.log("Form submitted successfully");
 
                     //  Reload the client list after successful submission
                     await reloadClientList();
@@ -82,10 +82,10 @@
                         form.reset();
                     }
                 } else {
-                    console.error("❌ Form submission failed", res.status);
+                    console.error("Form submission failed", res.status);
                 }
             } catch (error) {
-                console.error("❌ Error submitting form:", error);
+                console.error("Error submitting form:", error);
             }
         });
     });
@@ -94,7 +94,7 @@
     async function reloadClientList() {
         console.log("Reloading client list...");
         try {
-            const res = await fetch("/clients");
+            const res = await fetch("/admin/clients");
             if (res.ok) {
                 const html = await res.text();
                 const clientListContainer = document.getElementById("clientListContainer");

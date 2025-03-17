@@ -5,7 +5,10 @@
     ViewData["Title"] = "Clients";
 }
 
+<!-- ✅ Partial for Edit Client -->
 <partial name="Partials/Sections/_EditClient" />
+
+<!-- ✅ Partial for Create Client Modal (Ensures modal styling is used) -->
 <partial name="Partials/Sections/_CreateClient" />
 
 <section id="clients">
@@ -13,72 +16,80 @@
         <div class="page-header">
             <h2>Clients</h2>
             <div class="button-group">
+                <!-- ✅ Button to Open Modal -->
                 <button id="openAddClientModal" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i> Add Client
                 </button>
             </div>
         </div>
     </header>
-    <div class="surface">
-        <partial name="~/Views/Shared/Partials/Sections/_ClientList.cshtml" model="Model" />
 
+    <div class="surface">
+        <!-- ✅ Clients List Partial -->
+        <div id="clientsList">
+            <partial name="~/Views/Shared/Partials/Sections/_ClientList.cshtml" model="Model" />
+        </div>
     </div>
 </section>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            console.log("JavaScript Loaded!");
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadClients(); // ✅ Load clients list on page load
 
-            const openAddClientButton = document.getElementById("openAddClientModal");
-            const addClientModal = document.getElementById("add-client-modal");
-            const closeAddClientButton = document.getElementById("closeAddClientModal");
+        function loadClients() {
+            fetch('/admin/clients/list')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("clientsList").innerHTML = html;
+                })
+                .catch(error => console.error("Error loading clients:", error));
+        }
 
-            if (openAddClientButton && addClientModal && closeAddClientButton) {
-                openAddClientButton.addEventListener("click", function () {
-                    console.log("Add Client Button Clicked! Opening Modal...");
-                    addClientModal.classList.add("active");
-                    addClientModal.style.display = "flex"; 
-                });
-
-                closeAddClientButton.addEventListener("click", function () {
-                    console.log("Close Button Clicked! Closing Modal...");
-                    addClientModal.classList.remove("active");
-                    addClientModal.style.display = "none";
-                });
-
+        // ✅ Open "Create Client" modal
+        document.getElementById("openAddClientModal").addEventListener("click", function () {
+            const modal = document.getElementById("add-client-modal");
+            if (modal) {
+                modal.classList.add("active");
+                modal.style.display = "flex"; // ✅ Ensure modal appears
             } else {
-                console.error("ERROR: Add Client modal elements are missing!");
+                console.error("ERROR: Modal not found!");
             }
-
-            document.addEventListener("click", function (event) {
-                if (event.target.matches("[data-modal='true']")) {
-                    const modalId = event.target.getAttribute("data-target");
-                    const modal = document.querySelector(modalId);
-                    if (modal) {
-                        console.log("Edit Client Icon Clicked! Opening Modal...");
-                        modal.classList.add("active");
-                        modal.style.display = "flex"; 
-                    }
-                }
-            });
-
-            const closeEditClientButton = document.querySelector("#edit-client-modal .btn-close");
-
-            if (closeEditClientButton) {
-                closeEditClientButton.addEventListener("click", function () {
-                    console.log("Close Edit Client Modal Button Clicked!");
-                    const editClientModal = document.getElementById("edit-client-modal");
-                    if (editClientModal) {
-                        editClientModal.classList.remove("active");
-                        editClientModal.style.display = "none";
-                    }
-                });
-            } else {
-                console.error("ERROR: Close Edit Client button is missing!");
-            }
-
         });
-    </script>
 
+        // ✅ Close "Create Client" modal
+        document.getElementById("closeAddClientModal").addEventListener("click", function () {
+            const modal = document.getElementById("add-client-modal");
+            if (modal) {
+                modal.classList.remove("active");
+                modal.style.display = "none";
+                document.getElementById("createClientForm").reset(); // ✅ Reset form
+            }
+        });
 
+        // ✅ Handle Create Client form submission
+        document.getElementById("createClientForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
 
+            fetch('/admin/clients/create', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const modal = document.getElementById("add-client-modal");
+                    if (modal) {
+                        modal.classList.remove("active");
+                        modal.style.display = "none";
+                        document.getElementById("createClientForm").reset();
+                    }
+                    loadClients(); // ✅ Refresh clients list after adding
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error creating client:", error));
+        });
+    });
+</script>
