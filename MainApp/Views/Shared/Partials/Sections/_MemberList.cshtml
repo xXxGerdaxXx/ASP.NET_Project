@@ -1,64 +1,11 @@
-﻿<div class="members-grid">
-    <div class="member-card">
-        <div class="member-avatar">
-            <img src="https://i.pravatar.cc/80?img=10" alt="John Doe's Avatar" />
-        </div>
-        <div class="member-job">Chief Executive Officer</div>
-        <div class="member-name">John Doe</div>
-        <button class="message-btn">Message</button>
-        <div class="member-actions">
-            <i class="fa-solid fa-ellipsis"></i>
-        </div>
-    </div>
+﻿@model List<Infrastructure.Entities.MemberEntity>
 
-    <div class="member-card">
-        <div class="member-avatar">
-            <img src="https://i.pravatar.cc/80?img=20" alt="Jane Smith's Avatar" />
-        </div>
-        <div class="member-job">Administrator</div>
-        <div class="member-name">Jane Smith</div>
-        <button class="message-btn">Message</button>
-        <div class="member-actions">
-            <i class="fa-solid fa-ellipsis"></i>
-        </div>
-    </div>
-
-    <div class="member-card">
-        <div class="member-avatar">
-            <img src="https://i.pravatar.cc/80?img=30" alt="Michael Johnson's Avatar" />
-        </div>
-        <div class="member-job">Chief Technician Officer</div>
-        <div class="member-name">Michael Johnson</div>
-        <button class="message-btn">Message</button>
-        <div class="member-actions">
-            <i class="fa-solid fa-ellipsis"></i>
-        </div>
-    </div>
-
-    <div class="member-card">
-        <div class="member-avatar">
-            <img src="https://i.pravatar.cc/80?img=40" alt="Alice Brown's Avatar" />
-        </div>
-        <div class="member-job">Frontend Developer</div>
-        <div class="member-name">Alice Brown</div>
-        <button class="message-btn">Message</button>
-        <div class="member-actions">
-            <i class="fa-solid fa-ellipsis"></i>
-        </div>
-    </div>
-
-    <div class="member-card">
-        <div class="member-avatar">
-            <img src="https://i.pravatar.cc/80?img=50" alt="Emma Wilson's Avatar" />
-        </div>
-        <div class="member-job">Fullstack Developer</div>
-        <div class="member-name">Emma Wilson</div>
-        <button class="message-btn">Message</button>
-        <div class="member-actions">
-            <i class="fa-solid fa-ellipsis"></i>
-        </div>
-    </div>
+<div id="clientListContainer">
+    @await Html.PartialAsync("Partials/Sections/_MemberTableBody", Model)
 </div>
+
+
+
 
 
 

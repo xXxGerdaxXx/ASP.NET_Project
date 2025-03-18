@@ -2,11 +2,11 @@
 
 @if (Model == null)
 {
-    <p>❌ Model is NULL!</p>
+    <p>Model is NULL!</p>
 }
 else if (!Model.Any())
 {
-    <p>⚠️ No clients available (empty list).</p>
+    <p>No clients available (empty list).</p>
 }
 else
 {
@@ -43,6 +43,7 @@ else
                             <div class="badge success">
                                 Active
                             </div>
+                        </td>
                         <td class="client-actions">
                             <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-client-modal"></i>
                         </td>
@@ -52,26 +53,3 @@ else
         </table>
     </div>
 }
-
-@* 
-                        @model List<Infrastructure.Entities.ClientEntity>
-
-<tbody id="clientTableBody">
-    @foreach (var client in Model)
-    {
-        <tr>
-            <td class="client-check"><input type="checkbox" /></td>
-            <td class="client-info">
-                <img class="client-image" src="~/images/Avatar.svg" alt="" />
-                <div class="client-name">@client.ClientName</div>
-                <div class="client-email">@client.Email</div>
-            </td>
-            <td class="client-address">@client.Address</td>
-            <td class="client-phone">@client.PhoneNumber</td>
-            <td class="client-date">@client.CreatedAt.ToString("yyyy-MM-dd")</td>
-            <td class="client-actions">
-                <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-client-modal"></i>
-            </td>
-        </tr>
-    }
-</tbody> *@

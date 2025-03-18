@@ -23,9 +23,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
+
+
+
 // ? Register services (interfaces mapped to implementations)
 builder.Services.AddScoped<IClientService, ClientService>();
-//builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IMemberService, MemberService>();
 //builder.Services.AddScoped<IUserService, UserService>(); // If applicable
 
 

@@ -3,6 +3,9 @@ using Infrastructure.Interfaces;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
+
+namespace MainApp.Controllers;
+
 [Route("admin/clients")]
 public class ClientsController : Controller
 {

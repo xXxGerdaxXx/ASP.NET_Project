@@ -1,0 +1,61 @@
+﻿@model MemberEditFormModel
+
+<div id="edit-member-modal" class="modal-overlay">
+    <div class="surface-modal">
+        <header>
+            <h2>Edit Member</h2>
+            <button id="closeEditMemberModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
+        </header>
+        <form asp-action="EditMember" method="post" enctype="multipart/form-data" novalidate asp-controller="Admin">
+            <input asp-for="Id" readonly type="hidden" /> <!-- ✅ Ensure the ID is passed -->
+            <div class="image-previewer circle">
+                <img src="" class="image-preview" />
+                <input asp-for="File" accept="image/*" class="hide" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FirstName"></label>
+                <input asp-for="FirstName">
+                <span asp-validation-for="FirstName"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LastName"></label>
+                <input asp-for="LastName">
+                <span asp-validation-for="LastName"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email">
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <label asp-for="PhoneNumber"></label>
+            <input asp-for="PhoneNumber">
+            <span asp-validation-for="PhoneNumber"></span>
+
+            <div class="form-group">
+                <label asp-for="JobTitle"></label>
+                <input asp-for="JobTitle">
+                <span asp-validation-for="JobTitle"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address"></label>
+                <input asp-for="Address">
+                <span asp-validation-for="Address"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DateOfBirth"></label>
+                <input asp-for="DateOfBirth" type="date">
+                <span asp-validation-for="DateOfBirth"></span>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="submit" class="btn-blue-submit">Update</button>
+            </footer>
+        </form>
+    </div>
+</div>

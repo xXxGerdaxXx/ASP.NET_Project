@@ -4,6 +4,9 @@ namespace Infrastructure.Enums;
 
 public enum JobTitle
 {
+    [Description("Unknown")]
+    Unknown,
+
     [Description("Chief Executive Officer")]
     ChiefExecutiveOfficer,
 
