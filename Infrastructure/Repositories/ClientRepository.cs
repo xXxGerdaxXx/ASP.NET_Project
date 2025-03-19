@@ -61,4 +61,20 @@ public class ClientRepository(AppDbContext context) : IClientRepository
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<int> DeleteMultipleClientsAsync(List<int> clientIds)
+    {
+        var clientsToDelete = await _context.Clients
+            .Where(client => clientIds.Contains(client.Id))
+            .ToListAsync();
+
+        if (!clientsToDelete.Any())
+            return 0;
+
+        _context.Clients.RemoveRange(clientsToDelete);
+        await _context.SaveChangesAsync();
+
+        return clientsToDelete.Count;
+    }
+
 }

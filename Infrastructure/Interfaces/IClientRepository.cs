@@ -9,4 +9,5 @@ public interface IClientRepository
     Task<ClientEntity?> GetClientByIdAsync(int id); // ✅ Read (Get One)
     Task<bool> UpdateClientAsync(ClientEntity updatedClient); // ✅ Update
     Task<bool> DeleteClientAsync(int id); // ✅ Delete
+    Task<int> DeleteMultipleClientsAsync(List<int> clientIds);
 }

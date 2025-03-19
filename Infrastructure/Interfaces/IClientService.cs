@@ -9,4 +9,5 @@ public interface IClientService
     Task<ClientEntity?> GetClientByIdAsync(int id); 
     Task<ClientEntity?> UpdateClientAsync(ClientEntity updatedClient);
     Task<bool> DeleteClientAsync(int id);
+    Task<int> DeleteMultipleClientsAsync(List<int> clientIds);
 }

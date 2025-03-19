@@ -14,6 +14,69 @@ else
         <table>
             <thead>
                 <tr>
+                    <th class="client-check">
+                        <input type="checkbox" id="selectAllClients">
+                    </th>
+                    <th class="client-info">Client</th>
+                    <th class="client-address">Address</th>
+                    <th class="client-phone">Phone Number</th>
+                    <th class="client-date">Created At</th>
+                    <th class="client-status">Status</th>
+                </tr>
+            </thead>
+            <tbody id="clientTableBody">
+                @foreach (var client in Model)
+                {
+                    <tr data-client-id="@client.Id">
+                        <td class="client-check">
+                            <input type="checkbox" class="client-checkbox" value="@client.Id">
+                        </td>
+                        <td class="client-info">
+                            <img class="client-image" src="@(!string.IsNullOrEmpty(client.AvatarUrl) ? client.AvatarUrl : "/images/default-avatar.png")"
+                                 alt="Avatar of @client.ClientName" />
+                            <div class="client-name">@client.ClientName</div>
+                            <div class="client-email">@client.Email</div>
+                        </td>
+                        <td class="client-address">@client.Address</td>
+                        <td class="client-phone">@client.PhoneNumber</td>
+                        <td class="client-date">@client.CreatedAt.ToString("yyyy-MM-dd")</td>
+                        <td class="client-status">
+                            <div class="badge success">Active</div>
+                        </td>
+                        <td class="client-actions">
+                            <i class="fa-solid fa-ellipsis edit-client-btn" data-client-id="@client.Id"></i>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Delete Selected Clients Button -->
+    <button id="deleteSelectedClients" class="btn btn-danger" disabled>
+        <i class="fa-solid fa-trash"></i> Delete Selected Clients
+    </button>
+}
+
+
+
+@* @model List<Infrastructure.Entities.ClientEntity>
+
+@if (Model == null)
+{
+    <p>Model is NULL!</p>
+}
+else if (!Model.Any())
+{
+    <p>No clients available (empty list).</p>
+}
+else
+{
+    <div class="client-list">
+        <table>
+            <thead>
+                <tr>
                     <th class="client-check"><input type="checkbox" /></th>
                     <th class="client-info">Client</th>
                     <th class="client-address">Address</th>
@@ -53,3 +116,4 @@ else
         </table>
     </div>
 }
+ *@

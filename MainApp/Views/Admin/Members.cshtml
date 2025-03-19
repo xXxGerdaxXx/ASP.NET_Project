@@ -9,8 +9,8 @@
 <!--  Partial for Edit Member -->
 <partial name="Partials/Sections/_EditMember" />
 
-<!-- Partial for Create Member Modal -->
-<partial name="Partials/Sections/_CreateMember" />
+@* <!-- Partial for Create Member Modal -->
+<partial name="Partials/Sections/_CreateMember" /> *@
 
 <section id="members">
     <header>
@@ -26,68 +26,134 @@
     <div class="surface">
         <!-- Members List Partial -->
         <div id="clientsList">
-            <partial name="~/Views/Shared/Partials/Sections/_MemberList.cshtml" model="Model" />
+@*             <partial name="~/Views/Shared/Partials/Sections/_MemberList.cshtml" model="Model" /> *@
         </div>
     </div>
 </section>
 
 <script>
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     loadClients(); // Corrected function call
+
+    //     function loadClients() {
+    //         fetch('/admin/members/list')
+    //             .then(response => response.text())
+    //             .then(html => {
+    //                 document.getElementById("clientsList").innerHTML = html; // Corrected ID
+    //             })
+    //             .catch(error => console.error("Error loading members:", error));
+    //     }
+
+    //     // Open "Create Members" modal
+    //     document.getElementById("openAddMemberModal").addEventListener("click", function () { // Corrected ID
+    //         const modal = document.getElementById("add-member-modal"); // Corrected ID
+    //         if (modal) {
+    //             modal.classList.add("active");
+    //             modal.style.display = "flex"; // Ensure modal appears
+    //         } else {
+    //             console.error("ERROR: Modal not found!");
+    //         }
+    //     });
+
+    //     // Close "Create Member" modal
+    //     document.getElementById("closeAddMemberModal").addEventListener("click", function () {
+    //         const modal = document.getElementById("add-member-modal"); // Corrected ID
+    //         if (modal) {
+    //             modal.classList.remove("active");
+    //             modal.style.display = "none";
+    //             document.getElementById("createMemberForm").reset(); // Reset form
+    //         }
+    //     });
+
+    //     // Handle Create Member form submission
+    //     document.getElementById("createMemberForm").addEventListener("submit", function (event) {
+    //         event.preventDefault();
+    //         const formData = new FormData(this);
+
+    //         fetch('/admin/members/create', {
+    //             method: 'POST',
+    //             body: formData
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.success) {
+    //                 const modal = document.getElementById("add-member-modal"); // Corrected ID
+    //                 modal.classList.remove("active");
+    //                 modal.style.display = "none";
+    //                 document.getElementById("createMemberForm").reset();
+    //                 loadClients(); // Refresh members list after adding
+    //             } else {
+    //                 alert("Error: " + data.message);
+    //             }
+    //         })
+    //         .catch(error => console.error("Error creating member:", error));
+    //     });
+    // });
     document.addEventListener("DOMContentLoaded", function () {
-        loadClients(); // Corrected function call
+        loadClients();
 
         function loadClients() {
             fetch('/admin/members/list')
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById("clientsList").innerHTML = html; // Corrected ID
+                    document.getElementById("clientsList").innerHTML = html;
                 })
                 .catch(error => console.error("Error loading members:", error));
         }
 
-        // Open "Create Members" modal
-        document.getElementById("openAddMemberModal").addEventListener("click", function () { // Corrected ID
-            const modal = document.getElementById("add-member-modal"); // Corrected ID
-            if (modal) {
-                modal.classList.add("active");
-                modal.style.display = "flex"; // Ensure modal appears
-            } else {
-                console.error("ERROR: Modal not found!");
-            }
-        });
+        // Open "Create Member" modal dynamically via AJAX
+        document.getElementById("openAddMemberModal").addEventListener("click", function () {
+            fetch('/admin/members/create')
+                .then(response => response.text())
+                .then(html => {
+                    // Remove existing modal if it exists
+                    const existingModal = document.getElementById("add-member-modal");
+                    if (existingModal) {
+                        existingModal.remove();
+                    }
 
-        // Close "Create Member" modal
-        document.getElementById("closeAddMemberModal").addEventListener("click", function () {
-            const modal = document.getElementById("add-member-modal"); // Corrected ID
-            if (modal) {
-                modal.classList.remove("active");
-                modal.style.display = "none";
-                document.getElementById("createMemberForm").reset(); // Reset form
-            }
-        });
+                    // Inject the fetched modal into the body
+                    const modalContainer = document.createElement("div");
+                    modalContainer.innerHTML = html;
+                    document.body.appendChild(modalContainer);
 
-        // Handle Create Member form submission
-        document.getElementById("createMemberForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            const formData = new FormData(this);
+                    const modal = document.getElementById("add-member-modal");
+                    if (modal) {
+                        modal.classList.add("active");
+                        modal.style.display = "flex";
 
-            fetch('/admin/members/create', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const modal = document.getElementById("add-member-modal"); // Corrected ID
-                    modal.classList.remove("active");
-                    modal.style.display = "none";
-                    document.getElementById("createMemberForm").reset();
-                    loadClients(); // Refresh members list after adding
-                } else {
-                    alert("Error: " + data.message);
-                }
-            })
-            .catch(error => console.error("Error creating member:", error));
+                        // Close button event
+                        modal.querySelector("#closeAddMemberModal").addEventListener("click", function () {
+                            modal.remove();
+                        });
+
+                        // Handle form submission dynamically
+                        modal.querySelector("#createMemberForm").addEventListener("submit", function (event) {
+                            event.preventDefault();
+                            const formData = new FormData(this);
+
+                            fetch('/admin/members/create', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    modal.remove(); // Remove modal on success
+                                    loadClients(); // Refresh the members list
+                                } else {
+                                    alert("Error: " + data.message);
+                                }
+                            })
+                            .catch(error => console.error("Error creating member:", error));
+                        });
+                    } else {
+                        console.error("ERROR: Modal not found in AJAX response!");
+                    }
+                })
+                .catch(error => console.error("Error loading create member modal:", error));
         });
     });
+
 
 </script>

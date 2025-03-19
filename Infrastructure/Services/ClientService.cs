@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Interfaces;
 using Infrastructure.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
@@ -84,4 +85,19 @@ public class ClientService(IClientRepository clientRepository) : IClientService
 
         return await _clientRepository.DeleteClientAsync(id);
     }
+
+    public async Task<int> DeleteMultipleClientsAsync(List<int> clientIds)
+    {
+        if (clientIds == null || !clientIds.Any())
+        {
+            Console.WriteLine("No clients provided for deletion.");
+            return 0;
+        }
+
+        var deletedCount = await _clientRepository.DeleteMultipleClientsAsync(clientIds);
+        Console.WriteLine($"Deleted {deletedCount} clients.");
+        return deletedCount;
+    }
+
+
 }

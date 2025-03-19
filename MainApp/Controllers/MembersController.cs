@@ -39,12 +39,19 @@ public class MembersController : Controller
     }
 
 
-    // GET: /members/create
+    //// GET: /members/create
+    //[HttpGet("create")]
+    //public IActionResult Create()
+    //{
+    //    return PartialView("_Create"); // ✅ Load form as a modal
+    //}
+    // GET: /admin/members/create
     [HttpGet("create")]
     public IActionResult Create()
     {
-        return PartialView("_Create"); // ✅ Load form as a modal
+        return PartialView("Partials/Sections/_CreateMember"); // ✅ Now used for AJAX
     }
+
 
     // POST: /members/create
     [HttpPost("create")]

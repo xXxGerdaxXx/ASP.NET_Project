@@ -31,7 +31,7 @@ public class AccountController(UserService userService) : Controller
             return View(loginDTO);
         }
 
-        // ✅ Create User Claims
+        // Create User Claims
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Username),
@@ -42,12 +42,12 @@ public class AccountController(UserService userService) : Controller
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var authProperties = new AuthenticationProperties { IsPersistent = loginDTO.RememberMe };
 
-        // ✅ Sign in the user
+        // Sign in the user
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                                       new ClaimsPrincipal(claimsIdentity),
                                       authProperties);
 
-        return RedirectToAction("Index", "Home"); // ✅ Redirect to home page
+        return RedirectToAction("Index", "Home"); // Redirect to home page
     }
 
     public async Task<IActionResult> Logout()

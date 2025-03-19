@@ -3,7 +3,7 @@
 <tr>
     <td class="client-check"><input type="checkbox" /></td>
     <td class="client-info">
-        <img class="client-image" src="~/images/Avatar.svg" alt="" />
+        <img class="client-image" src="~/images/Avatar.svg" alt="Avatar of @Model.ClientName" />
         <div class="client-name">@Model.ClientName</div>
         <div class="client-email">@Model.Email</div>
     </td>
@@ -12,5 +12,6 @@
     <td class="client-date">@Model.CreatedAt.ToString("yyyy-MM-dd")</td>
     <td class="client-actions">
         <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-client-modal"></i>
+
     </td>
 </tr>
