@@ -1,6 +1,8 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Interfaces;
 using MainApp.Models;
+using Microsoft.AspNetCore.Hosting;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -11,11 +13,13 @@ public class ClientsController : Controller
 {
     private readonly IClientService _clientService;
     private readonly ILogger<ClientsController> _logger;
+    private readonly FileService _fileService;
 
-    public ClientsController(IClientService clientService, ILogger<ClientsController> logger)
+    public ClientsController(IClientService clientService, ILogger<ClientsController> logger, FileService fileService)
     {
         _clientService = clientService;
         _logger = logger;
+        _fileService = fileService;
     }
 
     // ✅ Get all clients (Partial View)
@@ -55,7 +59,18 @@ public class ClientsController : Controller
             return StatusCode(500, new { success = false, message = "Error deleting clients" });
         }
     }
+    // ✅ Handle Avatar Uploads
+    [HttpPost("upload-avatar")]
+    public async Task<IActionResult> UploadClientAvatar(IFormFile file)
+    {
+        string? fileUrl = await _fileService.SaveFileAsync(file, "clients"); // ✅ Use FileService
+        if (fileUrl == null)
+        {
+            return BadRequest("Error uploading file.");
+        }
 
+        return Ok(new { url = fileUrl });
+    }
     // GET: /admin/clients/create
     [HttpGet("create")]
     public IActionResult Create()
@@ -80,7 +95,12 @@ public class ClientsController : Controller
             _logger.LogWarning("Form validation failed: {@Errors}", errors);
             return BadRequest(new { success = false, errors });
         }
-
+        // ✅ Save uploaded file (Avatar)
+        string? avatarUrl = null;
+        if (form.File != null)
+        {
+            avatarUrl = await _fileService.SaveFileAsync(form.File, "clients"); // ✅ Save file
+        }
         var newClient = new ClientEntity
         {
             ClientName = form.ClientName,
@@ -88,7 +108,8 @@ public class ClientsController : Controller
             Email = form.Email,
             PhoneNumber = form.PhoneNumber ?? "N/A",
             Address = form.Address ?? "Unknown",
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            AvatarUrl = avatarUrl // ✅ Ensure avatar URL is saved
         };
 
         try
@@ -123,7 +144,6 @@ public class ClientsController : Controller
 
         return PartialView("~/Views/Shared/Partials/Sections/_EditClient.cshtml", model);
     }
-
     [HttpPost("editclient")]
     public async Task<IActionResult> Edit(ClientEditFormModel form)
     {
@@ -142,19 +162,31 @@ public class ClientsController : Controller
 
         try
         {
-            var updatedClient = new ClientEntity
-            {
-                Id = form.Id,
-                ClientName = form.ClientName,
-                ContactPerson = form.ContactPerson,
-                Email = form.Email,
-                PhoneNumber = form.PhoneNumber,
-                Address = form.Address,
-                AvatarUrl = form.File != null ? await SaveFileAsync(form.File) : form.AvatarUrl // ✅ Handle avatar upload
-            };
+            var client = await _clientService.GetClientByIdAsync(form.Id);
+            if (client == null) return NotFound();
 
-            await _clientService.UpdateClientAsync(updatedClient);
-            _logger.LogInformation("Client Updated Successfully: {@Client}", updatedClient);
+            // ✅ Save file only if a new one is uploaded
+            if (form.File != null)
+            {
+                var uploadedFilePath = await _fileService.SaveFileAsync(form.File, "clients");
+                if (!string.IsNullOrEmpty(uploadedFilePath))
+                {
+                    client.AvatarUrl = uploadedFilePath;
+                }
+            }
+
+            client.ClientName = form.ClientName;
+            client.ContactPerson = form.ContactPerson;
+            client.Email = form.Email;
+            client.PhoneNumber = form.PhoneNumber;
+            client.Address = form.Address;
+            //client.CreatedAt = DateTime.UtcNow;
+            //client.AvatarUrl = form.AvatarUrl;
+
+
+
+            await _clientService.UpdateClientAsync(client);
+            _logger.LogInformation("Client Updated Successfully: {@Client}", client);
 
             return Json(new { success = true });
         }
@@ -165,24 +197,67 @@ public class ClientsController : Controller
         }
     }
 
-    private async Task<string?> SaveFileAsync(IFormFile file)
-    {
-        if (file == null || file.Length == 0)
-            return null;
 
-        var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/clients");
-        Directory.CreateDirectory(uploadsPath);
 
-        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-        var filePath = Path.Combine(uploadsPath, fileName);
+    //[HttpPost("editclient")]
+    //public async Task<IActionResult> Edit(ClientEditFormModel form)
+    //{
+    //    if (!ModelState.IsValid)
+    //    {
+    //        var errors = ModelState
+    //            .Where(x => x.Value?.Errors.Count > 0)
+    //            .ToDictionary(
+    //                kvp => kvp.Key,
+    //                kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+    //            );
 
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
+    //        _logger.LogWarning("Form validation failed: {@Errors}", errors);
+    //        return BadRequest(new { success = false, errors });
+    //    }
 
-        return $"/images/clients/{fileName}"; // ✅ Returns relative URL
-    }
+    //    try
+    //    {
+    //        var updatedClient = new ClientEntity
+    //        {
+    //            Id = form.Id,
+    //            ClientName = form.ClientName,
+    //            ContactPerson = form.ContactPerson,
+    //            Email = form.Email,
+    //            PhoneNumber = form.PhoneNumber,
+    //            Address = form.Address,
+    //            AvatarUrl = form.AvatarUrl 
+    //        };
+
+    //        await _clientService.UpdateClientAsync(updatedClient);
+    //        _logger.LogInformation("Client Updated Successfully: {@Client}", updatedClient);
+
+    //        return Json(new { success = true });
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "Error Updating Client: {@Form}", form);
+    //        return StatusCode(500, new { success = false, message = "Error updating client. Please try again." });
+    //    }
+    //}
+
+    //private async Task<string?> SaveFileAsync(IFormFile file)
+    //{
+    //    if (file == null || file.Length == 0)
+    //        return null;
+
+    //    var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/clients");
+    //    Directory.CreateDirectory(uploadsPath);
+
+    //    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+    //    var filePath = Path.Combine(uploadsPath, fileName);
+
+    //    using (var stream = new FileStream(filePath, FileMode.Create))
+    //    {
+    //        await file.CopyToAsync(stream);
+    //    }
+
+    //    return $"/images/clients/{fileName}"; // ✅ Returns relative URL
+    //}
 
 
 

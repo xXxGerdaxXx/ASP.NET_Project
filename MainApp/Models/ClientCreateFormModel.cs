@@ -9,6 +9,8 @@ public class ClientCreateFormModel
     [Display(Name = "Client Image", Prompt = "Select an image")]
     [DataType(DataType.Upload)]
     public IFormFile? File { get; set; }
+    public string? AvatarUrl { get; set; }
+    public string Status { get; set; } = "Active";
 
     [Display(Name = "Client Name", Prompt = "Enter client name")]
     [Required(ErrorMessage = "Client name is required")]
@@ -34,8 +36,6 @@ public class ClientCreateFormModel
     [Display(Name = "Address", Prompt = "Enter address")]
     [MaxLength(300)]
     public string? Address { get; set; }
-
-    public string? AvatarUrl { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

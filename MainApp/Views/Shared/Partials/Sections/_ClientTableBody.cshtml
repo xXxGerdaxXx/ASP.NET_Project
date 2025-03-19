@@ -32,7 +32,8 @@ else
                             <input type="checkbox" class="client-checkbox" value="@client.Id">
                         </td>
                         <td class="client-info">
-                            <img class="client-image" src="@(!string.IsNullOrEmpty(client.AvatarUrl) ? client.AvatarUrl : "/images/default-avatar.png")"
+                            <img class="client-image"
+                                 src="@(!string.IsNullOrEmpty(client.AvatarUrl) ? client.AvatarUrl : "/images/default-avatar.png")"
                                  alt="Avatar of @client.ClientName" />
                             <div class="client-name">@client.ClientName</div>
                             <div class="client-email">@client.Email</div>
