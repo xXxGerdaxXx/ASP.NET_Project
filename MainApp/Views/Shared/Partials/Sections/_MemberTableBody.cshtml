@@ -2,11 +2,11 @@
 
 @if (Model == null)
 {
-    <p class="error-message">Error: Unable to load members.</p>
+    <p>Model is NULL!</p>
 }
 else if (!Model.Any())
 {
-    <p class="info-message">No members available at the moment.</p>
+    <p>No members available (empty list).</p>
 }
 else
 {
@@ -16,28 +16,24 @@ else
             <div class="member-card">
                 <!-- More Options Button -->
                 <div class="member-actions">
-                    <button class="edit-member-btn" data-member-id="@member.Id" aria-label="Edit member">
-                        <i class="fa-solid fa-ellipsis"></i>
-                    </button>
+                    <div class="member-actions">
+                        <i class="fa-solid fa-ellipsis edit-member-btn" data-member-id="@member.Id"></i>
+                    </div>
+
                 </div>
 
                 <!-- Profile Avatar -->
                 <div class="member-avatar">
                     <img src="@(!string.IsNullOrEmpty(member.AvatarUrl) ? member.AvatarUrl : "/images/Avatar.svg")"
-                         alt="Profile picture of @member.FirstName @member.LastName"
+                         alt="@member.FirstName @member.LastName"
                          class="avatar-img" />
                 </div>
 
                 <!-- Member Details -->
                 <h3 class="member-name">@member.FirstName @member.LastName</h3>
                 <div class="member-role">@member.JobTitle</div>
-                <div class="member-email">
-                    <a href="mailto:@member.Email">@member.Email</a>
-                </div>
-                <div class="member-address">@member.Address</div>
-                <div class="member-phone">
-                    <a href="tel:@member.PhoneNumber">@member.PhoneNumber</a>
-                </div>
+                <div class="member-email">@member.Email</div>
+                <div class="member-phone">@member.PhoneNumber</div>
 
                 <!-- Contact Button -->
                 <button class="message-btn" aria-label="Send message to @member.FirstName @member.LastName">

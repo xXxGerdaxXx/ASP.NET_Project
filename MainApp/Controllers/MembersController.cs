@@ -106,7 +106,7 @@ public class MembersController : Controller
         var member = await _memberService.GetMemberByIdAsync(id);
         if (member == null) return NotFound();
 
-        var viewModel = new MemberEditFormModel
+        var model = new MemberEditFormModel
         {
             Id = member.Id,
             FirstName = member.FirstName,
@@ -118,7 +118,7 @@ public class MembersController : Controller
             AvatarUrl = member.AvatarUrl
         };
 
-        return PartialView("_EditMemberModal", viewModel);
+        return PartialView("~/Views/Shared/Partials/Sections/_EditMember.cshtml", model);
     }
 
 
