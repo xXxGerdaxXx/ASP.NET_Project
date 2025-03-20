@@ -68,6 +68,8 @@
     --orange: #FF9640;
     --orange-dark: #F09330;
     --red: #FF6640;
+    --red-semilight: #f5e5e8;
+    --red-light: #fcefeb;
     --red-dark: #E94D3F;
     --green: #31D482;
     --green-light: #EFFBF1;
@@ -509,15 +511,24 @@ form input:focus {
         font-size: 0.9em;
     }
 
+    form selected::placeholder,
+    fork textarea::placeholder {
+        color: var(--text-extra-muted-color);
+        font-size: 0.9em;
+    }
+
 form .field-group {
     position: relative;
+}
+form .input-validation-error {
+    border-color: var(--error-border-color);
 }
 
 form .field-validation-error {
     position: absolute;
     z-index: 1;
-    top: 4px;
-    right: 0.2rem;
+    top: 5px;
+    right: 0.28rem;
     font-size: 0.8em;
     color: var(--error-text-color);
     background-color: var(--error-background-color);
@@ -525,15 +536,18 @@ form .field-validation-error {
     padding: 0.4rem 1rem;
     text-align: right;
     display: flex;
+    justify-content: center;
     gap: 0.5rem;
     align-items: center;
 }
-        form .field-validation-error::before {
-            content: '\f071';
-            font-size: 1.1em;
-            font-weight: var(--font-regular);
-            font-family: var(--font-fa);
-        }
+    form .field-validation-error::before {
+        content: '\f071';
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        padding-right: 0.5rem;
+        color: var(--error-text-color);
+        background-color: var(--error-background-color);
+    }
 
 
 /* Google Button */

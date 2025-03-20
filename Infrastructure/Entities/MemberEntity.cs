@@ -6,8 +6,9 @@ namespace Infrastructure.Entities;
 
 public class MemberEntity
 {
-    public int Id { get; set; }  // Primary Key
+    public int Id { get; set; }  
 
+    public string? AvatarUrl { get; set; }  
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
@@ -15,7 +16,7 @@ public class MemberEntity
     public string Address { get; set; } = null!;
 
     public DateTime DateOfBirth { get; set; }
-    public JobTitle JobTitle { get; set; } // Enum for job title
+    public JobTitle JobTitle { get; set; } 
 
     // Many-to-Many: Members ↔ Projects (via join table)
     public List<ProjectMemberEntity> ProjectMembers { get; set; } = new();

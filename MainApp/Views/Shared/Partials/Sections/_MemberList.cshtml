@@ -1,6 +1,6 @@
 ﻿@model List<Infrastructure.Entities.MemberEntity>
 
-<div id="clientListContainer">
+<div id="memberListContainer">
     @await Html.PartialAsync("Partials/Sections/_MemberTableBody", Model)
 </div>
 
@@ -9,39 +9,3 @@
 
 
 
-
-@* @model List<Infrastructure.Entities.MemberEntity>
-
-@if (Model == null || !Model.Any())
-{
-    <p class="empty-message">⚠️ No team members available.</p>
-}
-else
-{
-    <div class="members-grid">
-        @foreach (var member in Model)
-        {
-            <div class="member-card">
-                <!-- Profile Image -->
-                <div class="member-avatar">
-                    <img src="https://via.placeholder.com/80" alt="@member.FirstName's Avatar" />
-                </div>
-
-                <!-- Job Title -->
-                <div class="member-job">@member.JobTitle</div>
-
-                <!-- Name -->
-                <div class="member-name">@member.FirstName @member.LastName</div>
-
-                <!-- Contact Button -->
-                <button class="message-btn">Message</button>
-
-                <!-- Actions Menu -->
-                <div class="member-actions">
-                    <i class="fa-solid fa-ellipsis"></i>
-                </div>
-            </div>
-        }
-    </div>
-}
- *@

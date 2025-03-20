@@ -7,27 +7,34 @@
             <button id="closeAddClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
         </header>
 
-        <form id="createClientForm" asp-action="Create" asp-controller="Clients" method="post" enctype="multipart/form-data">
+        <form novalidate method="post" id="createClientForm" asp-action="Create" asp-controller="Clients" enctype="multipart/form-data">
 
             <div class="image-previewer circle">
-                <label asp-for="File"></label>
-                <input asp-for="File" type="file" accept="image/*" class="file-input">
-                <span asp-validation-for="File"></span>
+                <img src="" class="image-preview" />
+                <input asp-for="File" type="file" accept="image/*" class="hide" />
             </div>
-
-@*             <div class="image-previewer circle">
-                <label asp-for="File"></label>
-                <input asp-for="File" accept="image/*">
-                <span asp-validation-for="File"></span>
-            </div> *@
 
             <div class="form-group">
                 <label asp-for="ClientName"></label>
                 <div class="field-group">
                     <input name="ClientName" asp-for="ClientName">
-                    <span asp-validation-for="ClientName"></span>
+                    <span asp-validation-for="ClientName" class="text-danger"></span>
                 </div>
             </div>
+@*                 <div class="form-group">
+                    <label asp-for="ClientName"></label>
+                    <div class="field-group">
+                        <input asp-for="ClientName" class="form-control" />
+                        <span asp-validation-for="ClientName" class="text-danger"></span>
+                    </div>
+                </div> *@
+@*             <div class="form-group">
+                <label asp-for ="ClientName"></label>
+                <div class="field-group">
+                    <input type="text" placeholder="Enter client name" />
+                    <span class="field-validation-error">Required</span>
+                </div>
+            </div> *@
 
             <div class="form-group">
                 <label asp-for="ContactPerson"></label>

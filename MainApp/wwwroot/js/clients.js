@@ -1,5 +1,6 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    loadClients(); // ✅ Load clients list on page load
+    setTimeout(() => { attachEventListeners(); }, 100); // Delay event attachment
+    loadClients(); // Load clients list on page load
 
     function loadClients() {
         fetch('/admin/clients/list')
@@ -11,7 +12,7 @@
                     return;
                 }
                 clientsList.innerHTML = html;
-                attachEventListeners(); // ✅ Attach event listeners after clients are loaded
+                attachEventListeners();
             })
             .catch(error => console.error("Error loading clients:", error));
     }
@@ -48,8 +49,7 @@
 
         if (deleteSelectedBtn) {
             deleteSelectedBtn.addEventListener("click", function () {
-                const selectedClientIds = Array.from(clientCheckboxes)
-                    .filter(checkbox => checkbox.checked)
+                const selectedClientIds = Array.from(document.querySelectorAll(".client-checkbox:checked"))
                     .map(checkbox => parseInt(checkbox.value));
 
                 if (selectedClientIds.length === 0) {
@@ -62,75 +62,12 @@
         }
     }
 
-    function loadEditClientModal(clientId) {
-        fetch(`/admin/clients/editclient/${clientId}`)
-            .then(response => response.text())
-            .then(html => {
-                let modal = document.getElementById("edit-client-modal");
-
-                if (modal) {
-                    modal.remove(); // ✅ Remove existing modal before adding a new one
-                }
-
-                const modalContainer = document.createElement("div");
-                modalContainer.innerHTML = html;
-                document.body.appendChild(modalContainer);
-
-                modal = document.getElementById("edit-client-modal");
-
-                if (modal) {
-                    modal.classList.add("active");
-                    modal.style.display = "flex";
-
-                    modal.querySelector("#closeEditClientModal").addEventListener("click", function () {
-                        modal.remove();
-                    });
-
-                    setupEditFormSubmission(clientId); // ✅ Pass `clientId`
-                    setupFileUploadPreview("editClientForm"); // ✅ Ensure image preview works
-                }
-            })
-            .catch(error => console.error("Error loading edit client modal:", error));
-    }
-
-    function setupEditFormSubmission(clientId) {
-        const editForm = document.getElementById("editClientForm");
-
-        if (!editForm) {
-            console.error("Edit form not found!");
-            return;
-        }
-
-        editForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-            const formData = new FormData(editForm);
-
-            fetch("/admin/clients/editclient", {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showSuccessNotification("Client updated successfully!");
-                        document.getElementById("edit-client-modal").remove(); // ✅ Close modal
-                        loadClients(); // ✅ Refresh client list
-                    } else {
-                        showErrorNotification("Error updating client: " + data.message);
-                    }
-                })
-                .catch(error => console.error("Error updating client:", error));
-        });
-    }
-
     function openAddClientModal() {
         fetch('/admin/clients/create')
             .then(response => response.text())
             .then(html => {
                 const existingModal = document.getElementById("add-client-modal");
-                if (existingModal) {
-                    existingModal.remove();
-                }
+                if (existingModal) existingModal.remove();
 
                 const modalContainer = document.createElement("div");
                 modalContainer.innerHTML = html;
@@ -147,32 +84,141 @@
                         modal.remove();
                     });
 
-                    modal.querySelector("#createClientForm").addEventListener("submit", function (event) {
-                        event.preventDefault();
-                        const formData = new FormData(this);
+                    const form = modal.querySelector("#createClientForm");
+                    if (form) {
+                        form.addEventListener("submit", function (event) {
+                            event.preventDefault();
+                            if (!validateForm(form)) return; 
 
-                        fetch('/admin/clients/create', {
-                            method: 'POST',
-                            body: formData
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    modal.remove();
-                                    loadClients();
-                                } else {
-                                    alert("Error: " + data.message);
-                                }
+                            const formData = new FormData(form);
+                            fetch('/admin/clients/create', {
+                                method: 'POST',
+                                body: formData
                             })
-                            .catch(error => console.error("Error creating client:", error));
-                    });
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert("Client created successfully!");
+                                        location.reload(); // Refresh or update the UI
+                                    } else {
+                        
+                                        displayServerErrors(data.errors);
+                                    }
+                                })
+                                .catch(error => console.error("Error creating client:", error));
+                        });
+                    }
                 }
             })
             .catch(error => console.error("Error loading create client modal:", error));
     }
 
+    function validateForm(form) {
+        let isValid = true;
+
+        form.querySelectorAll("[required]").forEach(input => {
+            let errorSpan = input.nextElementSibling;
+            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+                errorSpan = document.createElement("span");
+                errorSpan.classList.add("field-validation-error");
+                input.insertAdjacentElement("afterend", errorSpan);
+            }
+
+            if (input.value.trim() === "") {
+                input.classList.add("input-validation-error");
+                errorSpan.textContent = "This field is required";
+                errorSpan.style.display = "inline";
+                isValid = false;
+            } else {
+                input.classList.remove("input-validation-error");
+                errorSpan.textContent = "";
+                errorSpan.style.display = "none";
+            }
+        });
+
+        return isValid;
+    }
+    function displayServerErrors(errors) {
+        Object.keys(errors).forEach(key => {
+            const inputField = document.querySelector(`[name="${key}"]`);
+            if (inputField) {
+                let errorSpan = inputField.nextElementSibling;
+                if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+                    errorSpan = document.createElement("span");
+                    errorSpan.classList.add("field-validation-error");
+                    inputField.insertAdjacentElement("afterend", errorSpan);
+                }
+                errorSpan.textContent = errors[key].join(", ");
+                errorSpan.style.display = "inline";
+                inputField.classList.add("input-validation-error");
+            }
+        });
+    }
+    function loadEditClientModal(clientId) {
+        fetch(`/admin/clients/editclient/${clientId}`)
+            .then(response => response.text())
+            .then(html => {
+                let modal = document.getElementById("edit-client-modal");
+                if (modal) modal.remove();
+
+                const modalContainer = document.createElement("div");
+                modalContainer.innerHTML = html;
+                document.body.appendChild(modalContainer);
+
+                modal = document.getElementById("edit-client-modal");
+                if (modal) {
+                    modal.classList.add("active");
+                    modal.style.display = "flex";
+
+                    modal.querySelector("#closeEditClientModal").addEventListener("click", function () {
+                        modal.remove();
+                    });
+
+                    setupEditFormSubmission(clientId);
+                    setupFileUploadPreview("editClientForm");
+                }
+            })
+            .catch(error => console.error("Error loading edit client modal:", error));
+
+    }
+
+    function setupEditFormSubmission(clientId) {
+        const editForm = document.getElementById("editClientForm");
+        if (!editForm) {
+            console.error("Edit form not found!");
+            return;
+        }
+
+        editForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            if (!validateForm(editForm)) return; // Validate before submitting
+            const formData = new FormData(editForm);
+
+            fetch("/admin/clients/editclient", {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Client updated successfully!");
+                        document.getElementById("edit-client-modal").remove();
+                        loadClients();
+                    } else {
+                displayServerErrors(data.errors); // Show server-side validation errors
+                    }
+                })
+                .catch(error => console.error("Error updating client:", error));
+        });
+    }
+
     function showDeleteModal(selectedClientIds) {
         const modal = document.getElementById("deleteConfirmationModal");
+        if (!modal) {
+            console.error("Error: Delete confirmation modal not found.");
+            return;
+        }
+
         const confirmBtn = document.getElementById("confirmDeleteClients");
         const cancelBtn = document.getElementById("cancelDeleteClients");
 
@@ -188,11 +234,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showSuccessNotification(`Deleted ${data.deleted} client(s) successfully!`);
+                        alert(`Deleted ${data.deleted} client(s) successfully!`);
                         modal.style.display = "none";
                         loadClients();
                     } else {
-                        showErrorNotification("Error: " + data.message);
+                        alert("Error: " + data.message);
                     }
                 })
                 .catch(error => console.error("Error deleting clients:", error));
@@ -203,84 +249,34 @@
         };
     }
 
-    function showSuccessNotification(message) {
-        const notification = document.getElementById("deleteSuccessNotification");
-        const messageBox = document.getElementById("deleteSuccessMessage");
-
-        messageBox.textContent = message;
-        notification.style.display = "block";
-
-        setTimeout(() => {
-            notification.style.display = "none";
-        }, 3000);
-    }
-
-    function showErrorNotification(message) {
-        const notification = document.getElementById("deleteErrorNotification");
-        const messageBox = document.getElementById("deleteErrorMessage");
-
-        messageBox.textContent = message;
-        notification.style.display = "block";
-
-        setTimeout(() => {
-            notification.style.display = "none";
-        }, 3000);
-    }
-
     function setupFileUploadPreview(formId) {
         const fileInput = document.querySelector(`#${formId} input[type='file']`);
         const imagePreview = document.querySelector(`#${formId} .image-preview`);
+        const previewer = document.querySelector(`#${formId} .image-previewer`);
 
-        if (fileInput && imagePreview) {
+        if (fileInput && imagePreview && previewer) {
             fileInput.addEventListener("change", function () {
                 const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (event) {
-                        imagePreview.src = event.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
+                if (file) processImage(file, imagePreview, previewer);
+            });
+
+            previewer.addEventListener("click", function () {
+                fileInput.click();
             });
         }
     }
 
-    function toggleDeleteButton() {
-        const clientCheckboxes = document.querySelectorAll(".client-checkbox");
-        const deleteSelectedBtn = document.getElementById("deleteSelectedClients");
+    function processImage(file, imagePreview, previewer) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            imagePreview.src = event.target.result;
+            previewer.classList.add("selected");
+        };
+        reader.readAsDataURL(file);
+    }
 
-        const selectedClients = Array.from(clientCheckboxes).some(checkbox => checkbox.checked);
-        deleteSelectedBtn.disabled = !selectedClients;
+    function toggleDeleteButton() {
+        const deleteSelectedBtn = document.getElementById("deleteSelectedClients");
+        deleteSelectedBtn.disabled = document.querySelectorAll(".client-checkbox:checked").length === 0;
     }
 });
-
-
-//document.getElementById("avatarInput").addEventListener("change", function (event) {
-//    const file = event.target.files[0];
-//    if (file) {
-//        const reader = new FileReader();
-//        reader.onload = function (e) {
-//            document.getElementById("avatarPreview").src = e.target.result;
-//        };
-//        reader.readAsDataURL(file);
-
-//        // ✅ Upload file via AJAX
-//        const formData = new FormData();
-//        formData.append("File", file);
-//        formData.append("Folder", "clients"); // Change this dynamically for different models
-
-//        fetch("/fileupload/upload", {
-//            method: "POST",
-//            body: formData
-//        })
-//            .then(response => response.json())
-//            .then(data => {
-//                if (data.success) {
-//                    document.getElementById("avatarUrl").value = data.filePath;
-//                } else {
-//                    alert("Error uploading file: " + data.message);
-//                }
-//            })
-//            .catch(error => console.error("Error uploading file:", error));
-//    }
-//});

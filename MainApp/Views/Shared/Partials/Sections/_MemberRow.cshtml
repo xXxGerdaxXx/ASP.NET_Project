@@ -4,7 +4,8 @@
     </div>
 
     <div class="member-avatar">
-        <img src="@(!string.IsNullOrEmpty(Model.ProfileImage) ? Model.ProfileImage : "/images/Avatar.svg")" alt="@Model.FirstName @Model.LastName" />
+        <img class="client-image" src="@(!string.IsNullOrEmpty(Model.AvatarUrl) ? Model.AvatarUrl : "/images/Avatar.svg")"
+             alt="Avatar of @Model.MemberName" />
     </div>
 
     <div class="member-role">@Model.JobTitle</div>

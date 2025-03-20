@@ -4,6 +4,8 @@ using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace MainApp.Controllers;
 
@@ -12,14 +14,16 @@ public class MembersController : Controller
 {
     private readonly IMemberService _memberService;
     private readonly ILogger<MembersController> _logger;
+    private readonly FileService _fileService;
 
-    public MembersController(IMemberService memberService, ILogger<MembersController> logger)
+    public MembersController(IMemberService memberService, ILogger<MembersController> logger, FileService fileService)
     {
         _memberService = memberService;
         _logger = logger;
+        _fileService = fileService;
     }
 
-    // ✅ THIS RETURNS THE PARTIAL VIEW (NOT A FULL PAGE)
+    // THIS RETURNS THE PARTIAL VIEW (NOT A FULL PAGE)
     [HttpGet("list")]
     public async Task<IActionResult> GetMembersList()
     {
@@ -43,13 +47,13 @@ public class MembersController : Controller
     //[HttpGet("create")]
     //public IActionResult Create()
     //{
-    //    return PartialView("_Create"); // ✅ Load form as a modal
+    //    return PartialView("_Create"); // Load form as a modal
     //}
     // GET: /admin/members/create
     [HttpGet("create")]
     public IActionResult Create()
     {
-        return PartialView("Partials/Sections/_CreateMember"); // ✅ Now used for AJAX
+        return PartialView("Partials/Sections/_CreateMember"); // Now used for AJAX
     }
 
 
@@ -96,85 +100,77 @@ public class MembersController : Controller
         }
     }
 
+    [HttpGet("edit/{id}")]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var member = await _memberService.GetMemberByIdAsync(id);
+        if (member == null) return NotFound();
+
+        var viewModel = new MemberEditFormModel
+        {
+            Id = member.Id,
+            FirstName = member.FirstName,
+            LastName = member.LastName,
+            Email = member.Email,
+            PhoneNumber = member.PhoneNumber,
+            Address = member.Address,
+            JobTitle = member.JobTitle,
+            AvatarUrl = member.AvatarUrl
+        };
+
+        return PartialView("_EditMemberModal", viewModel);
+    }
+
+
+    [HttpPost("editmember")]
+    public async Task<IActionResult> Edit(MemberEditFormModel form)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x => x.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+                );
+
+            _logger.LogWarning("Form validation failed: {@Errors}", errors);
+            return BadRequest(new { success = false, errors });
+        }
+
+        try
+        {
+            var member = await _memberService.GetMemberByIdAsync(form.Id);
+            if (member == null) return NotFound();
+
+            // Save file only if a new one is uploaded
+            if (form.File != null)
+            {
+                var uploadedFilePath = await _fileService.SaveFileAsync(form.File, "members");
+                if (!string.IsNullOrEmpty(uploadedFilePath))
+                {
+                    member.AvatarUrl = uploadedFilePath;
+                }
+            }
+
+            // Update member properties
+            member.FirstName = form.FirstName;
+            member.LastName = form.LastName;
+            member.Email = form.Email;
+            member.PhoneNumber = form.PhoneNumber;
+            member.Address = form.Address;
+            member.JobTitle = form.JobTitle;
+
+            await _memberService.UpdateMemberAsync(member);
+            _logger.LogInformation("Member Updated Successfully: {@Member}", member);
+
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error Updating Member: {@Form}", form);
+            return StatusCode(500, new { success = false, message = "Error updating member. Please try again." });
+        }
+    }
 
 }
-
-
-
-
-//using Infrastructure.Entities;
-//using Infrastructure.Interfaces;
-//using MainApp.Models;
-//using Microsoft.AspNetCore.Mvc;
-
-//[Route("admin/clients")]
-//public class ClientsController : Controller
-//{
-//    private readonly IClientService _clientService;
-//    private readonly ILogger<ClientsController> _logger;
-
-//    public ClientsController(IClientService clientService, ILogger<ClientsController> logger)
-//    {
-//        _clientService = clientService;
-//        _logger = logger;
-//    }
-
-//    // ✅ THIS RETURNS THE PARTIAL VIEW (NOT A FULL PAGE)
-//    [HttpGet("list")]
-//    public async Task<IActionResult> GetClientsList()
-//    {
-//        var clients = await _clientService.GetAllClientsAsync();
-
-//        if (clients == null || !clients.Any())
-//        {
-//            _logger.LogWarning(clients == null ? "Clients list is NULL!" : "Clients list is EMPTY!");
-//            clients = new List<ClientEntity>();
-//        }
-//        else
-//        {
-//            _logger.LogInformation($"Retrieved {clients.Count} clients from the database.");
-//        }
-
-//        return PartialView("Partials/Sections/_ClientTableBody", clients); // ✅ Returns only the partial!
-//    }
-
-//    [HttpPost("create")]
-//    public async Task<IActionResult> CreateClient(ClientCreateFormModel form)
-//    {
-//        if (!ModelState.IsValid)
-//        {
-//            var errors = ModelState
-//                .Where(x => x.Value?.Errors.Count > 0)
-//                .ToDictionary(
-//                    kvp => kvp.Key,
-//                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
-//                );
-
-//            _logger.LogWarning("⚠️ Form validation failed: {@Errors}", errors);
-//            return BadRequest(new { success = false, errors });
-//        }
-
-//        var newClient = new ClientEntity
-//        {
-//            ClientName = form.ClientName,
-//            ContactPerson = form.ContactPerson,
-//            Email = form.Email,
-//            PhoneNumber = form.PhoneNumber ?? "N/A",
-//            Address = form.Address ?? "Unknown",
-//            CreatedAt = DateTime.UtcNow
-//        };
-
-//        try
-//        {
-//            await _clientService.CreateClientAsync(newClient);
-//            _logger.LogInformation("✅ Client Created Successfully: {@Client}", newClient);
-
-//            return Json(new { success = true }); // ✅ AJAX-friendly response
-//        }
-//        catch (Exception ex)
-//        {
-//            _logger.LogError(ex, "❌ Error Creating Client: {@Form}", form);
-//            return StatusCode(500, new { success = false, message = ex.Message });
-//        }
-//    }
-//}

@@ -10,15 +10,11 @@
         
 
             <input asp-for="Id" readonly type="hidden" /> <!-- ✅ Ensure the ID is passed -->
+
             <div class="image-previewer circle">
-                <img id="avatarPreview" src="@Model.AvatarUrl" class="image-preview" />
-                <input type="file" id="avatarInput" accept="image/*" class="hide" />
-                <input type="hidden" id="avatarUrl" asp-for="AvatarUrl" /> <!-- Store the uploaded file path -->
+                <img src="" class="image-preview" />
+                <input asp-for="File" type="file" accept="image/*" class="hide" />
             </div>
-@*             <div class="image-previewer circle">
-                <img src="@Model.AvatarUrl" class="image-preview" />
-                <input asp-for="File" accept="image/*" class="hide" />
-            </div> *@
 
             <div class="form-group">
                 <label asp-for="ClientName"></label>
