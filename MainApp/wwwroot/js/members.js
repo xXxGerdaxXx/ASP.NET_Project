@@ -32,38 +32,8 @@
         if (addMemberModalButton) {
             addMemberModalButton.addEventListener("click", openAddMemberModal);
         }
-
-        const selectAllCheckbox = document.getElementById("selectAllMembers");
-        const memberCheckboxes = document.querySelectorAll(".member-checkbox");
-        const deleteSelectedBtn = document.getElementById("deleteSelectedMembers");
-
-        if (selectAllCheckbox) {
-            selectAllCheckbox.addEventListener("change", function () {
-                memberCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAllCheckbox.checked;
-                });
-                toggleDeleteButton();
-            });
-        }
-
-        memberCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", toggleDeleteButton);
-        });
-
-        if (deleteSelectedBtn) {
-            deleteSelectedBtn.addEventListener("click", function () {
-                const selectedMemberIds = Array.from(document.querySelectorAll(".member-checkbox:checked"))
-                    .map(checkbox => parseInt(checkbox.value));
-
-                if (selectedMemberIds.length === 0) {
-                    showErrorMessage("No members selected for deletion.");
-                    return;
-                }
-
-                showDeleteModal(selectedMemberIds);
-            });
-        }
     }
+
 
     function openAddMemberModal() {
         fetch('/admin/members/create')
@@ -136,6 +106,13 @@
 
                     setupFileUploadPreview("editMemberForm");
                     setupEditFormSubmission(memberId);
+                    // ✅ FIX: Attach delete button event listener inside modal
+                    const deleteButton = modal.querySelector("#deleteMemberBtn");
+                    if (deleteButton) {
+                        deleteButton.addEventListener("click", function () {
+                            deleteMember(memberId); // ✅ Delete only the selected member
+                        });
+                    }
                 }
             })
             .catch(error => showErrorMessage("Error loading edit member modal."));
@@ -171,7 +148,27 @@
                 .catch(error => showErrorMessage("Error updating member."));
         });
     }
+    function deleteMember(memberId) {
+        if (!confirm("Are you sure you want to delete this member?")) return;
 
+        fetch(`/admin/members/delete/${memberId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Member deleted successfully.");
+                    document.getElementById("edit-member-modal")?.remove(); // Close modal if open
+                    loadMembers(); // Refresh members list
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error deleting member:", error));
+    }
     function setupFileUploadPreview(formId) {
         const fileInput = document.querySelector(`#${formId} input[type='file']`);
         const imagePreview = document.querySelector(`#${formId} .image-preview`);

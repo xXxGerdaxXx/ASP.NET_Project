@@ -60,11 +60,11 @@ public class ClientsController : Controller
             return StatusCode(500, new { success = false, message = "Error deleting clients" });
         }
     }
-    // ✅ Handle Avatar Uploads
+    // Handle Avatar Uploads
     [HttpPost("upload-avatar")]
     public async Task<IActionResult> UploadClientAvatar(IFormFile file)
     {
-        string? fileUrl = await _fileService.SaveFileAsync(file, "clients"); // ✅ Use FileService
+        string? fileUrl = await _fileService.SaveFileAsync(file, "clients"); //  Use FileService
         if (fileUrl == null)
         {
             return BadRequest("Error uploading file.");
@@ -76,11 +76,11 @@ public class ClientsController : Controller
     [HttpGet("create")]
     public IActionResult Create()
     {
-        return PartialView("Partials/Sections/_CreateClient"); // ✅ AJAX will now fetch this
+        return PartialView("Partials/Sections/_CreateClient"); // AJAX will now fetch this
     }
 
 
-    // ✅ Create a new client
+    // Create a new client
     [HttpPost("create")]
     public async Task<IActionResult> CreateClient(ClientCreateFormModel form)
     {

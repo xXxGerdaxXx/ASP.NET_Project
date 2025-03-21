@@ -15,7 +15,7 @@
                 <img src="" class="image-preview" />
                 <input asp-for="File" accept="image/*" class="hide" />
             </div>
-
+            <div class="sidebyside-fields">
             <div class="form-group">
                 <label asp-for="MemberName"></label>
                 <input asp-for="MemberName">
@@ -27,7 +27,7 @@
                 <input asp-for="MemberSurname">
                 <span asp-validation-for="MemberSurname"></span>
             </div>
-
+            </div>
             <div class="form-group">
                 <label asp-for="Email"></label>
                 <input asp-for="Email">
@@ -58,8 +58,8 @@
                 <span asp-validation-for="DateOfBirth"></span>
             </div>
 
-            <footer>
-                <button type="submit" class="btn-blue-submit">Create</button>
+            <footer class="modal-footer">
+                <button type="submit" class="btn-blue-submit">Add Member</button>
             </footer>
         </form>
     </div>

@@ -44,9 +44,23 @@ namespace Infrastructure.Services
             return await _memberRepository.UpdateMemberAsync(member);
         }
 
-        public async Task<bool> DeleteMemberAsync(int id)
+        public async Task<bool> DeleteMemberAsync(int memberId)
         {
-            return await _memberRepository.DeleteMemberAsync(id);
+            if (memberId <= 0)
+            {
+                Console.WriteLine("Invalid member ID for deletion.");
+                return false;
+            }
+
+            var existingMember = await _memberRepository.GetMemberByIdAsync(memberId);
+            if (existingMember == null)
+            {
+                Console.WriteLine($"Cannot delete. Member with ID {memberId} not found.");
+                return false;
+            }
+
+            return await _memberRepository.DeleteMemberAsync(memberId);
         }
+
     }
 }

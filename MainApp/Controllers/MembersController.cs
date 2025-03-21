@@ -173,4 +173,31 @@ public class MembersController : Controller
         }
     }
 
+    [HttpPost("delete/{memberId}")]
+    public async Task<IActionResult> DeleteMember(int memberId)
+    {
+        if (memberId <= 0)
+        {
+            return BadRequest(new { success = false, message = "Invalid member ID." });
+        }
+
+        try
+        {
+            bool isDeleted = await _memberService.DeleteMemberAsync(memberId);
+
+            if (!isDeleted)
+            {
+                return NotFound(new { success = false, message = "Member not found or could not be deleted." });
+            }
+
+            return Json(new { success = true, message = "Member deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting member ID {MemberId}", memberId);
+            return StatusCode(500, new { success = false, message = "Error deleting the member." });
+        }
+    }
+
+
 }

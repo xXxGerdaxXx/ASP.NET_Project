@@ -231,7 +231,7 @@ h6 {
 .surface-modal {
     width: 550px;
     max-width: 100%;
-    height: 90vh; /* Adjust height to fit within viewport */
+    height: 100vh; /* Adjust height to fit within viewport */
     background-color: var(--surface-color);
     padding: 2rem;
     border-radius: 16px;
@@ -263,7 +263,7 @@ h6 {
     .modal-footer {
         display: flex;
         justify-content: center;
-        padding-top: 8.5rem;
+        padding-top: 1rem;
         background: var(--white-100);
     }
 
@@ -892,6 +892,25 @@ footer {
             background: var(--btn-blue-background-hover-color);
         }
 
+.btn-red-delete {
+    width: 490px;
+    background: #d9534f;
+    color: var(--white-100);
+    font-size: 16px;
+    margin-top: 1rem;
+    font-weight: var(--font-semibold);
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    .btn-red-delete:hover {
+        background: #c9302c;
+        color: var(--white-100);
+    }
+
 .clients-header {
     display: flex;
     justify-content: space-between; /* Push button to the right */
@@ -1279,10 +1298,49 @@ footer {
     }
 
 
-    /* Ensure each form-group takes equal width */
-    .date-fields .form-group {
-        flex: 1; /* Makes both fields take equal space */
-        min-width: 150px;
+.date-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center; /* Ensures center alignment */
+}
+
+.date-inputs {
+    display: flex;
+    flex-direction: row;
+    gap: 30px; /* Spacing between selects */
+    justify-content: center;
+    align-items: center;
+}
+
+    /* Styling for select dropdowns */
+    .date-inputs select {
+        width: 140px; /* Adjusted for better fit */
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--white-100);
+        color: var(--text-color);
+        cursor: pointer;
+        text-align: left;
+        appearance: none; /* Removes default styling in some browsers */
+        -webkit-appearance: none; /* Ensures compatibility */
+    }
+
+    /* Ensures spacing between label and select */
+    .date-inputs label {
+        font-size: 14px;
+        font-weight: var(--font-semibold);
+        color: var(--text-color);
+    }
+
+    /* Style for hover and focus states */
+    .date-inputs select:hover,
+    .date-inputs select:focus {
+        border-color: var(--blue-accent);
+        outline: none;
+        box-shadow: 0 0 5px rgba(45, 153, 255, 0.3);
     }
 
 /* Search Input Wrapper */

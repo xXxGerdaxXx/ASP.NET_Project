@@ -7,23 +7,28 @@
             <button id="closeEditMemberModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
         </header>
 
-        <form id="editMemberForm" asp-action="EditMember" novalidate asp-controller="Members" method="post" enctype="multipart/form-data">
-            <input asp-for="Id" readonly type="hidden" /> <!-- ✅ Ensure the ID is passed -->
+        <form id="editMemberForm" asp-action="EditMember" method="post" enctype="multipart/form-data" novalidate asp-controller="Admin" id="editMemberForm">
+            <input asp-for="Id" type="hidden" /> <!-- Ensure ID is passed -->
+            <!-- Profile Image -->
             <div class="image-previewer circle">
-                <img src="" class="image-preview" />
+                <img src="@(!string.IsNullOrEmpty(Model.AvatarUrl) ? Model.AvatarUrl : "/images/Avatar.svg")"
+                     class="image-preview" />
                 <input asp-for="File" accept="image/*" class="hide" />
             </div>
 
-            <div class="form-group">
-                <label asp-for="FirstName"></label>
-                <input asp-for="FirstName">
-                <span asp-validation-for="FirstName"></span>
-            </div>
+            <!-- First Name and Last Name in the Same Row -->
+            <div class="sidebyside-fields">
+                <div class="form-group">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName">
+                    <span asp-validation-for="FirstName"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="LastName"></label>
-                <input asp-for="LastName">
-                <span asp-validation-for="LastName"></span>
+                <div class="form-group">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName">
+                    <span asp-validation-for="LastName"></span>
+                </div>
             </div>
 
             <div class="form-group">
@@ -32,9 +37,11 @@
                 <span asp-validation-for="Email"></span>
             </div>
 
-            <label asp-for="PhoneNumber"></label>
-            <input asp-for="PhoneNumber">
-            <span asp-validation-for="PhoneNumber"></span>
+            <div class="form-group">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber">
+                <span asp-validation-for="PhoneNumber"></span>
+            </div>
 
             <div class="form-group">
                 <label asp-for="JobTitle"></label>
@@ -48,15 +55,73 @@
                 <span asp-validation-for="Address"></span>
             </div>
 
+            <!-- Birthdate Fields (Dropdowns) -->
             <div class="form-group">
-                <label asp-for="DateOfBirth"></label>
-                <input asp-for="DateOfBirth" type="date">
-                <span asp-validation-for="DateOfBirth"></span>
+                <label>Date of Birth</label>
+                <div class="date-inputs">
+                    <select name="BirthDay" id="BirthDay">
+                        <option value="" disabled selected>Day</option>
+                        @for (int i = 1; i <= 31; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+
+                    <select name="BirthMonth" id="BirthMonth">
+                        <option value="" disabled selected>Month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+
+                    <select name="BirthYear" id="BirthYear">
+                        <option value="" disabled selected>Year</option>
+                        @for (int i = DateTime.Now.Year; i >= 1900; i--)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                </div>
             </div>
 
             <footer class="modal-footer">
-                <button type="submit" class="btn-blue-submit">Update</button>
+                <button type="submit" class="btn-blue-submit">Update Member</button>
+                <button type="button" id="deleteMemberBtn" class="btn btn-red-delete">Delete Member</button>
             </footer>
         </form>
     </div>
 </div>
+@*         <script>
+            document.getElementById("deleteMemberBtn").addEventListener("click", function () {
+                if (!confirm("Are you sure you want to delete this member?")) return;
+
+                let memberId = "@Model.Id"; // Get the member ID dynamically
+
+                fetch(`/admin/members/delete/${memberId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Member deleted successfully.");
+                        window.location.reload(); // Refresh page or close modal
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => console.error("Error deleting member:", error));
+            });
+        </script> *@
