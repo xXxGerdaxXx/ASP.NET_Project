@@ -1,41 +1,44 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Infrastructure.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace MainApp.Models;
 
 public class MemberCreateForm
 {
-    [Display(Name = "Client Image", Prompt = "Select an image")]
+
+    [Display(Name = "Member Image", Prompt = "Select an image")]
     [DataType(DataType.Upload)]
     public IFormFile? File { get; set; }
+    public string? AvatarUrl { get; set; }
 
     [Display(Name = "First Name", Prompt = "Enter member's name")]
-    [Required(ErrorMessage = "Required")]
-    public string MemberName { get; set; } = null!;
+    [Required(ErrorMessage = "First name is required")]
+    public string FirstName { get; set; } = null!;
 
     [Display(Name = "Last Name", Prompt = "Enter member's surname")]
-    [Required(ErrorMessage = "Required")]
-    public string MemberSurname { get; set; } = null!;
+    [Required(ErrorMessage = "Last name is required")]
+    public string LastName { get; set; } = null!;
 
     [DataType(DataType.EmailAddress)]
     [Display(Name = "Email", Prompt = "Enter email address")]
-    [Required(ErrorMessage = "Required")]
+    [Required(ErrorMessage = "Email address is required")]
     [RegularExpression(@"^[^\s]+@[^\s]+\.[^\s]+$", ErrorMessage = "Invalid email")]
     public string Email { get; set; } = null!;
 
     [DataType(DataType.PhoneNumber)]
     [Display(Name = "Phone", Prompt = "Enter phone number")]
-    public string? Phone { get; set; }
+    public string? PhoneNumber { get; set; }
 
     [Display(Name = "Job Title", Prompt = "Select job title")]
-    [Required(ErrorMessage = "Required")]
-    public string JobTitle { get; set; } = null!;
+    [Required(ErrorMessage = "You must select a job title")]
+    public JobTitle JobTitle { get; set; }
 
     [Display(Name = "Address", Prompt = "Enter member's address")]
-    [Required(ErrorMessage = "Required")]
+    [Required(ErrorMessage = "Address is required")]
     public string Address { get; set; } = null!;
 
     [DataType(DataType.Date)]
     [Display(Name = "Date of Birth", Prompt = "Select date of birth")]
-    [Required(ErrorMessage = "Required")]
+    [Required(ErrorMessage = "You must enter date of birth")]
     public DateTime DateOfBirth { get; set; }
 }

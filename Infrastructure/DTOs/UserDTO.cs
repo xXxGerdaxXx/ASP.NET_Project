@@ -22,6 +22,6 @@ namespace Infrastructure.DTOs
         public string ConfirmPassword { get; set; } = null!;
 
         [Required]
-        public bool AcceptTerms { get; set; } // Checkbox from UI
+        public bool AcceptTerms { get; set; } 
     }
 }

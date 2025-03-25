@@ -10,7 +10,7 @@ public class UserService(IUserRepository userRepository)
 {
     private readonly IUserRepository _userRepository = userRepository;
 
-    // ✅ Register User
+    //  Register User
     public async Task<ServiceResponse<string>> RegisterUser(UserDTO userDTO)
     {
         var response = new ServiceResponse<string>();
@@ -32,27 +32,24 @@ public class UserService(IUserRepository userRepository)
             return response;
         }
 
-        // Hash password
-        string passwordHash = PasswordHasher.HashPassword(userDTO.Password);
+        var nameParts = userDTO.FullName.Trim().Split(' ', 2);
+        var firstName = nameParts[0];
+        var lastName = nameParts.Length > 1 ? nameParts[1] : "";
 
-        // ✅ Generate Username (First word of FullName + Random Number)
-        var nameParts = userDTO.FullName.Trim().Split(' ');
-        string firstPart = nameParts[0].ToLower();
-        string uniqueIdentifier = new Random().Next(1000, 9999).ToString(); // Random 4-digit number
-        string generatedUsername = $"{firstPart}{uniqueIdentifier}";
 
         var user = new UserEntity
         {
-            FullName = userDTO.FullName, // ✅ Assign FullName directly
-            Username = generatedUsername, // ✅ Use new username logic
+            FirstName = firstName,
+            LastName = lastName,
             Email = userDTO.Email,
-            PasswordHash = passwordHash,
-            RoleId = 2 // Default User Role
-        };
+            UserName = userDTO.Email, //  Use email as username
+            PasswordHash = PasswordHasher.HashPassword(userDTO.Password),
 
-        var success = await _userRepository.CreateUserAsync(user);
-        response.Success = success;
-        response.Message = success ? "User registered successfully!" : "User registration failed.";
+        };
+        var createdUser = await _userRepository.CreateAsync(user);
+        response.Success = createdUser != null;
+        response.Message = response.Success ? "User registered successfully!" : "User registration failed.";
+
 
         return response;
     }
@@ -60,7 +57,7 @@ public class UserService(IUserRepository userRepository)
     // ✅ Get All Users
     public async Task<List<UserEntity>> GetAllUsersAsync()
     {
-        return await _userRepository.GetAllUsersAsync();
+        return await _userRepository.GetAllAsync();
     }
 
     // ✅ Authenticate User

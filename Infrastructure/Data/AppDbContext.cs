@@ -1,43 +1,36 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Infrastructure.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<UserEntity>(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
     public DbSet<StatusEntity> Statuses { get; set; }
     public DbSet<ProjectEntity> Projects { get; set; }
-    public DbSet<RoleEntity> Roles { get; set; }
-    public DbSet<UserEntity> Users { get; set; }
     public DbSet<MemberEntity> Members { get; set; }
     public DbSet<ClientEntity> Clients { get; set; } = default!;
-    public DbSet<NotificationEntity> Notifications { get; set; }
+    public DbSet<UserNotificationEntity> Notifications { get; set; }
     public DbSet<FileEntity> Files { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder); // ✅ Critical for Identity
+
+        modelBuilder.Entity<UserEntity>()
+            .HasKey(u => u.Id);
+
+        modelBuilder.Entity<UserEntity>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
         // ✅ Define Primary Key for User
         modelBuilder.Entity<UserEntity>()
             .HasKey(u => u.Id);
 
         modelBuilder.Entity<UserEntity>()
-            .Property(u => u.Username)
-            .IsRequired()
-            .HasMaxLength(50);
-
-        modelBuilder.Entity<UserEntity>()
             .HasIndex(u => u.Email)
             .IsUnique();
-
-        // ✅ One-to-Many: One Role → Many Users
-        modelBuilder.Entity<UserEntity>()
-            .HasOne(u => u.Role)
-            .WithMany(r => r.Users)
-            .HasForeignKey(u => u.RoleId)
-            .OnDelete(DeleteBehavior.Restrict);
 
         // ✅ One-to-Many: One User → Many Projects
         modelBuilder.Entity<ProjectEntity>()
@@ -47,7 +40,6 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         // ✅ Define Primary Keys
-        modelBuilder.Entity<RoleEntity>().HasKey(r => r.Id);
         modelBuilder.Entity<StatusEntity>().HasKey(s => s.Id);
         modelBuilder.Entity<ProjectEntity>().HasKey(p => p.Id);
         modelBuilder.Entity<MemberEntity>().HasKey(m => m.Id);

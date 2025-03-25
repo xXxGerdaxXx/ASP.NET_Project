@@ -1,5 +1,4 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(() => { attachEventListeners(); }, 100); // Delay event attachment
     loadClients(); // Load clients list on page load
 
     function loadClients() {

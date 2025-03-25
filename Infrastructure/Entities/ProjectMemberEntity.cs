@@ -13,4 +13,6 @@ public class ProjectMemberEntity
 
     public int MemberId { get; set; }
     public MemberEntity Member { get; set; } = null!;
+
+    public string? Role { get; set; }
 }

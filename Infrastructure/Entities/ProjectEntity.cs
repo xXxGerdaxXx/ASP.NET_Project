@@ -9,6 +9,7 @@ public class ProjectEntity
 {
     public int Id { get; set; }  // Primary Key
 
+    [Required]
     public string ProjectName { get; set; } = null!;
     public string Description { get; set; } = null!;
 
@@ -17,7 +18,7 @@ public class ProjectEntity
     public decimal Budget { get; set; }
 
     // Foreign Key for User who created the project
-    public int CreatedByUserId { get; set; }
+    public string CreatedByUserId { get; set; } = null!;
     public UserEntity CreatedByUser { get; set; } = null!;
 
     // Foreign Key to StatusEntity

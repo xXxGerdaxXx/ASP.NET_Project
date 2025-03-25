@@ -2,11 +2,7 @@
 
 namespace Infrastructure.Interfaces;
 
-public interface IMemberRepository
+public interface IMemberRepository : IBaseRepository<MemberEntity>
 {
-    Task<MemberEntity> CreateMemberAsync(MemberEntity newMember); // ✅ Create
-    Task<List<MemberEntity>> GetAllMembersAsync(); // ✅ Read (Get All)
-    Task<MemberEntity?> GetMemberByIdAsync(int id); // ✅ Read (Get One)
-    Task<bool> UpdateMemberAsync(MemberEntity updatedMember); // ✅ Update
-    Task<bool> DeleteMemberAsync(int id); // ✅ Delete
+
 }

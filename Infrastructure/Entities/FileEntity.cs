@@ -10,7 +10,7 @@ public class FileEntity
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 
     // Optional Foreign Keys
-    public int? UserId { get; set; }  // Nullable foreign key
+    public string UserId { get; set; } = null!;  
     public UserEntity? User { get; set; }  // Nullable navigation property
 
     public int? ProjectId { get; set; }  // Nullable foreign key

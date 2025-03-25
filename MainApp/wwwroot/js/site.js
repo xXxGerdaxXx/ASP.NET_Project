@@ -63,6 +63,33 @@
         }
     };
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("themeToggle");
+    const slider = toggle?.querySelector(".toggle-switch");
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+
+        // Set toggle switch visual
+        if (savedTheme === "dark") {
+            slider.classList.add("active");
+        }
+    }
+
+    toggle?.addEventListener("click", function () {
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const newTheme = isDark ? "light" : "dark";
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+
+        slider.classList.toggle("active", newTheme === "dark");
+    });
+});
+
+
 
 
 //document.addEventListener('DOMContentLoaded', () => {

@@ -8,7 +8,7 @@ public interface IMemberService
 {
     Task<List<MemberEntity>> GetAllMembersAsync();
     Task<MemberEntity?> GetMemberByIdAsync(int id);
-    Task<MemberEntity?> CreateMemberAsync(MemberEntity member); // Updated return type
+    Task<MemberEntity?> CreateMemberAsync(MemberEntity member); 
     Task<bool> UpdateMemberAsync(MemberEntity member);
     Task<bool> DeleteMemberAsync(int id);
 }

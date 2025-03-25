@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Infrastructure.Entities;
+﻿using Infrastructure.Entities;
 using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
 
 namespace Infrastructure.Services
 {
@@ -19,12 +14,12 @@ namespace Infrastructure.Services
 
         public async Task<List<MemberEntity>> GetAllMembersAsync()
         {
-            return await _memberRepository.GetAllMembersAsync();
+            return await _memberRepository.GetAllAsync();
         }
 
         public async Task<MemberEntity?> GetMemberByIdAsync(int id)
         {
-            return await _memberRepository.GetMemberByIdAsync(id);
+            return await _memberRepository.GetByIdAsync(id);
         }
 
         public async Task<MemberEntity?> CreateMemberAsync(MemberEntity newMember)
@@ -35,13 +30,13 @@ namespace Infrastructure.Services
                 return null;
             }
 
-            var createdMember = await _memberRepository.CreateMemberAsync(newMember);
+            var createdMember = await _memberRepository.CreateAsync(newMember);
             return createdMember ?? null;
         }
 
         public async Task<bool> UpdateMemberAsync(MemberEntity member)
         {
-            return await _memberRepository.UpdateMemberAsync(member);
+            return await _memberRepository.UpdateAsync(member);
         }
 
         public async Task<bool> DeleteMemberAsync(int memberId)
@@ -52,15 +47,14 @@ namespace Infrastructure.Services
                 return false;
             }
 
-            var existingMember = await _memberRepository.GetMemberByIdAsync(memberId);
+            var existingMember = await _memberRepository.GetByIdAsync(memberId);
             if (existingMember == null)
             {
                 Console.WriteLine($"Cannot delete. Member with ID {memberId} not found.");
                 return false;
             }
 
-            return await _memberRepository.DeleteMemberAsync(memberId);
+            return await _memberRepository.DeleteAsync(memberId);
         }
-
     }
 }

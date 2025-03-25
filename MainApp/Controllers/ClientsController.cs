@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Hosting;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MainApp.Controllers;
 
+[Authorize(Roles = "Admin")]
 [Route("admin/clients")]
 public class ClientsController : Controller
 {

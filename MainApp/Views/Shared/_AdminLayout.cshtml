@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body class="admin-login-layout">
+    <div class="admin-layout-container">
+        <div class="left-panel">
+            <div class="left-panel-text">
+            <h1> 
+                <span class="text">Welcome to </span> 
+                <span class="highlight">Admin Panel</span>
+            </h1>
+                <div class="left-panel-p">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper nisl erat, vel convallis elit fermentum pellentesque. Sed mollis velit facilisis facilisis viverra.</p>
+        </div>
+            </div>
+        </div>
+        <div class="right-panel">
+            @RenderBody()
+        </div>
+    </div>
+</body>
+</html>

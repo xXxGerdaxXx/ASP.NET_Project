@@ -22,4 +22,7 @@ public class SignUpFormModel
     [Required(ErrorMessage = "You must confirm your password.")]
     public string ConfirmPassword { get; set; } = null!;
 
+    [Required]
+    public bool AcceptTerms { get; set; }
+
 }

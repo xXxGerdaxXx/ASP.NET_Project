@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 
+
 namespace Infrastructure.Enums;
 
 public enum JobTitle
@@ -13,6 +14,7 @@ public enum JobTitle
     [Description("Chief Technician Officer")]
     ChiefTechnicianOfficer,
 
+    [Description("Administrator")]
     Administrator,
 
     [Description("Frontend Developer")]

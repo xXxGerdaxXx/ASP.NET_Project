@@ -1,37 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Infrastructure.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Entities;
 
-public class UserEntity
+public class UserEntity : IdentityUser
 {
-    public int Id { get; set; }  // Primary Key (Defined in Fluent API)
+    [Required]
+    [MaxLength(100)]
+    [ProtectedPersonalData]
+    public string FirstName { get; set; } = null!;
 
     [Required]
     [MaxLength(100)]
-    public string FullName { get; set; } = null!; 
+    [ProtectedPersonalData]
+    public string LastName { get; set; } = null!;
 
-    [Required]
-    [MaxLength(50)]
-    public string Username { get; set; } = null!;
+    public JobTitle JobTitle { get; set; }
 
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; } = null!;
+    public List<ProjectEntity>? CreatedProjects { get; set; } = [];
 
-    [Required]
-    public string PasswordHash { get; set; } = null!;
+    public List<UserNotificationEntity> UserNotifications { get; set; } = [];
 
-    public JobTitle JobTitle { get; set; } // Enum for job title
-
-    // Foreign Key to RoleEntity (For Role-Based Access)
-    public int RoleId { get; set; }
-    public RoleEntity Role { get; set; } = null!;
-
-    // Navigation property for projects created by this user
-    public List<ProjectEntity>? CreatedProjects { get; set; } = new();
-
-    public List<UserNotificationEntity> UserNotifications { get; set; } = new();
-
-    public List<FileEntity> Files { get; set; } = new();
+    public List<FileEntity> Files { get; set; } = [];
 }

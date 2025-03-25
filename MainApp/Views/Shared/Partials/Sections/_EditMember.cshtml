@@ -7,7 +7,7 @@
             <button id="closeEditMemberModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
         </header>
 
-        <form id="editMemberForm" asp-action="EditMember" method="post" enctype="multipart/form-data" novalidate asp-controller="Admin" id="editMemberForm">
+        <form id="editMemberForm" asp-action="EditMember" method="post" enctype="multipart/form-data" novalidate asp-controller="Admin">
             <input asp-for="Id" type="hidden" /> <!-- Ensure ID is passed -->
             <!-- Profile Image -->
             <div class="image-previewer circle">

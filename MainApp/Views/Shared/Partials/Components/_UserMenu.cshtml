@@ -1,23 +1,55 @@
-﻿<div class="user-menu">
+﻿@using Infrastructure.Entities
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<UserEntity> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var fullName = user?.FirstName + " " + user?.LastName;
+}
+
+<div class="user-menu">
     <!-- Notifications -->
     <button class="icon-button" id="notificationsButton">
         <i class="fa-solid fa-bell"></i>
-        <span class="notification-badge"></span> <!-- Notification Badge -->
+        <span class="notification-badge"></span>
     </button>
 
-    <!-- Settings -->
-    <button class="icon-button">
-        <i class="fa-solid fa-gear"></i>
-    </button>
-
-    <!-- Profile -->
+    <!-- Gear Icon for Dropdown -->
     <div class="profile-dropdown">
-        <button class="profile-button">
-            <img src="https://i.pravatar.cc/40" alt="User Avatar">
+        <button class="icon-button" id="settingsButton">
+            <i class="fa-solid fa-gear"></i>
         </button>
-        <div class="dropdown-content">
-            <a href="/profile">View Profile</a>
-            <a href="/logout">Logout</a>
+
+        <!-- Dropdown -->
+        <div class="dropdown-content" id="userDropdown">
+            <div class="dropdown-item dropdown-header">
+                <img src="~/images/clients/1aad7ab0-caa9-4ee5-9fcf-fe5c8fccc1f9.svg" class="dropdown-avatar" alt="User Avatar" />
+                <div class="dropdown-user-name">@fullName</div>
+            </div>
+
+
+            <div class="dropdown-item toggle-theme" id="themeToggle">
+                <div class="label-group">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Dark Mode</span>
+                </div>
+                <div class="toggle-switch">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <form method="post" asp-controller="Account" asp-action="Logout">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="dropdown-item logout-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    Logout
+                </button>
+            </form>
         </div>
+    </div>
+
+    <!-- Always visible avatar (tiny one beside gear, optional) -->
+    <div class="avatar-display">
+        <img src="~/images/clients/1aad7ab0-caa9-4ee5-9fcf-fe5c8fccc1f9.svg" alt="User Avatar">
     </div>
 </div>

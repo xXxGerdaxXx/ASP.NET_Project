@@ -4,8 +4,7 @@ using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
+
 
 namespace MainApp.Controllers;
 
@@ -76,13 +75,14 @@ public class MembersController : Controller
 
         var newMember = new MemberEntity
         {
-            FirstName = form.MemberName,
-            LastName = form.MemberSurname,
+            FirstName = form.FirstName,
+            LastName = form.LastName,
             Email = form.Email,
-            PhoneNumber = form.Phone ?? "N/A",
+            PhoneNumber = form.PhoneNumber ?? "N/A",
             Address = form.Address ?? "Unknown",
-            DateOfBirth = DateTime.UtcNow,
-            JobTitle = Enum.TryParse<JobTitle>(form.JobTitle, true, out var jobTitle) ? jobTitle : JobTitle.Unknown
+            DateOfBirth = form.DateOfBirth,
+            JobTitle = form.JobTitle,
+            AvatarUrl = form.AvatarUrl
         };
 
 
@@ -114,6 +114,7 @@ public class MembersController : Controller
             Email = member.Email,
             PhoneNumber = member.PhoneNumber,
             Address = member.Address,
+            DateOfBirth = member.DateOfBirth,
             JobTitle = member.JobTitle,
             AvatarUrl = member.AvatarUrl
         };

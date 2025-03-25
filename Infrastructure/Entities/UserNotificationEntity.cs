@@ -8,7 +8,7 @@ namespace Infrastructure.Entities;
 
 public class UserNotificationEntity
 {
-    public int UserId { get; set; }
+    public string UserId { get; set; } = null!;
     public UserEntity User { get; set; } = null!;
 
     public int NotificationId { get; set; }

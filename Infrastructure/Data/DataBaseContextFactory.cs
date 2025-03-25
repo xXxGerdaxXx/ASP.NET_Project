@@ -12,7 +12,7 @@ public class DataBaseContextFactory : IDesignTimeDbContextFactory<AppDbContext>
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
         optionsBuilder.UseSqlServer(
-            "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Brodins\\Documents\\ASP_Net.mdf;Integrated Security=True;Connect Timeout=30",
+            "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\PROJEKTAI\\ASP.NET_Project\\Infrastructure\\Contexts\\ASP_Net_Db.mdf;Integrated Security=True;Connect Timeout=30",
             sqlOptions => sqlOptions.MigrationsAssembly("Infrastructure")
         );
 
