@@ -1,0 +1,31 @@
+﻿@{
+    var daysLeft = (Model.EndDate - DateTime.Now).Days;
+    var isOverdue = daysLeft < 0;
+}
+
+<div class="project-card">
+    <div class="project-actions">
+        <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-project-modal"></i>
+    </div>
+
+    <div class="project-avatar">
+        <img class="project-image"
+             src="/images/Avatar.svg"
+             alt="Avatar of @Model.ProjectName" />
+    </div>
+
+    <div class="project-title">@Model.ProjectName</div>
+    <div class="project-client">Client: @Model.Client?.ClientName</div>
+    <div class="project-description">@Model.Description</div>
+
+    <p class="time-left">
+        @if (isOverdue)
+        {
+            <span class="overdue">Overdue by @Math.Abs(daysLeft) day(s)</span>
+        }
+        else
+        {
+            <span class="on-time">⏳ @daysLeft day(s) left</span>
+        }
+    </p>
+</div>

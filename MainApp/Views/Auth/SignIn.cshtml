@@ -1,47 +1,47 @@
 ﻿@model SignInFormModel
 
-<div class="form-container">
-    <div class="form-box">
-        <h2>Log In</h2>
+<div class="form-wrapper">
+    <div class="form-container">
+        <div class="form-box">
+            <h2>Log In</h2>
 
-        <button class="google-btn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
-            Sign In with Google
-        </button>
+            <button class="google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+                Log In with Google
+            </button>
 
-        <div class="divider">
-            <span>OR</span>
-        </div>
-
-        <form asp-action="SignIn" method="post">
-
-
-            <div class="input-group">
-                <label>Email</label>
-                <input asp-for="Email" type="email" placeholder="Your email address" required />
+            <div class="divider">
+                <span>OR</span>
             </div>
 
-            <div class="input-group password-group">
-                <label asp-for="Password" class="form-label">Password</label>
-                <div class="password-wrapper">
-                    <input asp-for="Password" class="form-control" type="password" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
+            <form id="signin-form" asp-action="SignIn" method="post" asp-controller="Auth" novalidate>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input asp-for="Email" type="email" placeholder="Your email address" required />
                 </div>
-            </div>
 
-            <div class="checkbox-group">
-                <input type="checkbox" asp-for="RememberMe" />
-                <label>I accept <a href="#">Terms and Conditions</a></label>
-            </div>
+                <div class="input-group password-group">
+                    <label for="password">Password</label>
+                    <div class="password-wrapper">
+                        <input id="password" asp-for="Password" type="password" placeholder="Enter your password" required />
+                        <i class="fa-solid fa-eye password-toggle" onclick="togglePassword('password')"></i>
+                    </div>
+                </div>
 
-            <button type="submit" class="btn-primary">Create Account</button>
-        </form>
+                <div class="checkbox-group">
+                    <input type="checkbox" asp-for="RememberMe" />
+                    <label>Remember Me</label>
+                </div>
 
-        <p class="login-link">Already have an account? <a asp-action="SignIn">Login</a></p>
+                <button type="submit" class="btn-primary">Log In</button>
+            </form>
 
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <p class="error-message">@Html.ValidationSummary()</p>
-        }
+            <p class="login-link">Don't have an account? <a asp-action="SignUp">Sign Up</a></p>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <p class="error-message">@Html.ValidationSummary()</p>
+            }
+        </div>
     </div>
 </div>

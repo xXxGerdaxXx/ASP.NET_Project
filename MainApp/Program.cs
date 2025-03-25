@@ -28,14 +28,17 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 // ? Business - Services
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 // ? Utility Services
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ProjectService>();
 
 var app = builder.Build();
 

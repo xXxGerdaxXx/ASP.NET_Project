@@ -1,101 +1,70 @@
 ﻿@model ProjectCreateFormModel
 
-<div id="add-project-modal" class="modal-overlay">
+<div id="add-project-modal" class="modal-overlay" style="display: none;">
     <div class="surface-modal">
+
         <header>
             <h2>New Project</h2>
-            <button data-close-modal class="btn-close">
+            <button id="closeAddProjectModal" class="btn-close">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </header>
 
-        <div class="image-preview-container">
-            <div class="circle circle-gray">
-                <i class="fa-solid fa-camera"></i>
+        <form id="createProjectForm" method="post" asp-controller="Projects" asp-action="Create" enctype="multipart/form-data" novalidate>
+            <div class="image-preview-container">
+                <div class="circle circle-gray">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
             </div>
-        </div>
 
-        <form id="projectForm" action="/projects/create" method="post">
             <div class="form-group">
                 <label asp-for="Name"></label>
-                <input asp-for="Name">
-                <span asp-validation-for="Name"></span>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="ClientId"></label>
                 <div class="client-search-container">
-                    <div class="search-input-wrapper">
-                        <input type="text" id="clientSearch" placeholder="Search Clients..." autocomplete="off">
-                    </div>
+                    <input asp-for="ClientId" type="number" placeholder="Client ID" class="form-control" />
+                    <span asp-validation-for="ClientId" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-group">
                 <label asp-for="Description"></label>
-
-
-                <!-- Hidden textarea to store formatted content -->
-                <textarea asp-for="Description" id="description" name="Description" hidden></textarea>
-
-                <!-- Quill Editor -->
-                <div id="quill-editor"></div>
-                <span asp-validation-for="Description"></span>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-
-
 
             <div class="sidebyside-fields">
                 <div class="form-group">
                     <label asp-for="StartDate"></label>
-                    <input type="text" id="formattedStartDate" placeholder="Select Start Date" readonly>
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <input asp-for="StartDate" type="date" id="startDate" style="display: none;">
-
-                    <span asp-validation-for="StartDate"></span>
+                    <input asp-for="StartDate" type="date" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
                     <label asp-for="EndDate"></label>
-                    <input type="text" id="formattedEndDate" placeholder="Select End Date" readonly>
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <input asp-for="EndDate" type="date" id="endDate" style="display: none;">
-
-                    <span asp-validation-for="EndDate"></span>
+                    <input asp-for="EndDate" type="date" class="form-control" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
                 </div>
             </div>
-
 
             <div class="form-group">
-                <label asp-for="TeamMemberSearch "></label>
-                <div class="team-member-search-container">
-                    <div class="search-input-wrapper">
-                        <input asp-for="TeamMemberSearch" id="teamMemberSearch" placeholder="Search Team Members...">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    </div>
-                </div>
-
-                <div id="teamMemberList" class="team-member-list">
-                    <!-- Populate dynamically -->
-                    <ul>
-                        <li data-id="1">John Doe</li>
-                        <li data-id="2">Jane Smith</li>
-                        <li data-id="3">Alice Johnson</li>
-                        <li data-id="4">Bob Williams</li>
-                    </ul>
-                </div>
+                <label asp-for="TeamMemberSearch"></label>
+                <input asp-for="TeamMemberSearch" placeholder="Search Team Members..." class="form-control" />
+                <span asp-validation-for="TeamMemberSearch" class="text-danger"></span>
             </div>
-
 
             <div class="form-group">
                 <label asp-for="Budget"></label>
                 <div class="input-icon-wrapper">
                     <i class="fa-solid fa-dollar-sign"></i>
-                    <input asp-for="Budget" type="number" placeholder="Enter amount">
+                    <input asp-for="Budget" type="number" class="form-control" placeholder="Enter amount" />
                 </div>
-                <span asp-validation-for="Budget"></span>
+                <span asp-validation-for="Budget" class="text-danger"></span>
             </div>
-
 
             <footer>
                 <button type="submit" class="btn btn-blue-submit">Create</button>

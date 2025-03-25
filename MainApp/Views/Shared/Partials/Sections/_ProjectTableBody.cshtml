@@ -1,0 +1,50 @@
+﻿@model List<Infrastructure.Entities.ProjectEntity>
+
+@if (Model == null)
+{
+    <p>Model is NULL!</p>
+}
+else if (!Model.Any())
+{
+    <p>No projects available (empty list).</p>
+}
+else
+{
+    <section id="projectsList" class="projects-grid">
+        @foreach (var project in Model)
+        {
+            var daysLeft = (project.EndDate - DateTime.Now).Days;
+            var isOverdue = daysLeft < 0;
+
+            <div class="project-card">
+                <div class="project-actions">
+                    <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-project-modal"></i>
+                </div>
+
+                <div class="project-avatar">
+                    <img class="project-image"
+                         src="@("/images/Avatar.svg")"
+                         alt="Avatar of @project.ProjectName" />
+                </div>
+
+                <div class="project-title">@project.ProjectName</div>
+
+                <div class="project-client">Client: @project.Client.ClientName</div>
+
+                <div class="project-description">@project.Description</div>
+
+                <p class="time-left">
+                    @if (isOverdue)
+                    {
+                        <span class="overdue"> Overdue by @Math.Abs(daysLeft) day(s)</span>
+                    }
+                    else
+                    {
+                        <span class="on-time">⏳ @daysLeft day(s) left</span>
+                    }
+                </p>
+            </div>
+        }
+    </section>
+
+}

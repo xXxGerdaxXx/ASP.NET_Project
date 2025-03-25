@@ -10,7 +10,7 @@ using MainApp.Models;
 
 namespace MainApp.Controllers;
 
-public class AccountController(
+public class AuthController(
     UserManager<UserEntity> userManager,
     SignInManager<UserEntity> signInManager,
     RoleManager<IdentityRole> roleManager)
@@ -46,7 +46,7 @@ public class AccountController(
             return View(model);
         }
 
-        return RedirectToAction("Index", "Projects");
+        return RedirectToAction("Index", "Dashboard");
     }
 
 
@@ -98,5 +98,42 @@ public class AccountController(
 
         return RedirectToAction("SignIn");
     }
+
+    [HttpGet]
+    public IActionResult AdminSignIn()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AdminSignIn(SignInFormModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null || !await _userManager.IsInRoleAsync(user, "Admin"))
+        {
+            ModelState.AddModelError("", "Invalid credentials or not an admin.");
+            return View(model);
+        }
+
+        var result = await _signInManager.PasswordSignInAsync(
+            user,
+            model.Password,
+            model.RememberMe,
+            lockoutOnFailure: false
+        );
+
+        if (!result.Succeeded)
+        {
+            ModelState.AddModelError("", "Login failed.");
+            return View(model);
+        }
+
+        return RedirectToAction("Dashboard", "Admin");
+    }
+
 
 }
