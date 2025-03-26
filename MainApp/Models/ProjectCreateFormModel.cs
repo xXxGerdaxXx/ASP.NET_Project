@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace MainApp.Models;
 
@@ -8,9 +9,11 @@ public class ProjectCreateFormModel
     [Display(Name = "Project Name", Prompt = "Enter project name")]
     public string Name { get; set; } = null!;
 
-    [Required(ErrorMessage = "Client selection is required.")]
-    [Display(Name = "Client", Prompt = "Select a client")]
-    public int ClientId { get; set; } 
+    //[Required(ErrorMessage = "Client selection is required.")]
+    //[Display(Name = "Client", Prompt = "Select a client")]
+    //public int ClientId { get; set; }
+
+    //public SelectList ClientList { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
 
     [Required(ErrorMessage = "Description is required.")]
     [Display(Name = "Description", Prompt = "Type something")]
@@ -39,6 +42,6 @@ public class ProjectCreateFormModel
 
     public string Status { get; set; } = "all"; 
 
-    [Display(Name = "Project Image")]
-    public IFormFile? ProjectImage { get; set; } 
+    //[Display(Name = "Project Image")]
+    //public IFormFile? ProjectImage { get; set; } 
 }

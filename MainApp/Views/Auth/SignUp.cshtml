@@ -43,11 +43,16 @@
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
-
             <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" />
+                    I accept <a href="#">Terms and Conditions</a>
+                </label>
+            </div>
+@*             <div class="checkbox-group">
                 <input type="checkbox" asp-for="AcceptTerms" required />
                 <label>I accept <a href="#">Terms and Conditions</a></label>
-            </div>
+            </div> *@
 
             <button type="submit" class="btn-primary">Create Account</button>
         </form>

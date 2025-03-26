@@ -27,10 +27,12 @@
                         <i class="fa-solid fa-eye password-toggle" onclick="togglePassword('password')"></i>
                     </div>
                 </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" asp-for="RememberMe" />
-                    <label>Remember Me</label>
+                <div class="checkbox-group justify-between">
+                    <label class="checkbox-label">
+                        <input type="checkbox" />
+                        Remember Me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="btn-primary">Log In</button>

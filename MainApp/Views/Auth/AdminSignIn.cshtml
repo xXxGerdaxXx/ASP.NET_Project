@@ -7,8 +7,8 @@
 
 <div class="form-wrapper">
     <div class="form-container">
-        <div class="form-box">
-            <h2>Log In</h2>
+        <div class="form-box-admin">
+            <h2>Login</h2>
 
             <button class="google-btn">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
@@ -33,15 +33,18 @@
                     </div>
                 </div>
 
-                <div class="checkbox-group">
-                    <input type="checkbox" asp-for="RememberMe" />
-                    <label>Remember Me</label>
+                <div class="checkbox-group justify-between">
+                    <label class="checkbox-label">
+                        <input type="checkbox" />
+                        Remember Me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="btn-primary">Log In</button>
             </form>
 
-            <p class="login-link"><a asp-action="Register">Forgot Password?</a></p>
+
 
             @if (!ViewData.ModelState.IsValid)
             {
