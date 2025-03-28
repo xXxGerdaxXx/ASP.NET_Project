@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace MainApp.Models;
-
-public class ProjectCreateFormModel
+public class ProjectEditFormModel
 {
+    [Required]
+    public int Id { get; set; }
+
     [Required(ErrorMessage = "Project Name is required.")]
     [Display(Name = "Project Name", Prompt = "Enter project name")]
     public string Name { get; set; } = null!;
@@ -29,26 +30,20 @@ public class ProjectCreateFormModel
     [Display(Name = "End Date")]
     public DateTime EndDate { get; set; }
 
-    [Display(Name = "Members")]
-    public string TeamMemberSearch { get; set; } = string.Empty;
-
-    [Display(Name = "Selected Team Members")]
-    public List<int> SelectedTeamMemberIds { get; set; } = [];
-
     [Required(ErrorMessage = "Budget is required.")]
     [Range(0, double.MaxValue, ErrorMessage = "Budget must be a positive number.")]
     [Display(Name = "Budget", Prompt = "Enter project budget")]
     public decimal Budget { get; set; }
 
+    [Display(Name = "Project Image")]
+    public IFormFile? ProjectImage { get; set; }
+
+    public string? AvatarUrl { get; set; }
+
+    // 🔹 Add these:
     [Required(ErrorMessage = "Status selection is required.")]
     [Display(Name = "Status")]
     public int StatusId { get; set; }
 
     public SelectList StatusList { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
-
-
-    public string? AvatarUrl { get; set; } 
-
-    [Display(Name = "Project Image")]
-    public IFormFile? ProjectImage { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿@* @model List<Infrastructure.Entities.ProjectEntity>
+﻿@model List<Infrastructure.Entities.ProjectEntity>
 
 @if (Model == null)
 {
@@ -23,20 +23,22 @@ else
 
                 <div class="project-avatar">
                     <img class="project-image"
-                         src="@("/images/Avatar.svg")"
+                         src="@(string.IsNullOrWhiteSpace(project.AvatarUrl) ? "/images/Avatar.svg" : project.AvatarUrl)"
                          alt="Avatar of @project.ProjectName" />
                 </div>
 
                 <div class="project-title">@project.ProjectName</div>
 
-                <div class="project-client">Client: @project.Client.ClientName</div>
+                <div class="project-client">Client: @project.Client?.ClientName</div>
+
+                <div class="project-status">Status: @project.Status?.StatusName</div>
 
                 <div class="project-description">@project.Description</div>
 
                 <p class="time-left">
                     @if (isOverdue)
                     {
-                        <span class="overdue"> Overdue by @Math.Abs(daysLeft) day(s)</span>
+                        <span class="overdue">Overdue by @Math.Abs(daysLeft) day(s)</span>
                     }
                     else
                     {
@@ -46,11 +48,11 @@ else
             </div>
         }
     </section>
-
 }
- *@
 
 
+
+@* 
 <div class="project-grid">
     <div class="project-card">
         <div class="card-header">
@@ -106,3 +108,4 @@ else
         </div>
     </div>
 </div>
+ *@

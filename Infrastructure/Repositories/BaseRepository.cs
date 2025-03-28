@@ -9,7 +9,7 @@ public class BaseRepository<T>(AppDbContext context) : IBaseRepository<T> where 
     protected readonly AppDbContext _context = context;
     protected readonly DbSet<T> _dbSet = context.Set<T>();
 
-    public async Task<List<T>> GetAllAsync()
+    public virtual async Task<List<T>> GetAllAsync()
     {
         return await _dbSet.ToListAsync();
     }

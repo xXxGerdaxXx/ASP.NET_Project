@@ -15,6 +15,7 @@ namespace Infrastructure.Services
 
         public async Task<List<ProjectEntity>> GetAllProjectsAsync()
         {
+
             return await _projectRepository.GetAllAsync();
         }
 

@@ -29,11 +29,13 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
 // ? Business - Services
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
 
 // ? Utility Services
 builder.Services.AddScoped<FileService>();

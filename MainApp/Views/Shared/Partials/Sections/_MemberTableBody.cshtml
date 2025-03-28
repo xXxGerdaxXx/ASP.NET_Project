@@ -1,4 +1,5 @@
 ﻿@model List<Infrastructure.Entities.MemberEntity>
+@using Infrastructure.Helpers
 
 @if (Model == null)
 {
@@ -23,15 +24,16 @@ else
                 </div>
 
                 <!-- Profile Avatar -->
-                <div class="member-avatar">
+
+                <div class="member-image">
                     <img src="@(!string.IsNullOrEmpty(member.AvatarUrl) ? member.AvatarUrl : "/images/Avatar.svg")"
-                         alt="@member.FirstName @member.LastName"
+                         alt="Avatar of @member.FirstName @member.LastName"
                          class="avatar-img" />
                 </div>
 
                 <!-- Member Details -->
                 <h3 class="member-name">@member.FirstName @member.LastName</h3>
-                <div class="member-role">@member.JobTitle</div>
+                <div class="member-role">@EnumHelper.GetEnumDescription(member.JobTitle)</div>
                 <div class="member-email">@member.Email</div>
                 <div class="member-phone">@member.PhoneNumber</div>
 

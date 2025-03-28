@@ -12,5 +12,5 @@ public class StatusEntity
     public string StatusName { get; set; } = null!;
 
     // Navigation property (One Status → Many Projects)
-    public List<ProjectEntity>? Projects { get; set; } = new List<ProjectEntity>();
+    public List<ProjectEntity>? Projects { get; set; } = [];
 }

@@ -8,24 +8,31 @@
         <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-project-modal"></i>
     </div>
 
-    <div class="project-avatar">
-        <img class="project-image"
-             src="/images/Avatar.svg"
-             alt="Avatar of @Model.ProjectName" />
+    <!-- 🔹 Header: Avatar + Title/Client -->
+    <div class="project-header">
+        <div class="project-avatar">
+            <img class="project-image"
+                 src="@(string.IsNullOrEmpty(Model.AvatarUrl) ? "/images/Avatar.svg" : Model.AvatarUrl)"
+                 alt="Avatar of @Model.ProjectName" />
+        </div>
+        <div class="project-info">
+            <div class="project-title">@Model.ProjectName</div>
+            <div class="project-client">Client: @Model.Client?.ClientName</div>
+        </div>
     </div>
-
-    <div class="project-title">@Model.ProjectName</div>
-    <div class="project-client">Client: @Model.Client?.ClientName</div>
     <div class="project-description">@Model.Description</div>
+    <div class="project-status">Status: @Model.Status?.StatusName</div>
+    <div class="project-budget">💰 @Model.Budget.ToString("C")</div>
 
     <p class="time-left">
         @if (isOverdue)
         {
-            <span class="overdue">Overdue by @Math.Abs(daysLeft) day(s)</span>
+            <span class="overdue text-danger fw-bold">Overdue by @Math.Abs(daysLeft) day(s)</span>
         }
         else
         {
-            <span class="on-time">⏳ @daysLeft day(s) left</span>
+            <span class="on-time text-success">⏳ @daysLeft day(s) left</span>
         }
     </p>
 </div>
+

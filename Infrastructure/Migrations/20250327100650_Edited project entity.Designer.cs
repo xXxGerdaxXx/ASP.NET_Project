@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250327100650_Edited project entity")]
+    partial class Editedprojectentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,23 +255,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Statuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            StatusName = "Not Started"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            StatusName = "In Progress"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            StatusName = "Completed"
-                        });
                 });
 
             modelBuilder.Entity("Infrastructure.Entities.UserEntity", b =>

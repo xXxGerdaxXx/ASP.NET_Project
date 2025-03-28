@@ -29,6 +29,8 @@ public class ProjectEntity
     public int ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;
 
+    public string? AvatarUrl { get; set; }
+
     public List<ProjectMemberEntity> ProjectMembers { get; set; } = new();
 
     public List<FileEntity> Files { get; set; } = new();

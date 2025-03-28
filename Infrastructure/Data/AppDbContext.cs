@@ -125,5 +125,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .HasForeignKey(f => f.ProjectId)
             .OnDelete(DeleteBehavior.Cascade); // Delete files if the project is deleted
 
+
+
+        modelBuilder.Entity<StatusEntity>().HasData(
+            new StatusEntity { Id = 1, StatusName = "Not Started" },
+            new StatusEntity { Id = 2, StatusName = "In Progress" },
+            new StatusEntity { Id = 3, StatusName = "Completed" });
+
     }
+
 }

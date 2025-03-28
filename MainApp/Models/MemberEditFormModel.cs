@@ -1,13 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Infrastructure.Enums; // Assuming JobTitle is an enum
+using Infrastructure.Enums; 
 
 namespace MainApp.Models
 {
     public class MemberEditFormModel
     {
         [Required]
-        public int Id { get; set; } // ✅ Required for tracking which member is being edited
+        public int Id { get; set; } 
 
         [Required]
         [Display(Name = "First Name")]
@@ -40,10 +40,10 @@ namespace MainApp.Models
 
         [Required]
         [Display(Name = "Job Title")]
-        public JobTitle JobTitle { get; set; } // ✅ Enum (assuming `JobTitle` is an enum)
+        public JobTitle JobTitle { get; set; } 
 
-        public string? AvatarUrl { get; set; } // ✅ Profile image URL
+        public string? AvatarUrl { get; set; } 
 
-        public IFormFile? File { get; set; } // ✅ For updating the profile picture
+        public IFormFile? File { get; set; } 
     }
 }

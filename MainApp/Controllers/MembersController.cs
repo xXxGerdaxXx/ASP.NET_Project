@@ -41,14 +41,18 @@ public class MembersController : Controller
         return PartialView("Partials/Sections/_MemberTableBody", members); // ✅ Returns only the partial!
     }
 
+    [HttpPost("upload-avatar")]
+    public async Task<IActionResult> UploadClientAvatar(IFormFile file)
+    {
+        string? fileUrl = await _fileService.SaveFileAsync(file, "members"); //  Use FileService
+        if (fileUrl == null)
+        {
+            return BadRequest("Error uploading file.");
+        }
 
-    //// GET: /members/create
-    //[HttpGet("create")]
-    //public IActionResult Create()
-    //{
-    //    return PartialView("_Create"); // Load form as a modal
-    //}
-    // GET: /admin/members/create
+        return Ok(new { url = fileUrl });
+    }
+
     [HttpGet("create")]
     public IActionResult Create()
     {
@@ -73,6 +77,11 @@ public class MembersController : Controller
             return BadRequest(new { success = false, errors });
         }
 
+        string? avatarUrl = null;
+        if (form.File != null)
+        {
+            avatarUrl = await _fileService.SaveFileAsync(form.File, "members");
+        }
         var newMember = new MemberEntity
         {
             FirstName = form.FirstName,
@@ -82,7 +91,7 @@ public class MembersController : Controller
             Address = form.Address ?? "Unknown",
             DateOfBirth = form.DateOfBirth,
             JobTitle = form.JobTitle,
-            AvatarUrl = form.AvatarUrl
+            AvatarUrl = avatarUrl
         };
 
 
@@ -95,7 +104,7 @@ public class MembersController : Controller
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "❌ Error Creating Member: {@Form}", form);
+            _logger.LogError(ex, "Error Creating Member: {@Form}", form);
             return StatusCode(500, new { success = false, message = ex.Message });
         }
     }
