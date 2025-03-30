@@ -1,4 +1,5 @@
-﻿using Infrastructure.Entities;
+﻿using Infrastructure.DTOs;
+using Infrastructure.Entities;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 
@@ -24,17 +25,31 @@ namespace Infrastructure.Services
             return await _projectRepository.GetByIdAsync(id);
         }
 
-        public async Task<ProjectEntity?> CreateProjectAsync(ProjectEntity newProject)
+        public async Task<ProjectEntity?> CreateProjectAsync(ProjectDTO dto)
         {
-            if (newProject == null)
+            if (dto == null)
             {
                 Console.WriteLine("Attempted to create a null project.");
                 return null;
             }
 
+            var newProject = new ProjectEntity
+            {
+                ProjectName = dto.ProjectName,
+                Description = dto.Description,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                Budget = dto.Budget,
+                ClientId = dto.ClientId,
+                StatusId = dto.StatusId,
+                AvatarUrl = dto.AvatarUrl,
+                CreatedByUserId = dto.CreatedByUserId
+            };
+
             var createdProject = await _projectRepository.CreateAsync(newProject);
-            return createdProject ?? null;
+            return createdProject;
         }
+
 
         public async Task<bool> UpdateProjectAsync(ProjectEntity project)
         {

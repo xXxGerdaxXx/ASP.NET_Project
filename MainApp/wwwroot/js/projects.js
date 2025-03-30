@@ -18,7 +18,7 @@
     }
 
     function attachEventListeners() {
-        // Edit buttons
+
         document.querySelectorAll(".edit-project-btn").forEach(button => {
             button.addEventListener("click", function () {
                 const projectId = this.getAttribute("data-project-id");
@@ -26,7 +26,6 @@
             });
         });
 
-        // Open modal
         const addButton = document.getElementById("openAddProjectModal");
         if (addButton) {
             addButton.addEventListener("click", openAddProjectModal);
@@ -77,7 +76,7 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
-                                        alert("Project created successfully!");
+                                        showSuccessMessage("Project created successfully!");
                                         location.reload();
                                     } else {
                                         if (data.errors && typeof displayServerErrors === 'function') {
@@ -95,51 +94,68 @@
             })
             .catch(error => console.error("Error loading create project modal:", error));
     }
+    //function bindLiveValidation(input, errorSpan) {
+    //    if (!input.dataset.validationBound) {
+    //        input.addEventListener("input", function () {
+    //            if (input.value.trim() !== "") {
+    //                input.classList.remove("input-validation-error");
+    //                errorSpan.textContent = "";
+    //                errorSpan.style.display = "none";
+    //            }
+    //        });
+    //        input.dataset.validationBound = "true";
+    //    }
+    //}
+
+    //function validateForm(form) {
+    //    let isValid = true;
+
+    //    form.querySelectorAll("[required]").forEach(input => {
+    //        let errorSpan = input.nextElementSibling;
+
+    //        if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+    //            errorSpan = document.createElement("span");
+    //            errorSpan.classList.add("field-validation-error");
+    //            input.insertAdjacentElement("afterend", errorSpan);
+    //        }
+
+    //        if (input.value.trim() === "") {
+    //            input.classList.add("input-validation-error");
+    //            errorSpan.textContent = "This field is required";
+    //            errorSpan.style.display = "inline";
+    //            isValid = false;
+    //        } else {
+    //            input.classList.remove("input-validation-error");
+    //            errorSpan.textContent = "";
+    //            errorSpan.style.display = "none";
+    //        }
+
+    //        bindLiveValidation(input, errorSpan);
+    //    });
+
+    //    return isValid;
+    //}
 
 
+    //function displayServerErrors(errors) {
+    //    Object.keys(errors).forEach(key => {
+    //        const inputField = document.querySelector(`[name="${key}"]`);
+    //        if (inputField) {
+    //            let errorSpan = inputField.nextElementSibling;
+    //            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+    //                errorSpan = document.createElement("span");
+    //                errorSpan.classList.add("field-validation-error");
+    //                inputField.insertAdjacentElement("afterend", errorSpan);
+    //            }
 
+    //            errorSpan.textContent = errors[key].join(", ");
+    //            errorSpan.style.display = "inline";
+    //            inputField.classList.add("input-validation-error");
 
-    function validateForm(form) {
-        let isValid = true;
-
-        form.querySelectorAll("[required]").forEach(input => {
-            let errorSpan = input.nextElementSibling;
-            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-                errorSpan = document.createElement("span");
-                errorSpan.classList.add("field-validation-error");
-                input.insertAdjacentElement("afterend", errorSpan);
-            }
-
-            if (input.value.trim() === "") {
-                input.classList.add("input-validation-error");
-                errorSpan.textContent = "This field is required";
-                errorSpan.style.display = "inline";
-                isValid = false;
-            } else {
-                input.classList.remove("input-validation-error");
-                errorSpan.textContent = "";
-                errorSpan.style.display = "none";
-            }
-        });
-
-        return isValid;
-    }
-    function displayServerErrors(errors) {
-        Object.keys(errors).forEach(key => {
-            const inputField = document.querySelector(`[name="${key}"]`);
-            if (inputField) {
-                let errorSpan = inputField.nextElementSibling;
-                if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-                    errorSpan = document.createElement("span");
-                    errorSpan.classList.add("field-validation-error");
-                    inputField.insertAdjacentElement("afterend", errorSpan);
-                }
-                errorSpan.textContent = errors[key].join(", ");
-                errorSpan.style.display = "inline";
-                inputField.classList.add("input-validation-error");
-            }
-        });
-    }
+    //            bindLiveValidation(inputField, errorSpan); // 🧠 This is the missing piece
+    //        }
+    //    });
+    //}
     function loadEditProjectModal(projectId) {
         fetch(`/projects/edit/${projectId}`)
             .then(response => response.text())
@@ -215,11 +231,11 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert("Project deleted successfully.");
+                    showSuccessMessage("Project deleted successfully.");
                     document.getElementById("edit-project-modal")?.remove(); // Close modal if open
                     loadProjects(); // Refresh projects list
                 } else {
-                    alert("Error: " + data.message);
+                    showErrorMessage("Error: " + data.message);
                 }
             })
             .catch(error => console.error("Error deleting project:", error));

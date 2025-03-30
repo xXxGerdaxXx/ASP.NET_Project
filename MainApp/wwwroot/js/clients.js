@@ -52,7 +52,7 @@
                     .map(checkbox => parseInt(checkbox.value));
 
                 if (selectedClientIds.length === 0) {
-                    alert("No clients selected for deletion.");
+                    showErrorMessage("No clients selected for deletion.");
                     return;
                 }
 
@@ -97,7 +97,7 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.success) {
-                                        alert("Client created successfully!");
+                                        showSuccessMessage("Client created successfully!");
                                         location.reload(); // Refresh or update the UI
                                     } else {
                         
@@ -112,47 +112,68 @@
             .catch(error => console.error("Error loading create client modal:", error));
     }
 
-    function validateForm(form) {
-        let isValid = true;
+    //function bindLiveValidation(input, errorSpan) {
+    //    if (!input.dataset.validationBound) {
+    //        input.addEventListener("input", function () {
+    //            if (input.value.trim() !== "") {
+    //                input.classList.remove("input-validation-error");
+    //                errorSpan.textContent = "";
+    //                errorSpan.style.display = "none";
+    //            }
+    //        });
+    //        input.dataset.validationBound = "true";
+    //    }
+    //}
 
-        form.querySelectorAll("[required]").forEach(input => {
-            let errorSpan = input.nextElementSibling;
-            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-                errorSpan = document.createElement("span");
-                errorSpan.classList.add("field-validation-error");
-                input.insertAdjacentElement("afterend", errorSpan);
-            }
+    //function validateForm(form) {
+    //    let isValid = true;
 
-            if (input.value.trim() === "") {
-                input.classList.add("input-validation-error");
-                errorSpan.textContent = "This field is required";
-                errorSpan.style.display = "inline";
-                isValid = false;
-            } else {
-                input.classList.remove("input-validation-error");
-                errorSpan.textContent = "";
-                errorSpan.style.display = "none";
-            }
-        });
+    //    form.querySelectorAll("[required]").forEach(input => {
+    //        let errorSpan = input.nextElementSibling;
 
-        return isValid;
-    }
-    function displayServerErrors(errors) {
-        Object.keys(errors).forEach(key => {
-            const inputField = document.querySelector(`[name="${key}"]`);
-            if (inputField) {
-                let errorSpan = inputField.nextElementSibling;
-                if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-                    errorSpan = document.createElement("span");
-                    errorSpan.classList.add("field-validation-error");
-                    inputField.insertAdjacentElement("afterend", errorSpan);
-                }
-                errorSpan.textContent = errors[key].join(", ");
-                errorSpan.style.display = "inline";
-                inputField.classList.add("input-validation-error");
-            }
-        });
-    }
+    //        if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+    //            errorSpan = document.createElement("span");
+    //            errorSpan.classList.add("field-validation-error");
+    //            input.insertAdjacentElement("afterend", errorSpan);
+    //        }
+
+    //        if (input.value.trim() === "") {
+    //            input.classList.add("input-validation-error");
+    //            errorSpan.textContent = "This field is required";
+    //            errorSpan.style.display = "inline";
+    //            isValid = false;
+    //        } else {
+    //            input.classList.remove("input-validation-error");
+    //            errorSpan.textContent = "";
+    //            errorSpan.style.display = "none";
+    //        }
+
+    //        bindLiveValidation(input, errorSpan);
+    //    });
+
+    //    return isValid;
+    //}
+
+
+    //function displayServerErrors(errors) {
+    //    Object.keys(errors).forEach(key => {
+    //        const inputField = document.querySelector(`[name="${key}"]`);
+    //        if (inputField) {
+    //            let errorSpan = inputField.nextElementSibling;
+    //            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+    //                errorSpan = document.createElement("span");
+    //                errorSpan.classList.add("field-validation-error");
+    //                inputField.insertAdjacentElement("afterend", errorSpan);
+    //            }
+
+    //            errorSpan.textContent = errors[key].join(", ");
+    //            errorSpan.style.display = "inline";
+    //            inputField.classList.add("input-validation-error");
+
+    //            bindLiveValidation(inputField, errorSpan); 
+    //        }
+    //    });
+    //}
     function loadEditClientModal(clientId) {
         fetch(`/admin/clients/editclient/${clientId}`)
             .then(response => response.text())
@@ -200,7 +221,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert("Client updated successfully!");
+                        showSuccessMessage("Client updated successfully!");
                         document.getElementById("edit-client-modal").remove();
                         loadClients();
                     } else {
@@ -233,11 +254,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(`Deleted ${data.deleted} client(s) successfully!`);
+                        showSuccessMessage(`Deleted ${data.deleted} client(s) successfully!`);
                         modal.style.display = "none";
                         loadClients();
                     } else {
-                        alert("Error: " + data.message);
+                        showErrorMessage("Error: " + data.message);
                     }
                 })
                 .catch(error => console.error("Error deleting clients:", error));

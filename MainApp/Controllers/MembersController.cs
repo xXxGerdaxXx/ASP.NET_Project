@@ -9,18 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace MainApp.Controllers;
 
 [Route("admin/members")]
-public class MembersController : Controller
+public class MembersController(IMemberService memberService, ILogger<MembersController> logger, FileService fileService) : Controller
 {
-    private readonly IMemberService _memberService;
-    private readonly ILogger<MembersController> _logger;
-    private readonly FileService _fileService;
-
-    public MembersController(IMemberService memberService, ILogger<MembersController> logger, FileService fileService)
-    {
-        _memberService = memberService;
-        _logger = logger;
-        _fileService = fileService;
-    }
+    private readonly IMemberService _memberService = memberService;
+    private readonly ILogger<MembersController> _logger = logger;
+    private readonly FileService _fileService = fileService;
 
     // THIS RETURNS THE PARTIAL VIEW (NOT A FULL PAGE)
     [HttpGet("list")]

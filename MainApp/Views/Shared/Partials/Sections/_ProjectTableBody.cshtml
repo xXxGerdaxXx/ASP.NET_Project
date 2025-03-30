@@ -1,4 +1,4 @@
-﻿@model List<Infrastructure.Entities.ProjectEntity>
+﻿@model List<ProjectViewModel>
 
 @if (Model == null)
 {
@@ -10,44 +10,54 @@ else if (!Model.Any())
 }
 else
 {
-    <section id="projectsList" class="projects-grid">
+    <section id="projectsList" class="project-grid">
         @foreach (var project in Model)
         {
-            var daysLeft = (project.EndDate - DateTime.Now).Days;
-            var isOverdue = daysLeft < 0;
+            var isUrgent = project.Deadline.Contains("day") && project.Deadline.Contains("left") && project.Deadline.Contains("5");
 
             <div class="project-card">
-                <div class="project-actions">
-                    <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-project-modal"></i>
+                <div class="card-header">
+                    <div class="avatar-group">
+                    <div class="card-logo" style="background-color: #fef3c7;">
+                        @if (!string.IsNullOrWhiteSpace(project.AvatarUrl))
+                        {
+                            <img src="@project.AvatarUrl" alt="@project.Name" />
+                        }
+                        else
+                        {
+                            @project.Name.Substring(0, 1).ToUpper()
+                        }
+                    </div>
+                    </div>
+
+                    <div>
+                        <div class="card-title">@project.Name</div>
+                        <div class="card-desc">@project.Company</div>
+                    </div>
+                    <div class="member-actions">
+                    <i class="fa-solid fa-ellipsis edit-project-btn"
+                       data-project-id="@project.Id"
+                       data-modal="true"
+                       data-target="#edit-project-modal"></i></div>
                 </div>
 
-                <div class="project-avatar">
-                    <img class="project-image"
-                         src="@(string.IsNullOrWhiteSpace(project.AvatarUrl) ? "/images/Avatar.svg" : project.AvatarUrl)"
-                         alt="Avatar of @project.ProjectName" />
+                <div class="card-desc">@project.Description</div>
+
+                <div class="card-footer">
+                    <span class="time-label @(isUrgent ? "urgent" : "")">@project.Deadline</span>
+
+                    <div class="avatar-group">
+                        @foreach (var member in project.TeamMembers)
+                        {
+                            <img src="@member.AvatarUrl" alt="@member.Name" title="@member.Name" />
+                        }
+
+                    </div>
                 </div>
-
-                <div class="project-title">@project.ProjectName</div>
-
-                <div class="project-client">Client: @project.Client?.ClientName</div>
-
-                <div class="project-status">Status: @project.Status?.StatusName</div>
-
-                <div class="project-description">@project.Description</div>
-
-                <p class="time-left">
-                    @if (isOverdue)
-                    {
-                        <span class="overdue">Overdue by @Math.Abs(daysLeft) day(s)</span>
-                    }
-                    else
-                    {
-                        <span class="on-time">⏳ @daysLeft day(s) left</span>
-                    }
-                </p>
             </div>
         }
     </section>
+
 }
 
 

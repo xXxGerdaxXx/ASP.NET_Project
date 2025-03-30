@@ -13,9 +13,9 @@ public class ProjectEntity
     public string ProjectName { get; set; } = null!;
     public string Description { get; set; } = null!;
 
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public decimal Budget { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public decimal? Budget { get; set; }
 
     // Foreign Key for User who created the project
     public string CreatedByUserId { get; set; } = null!;

@@ -10,6 +10,7 @@
                     console.error("Error: #membersList element not found.");
                     return;
                 }
+
                 membersList.innerHTML = html;
                 attachEventListeners();
             })
@@ -17,6 +18,7 @@
     }
 
     function attachEventListeners() {
+
         document.querySelectorAll(".edit-member-btn").forEach(button => {
             button.addEventListener("click", function () {
                 const memberId = this.getAttribute("data-member-id");
@@ -33,6 +35,8 @@
             addMemberModalButton.addEventListener("click", openAddMemberModal);
         }
     }
+
+
 
 
     function openAddMemberModal() {
@@ -84,47 +88,71 @@
             })
             .catch(error => showErrorMessage("Error loading create member modal."));
     }
-    function validateForm(form) {
-        let isValid = true;
 
-        form.querySelectorAll("[required]").forEach(input => {
-            let errorSpan = input.nextElementSibling;
-            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-                errorSpan = document.createElement("span");
-                errorSpan.classList.add("field-validation-error");
-                input.insertAdjacentElement("afterend", errorSpan);
-            }
+    //function bindLiveValidation(input, errorSpan) {
+    //    if (!input.dataset.validationBound) {
+    //        input.addEventListener("input", function () {
+    //            if (input.value.trim() !== "") {
+    //                input.classList.remove("input-validation-error");
+    //                errorSpan.textContent = "";
+    //                errorSpan.style.display = "none";
+    //            }
+    //        });
+    //        input.dataset.validationBound = "true";
+    //    }
+    //}
 
-            if (input.value.trim() === "") {
-                input.classList.add("input-validation-error");
-                errorSpan.textContent = "This field is required";
-                errorSpan.style.display = "inline";
-                isValid = false;
-            } else {
-                input.classList.remove("input-validation-error");
-                errorSpan.textContent = "";
-                errorSpan.style.display = "none";
-            }
-        });
+    //function validateForm(form) {
+    //    let isValid = true;
 
-        return isValid;
-    }
-    function displayServerErrors(errors) {
-        Object.keys(errors).forEach(key => {
-            const inputField = document.querySelector(`[name="${key}"]`);
-            if (inputField) {
-                let errorSpan = inputField.nextElementSibling;
-                if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-                    errorSpan = document.createElement("span");
-                    errorSpan.classList.add("field-validation-error");
-                    inputField.insertAdjacentElement("afterend", errorSpan);
-                }
-                errorSpan.textContent = errors[key].join(", ");
-                errorSpan.style.display = "inline";
-                inputField.classList.add("input-validation-error");
-            }
-        });
-    }
+    //    form.querySelectorAll("[required]").forEach(input => {
+    //        let errorSpan = input.nextElementSibling;
+
+    //        if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+    //            errorSpan = document.createElement("span");
+    //            errorSpan.classList.add("field-validation-error");
+    //            input.insertAdjacentElement("afterend", errorSpan);
+    //        }
+
+    //        if (input.value.trim() === "") {
+    //            input.classList.add("input-validation-error");
+    //            errorSpan.textContent = "This field is required";
+    //            errorSpan.style.display = "inline";
+    //            isValid = false;
+    //        } else {
+    //            input.classList.remove("input-validation-error");
+    //            errorSpan.textContent = "";
+    //            errorSpan.style.display = "none";
+    //        }
+
+    //        bindLiveValidation(input, errorSpan);
+    //    });
+
+    //    return isValid;
+    //}
+
+
+    //function displayServerErrors(errors) {
+    //    Object.keys(errors).forEach(key => {
+    //        const inputField = document.querySelector(`[name="${key}"]`);
+    //        if (inputField) {
+    //            let errorSpan = inputField.nextElementSibling;
+    //            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
+    //                errorSpan = document.createElement("span");
+    //                errorSpan.classList.add("field-validation-error");
+    //                inputField.insertAdjacentElement("afterend", errorSpan);
+    //            }
+
+    //            errorSpan.textContent = errors[key].join(", ");
+    //            errorSpan.style.display = "inline";
+    //            inputField.classList.add("input-validation-error");
+
+    //            bindLiveValidation(inputField, errorSpan); // 🧠 This is the missing piece
+    //        }
+    //    });
+    //}
+
+
     function loadEditMemberModal(memberId) {
         fetch(`/admin/members/edit/${memberId}`)
             .then(response => response.text())
@@ -200,15 +228,16 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert("Member deleted successfully.");
+                    showSuccessMessage("Member deleted successfully.");
                     document.getElementById("edit-member-modal")?.remove(); // Close modal if open
                     loadMembers(); // Refresh members list
                 } else {
-                    alert("Error: " + data.message);
+                    showErrorMessage("Error: " + data.message);
                 }
             })
             .catch(error => console.error("Error deleting member:", error));
     }
+
     function setupFileUploadPreview(formId) {
         const fileInput = document.querySelector(`#${formId} input[type='file']`);
         const imagePreview = document.querySelector(`#${formId} .image-preview`);

@@ -1,28 +1,37 @@
-﻿@{
+﻿@model ProjectViewModel
+
+@{
     var daysLeft = (Model.EndDate - DateTime.Now).Days;
     var isOverdue = daysLeft < 0;
 }
 
 <div class="project-card">
     <div class="project-actions">
-        <i class="fa-solid fa-ellipsis" data-modal="true" data-target="#edit-project-modal"></i>
+        <i class="fa-solid fa-ellipsis edit-project-btn"
+           data-project-id="@Model.Id"
+           data-modal="true"
+           data-target="#edit-project-modal"></i>
     </div>
 
-    <!-- 🔹 Header: Avatar + Title/Client -->
     <div class="project-header">
         <div class="project-avatar">
-            <img class="project-image"
-                 src="@(string.IsNullOrEmpty(Model.AvatarUrl) ? "/images/Avatar.svg" : Model.AvatarUrl)"
-                 alt="Avatar of @Model.ProjectName" />
+            @if (!string.IsNullOrWhiteSpace(Model.AvatarUrl))
+            {
+                <img class="project-image" src="@Model.AvatarUrl" alt="@Model.Name" />
+            }
+            else
+            {
+                <div class="avatar-placeholder">@Model.Name.Substring(0, 1).ToUpper()</div>
+            }
         </div>
         <div class="project-info">
-            <div class="project-title">@Model.ProjectName</div>
-            <div class="project-client">Client: @Model.Client?.ClientName</div>
+            <div class="project-title">@Model.Name</div>
+            <div class="project-client">Client: @Model.Company</div>
         </div>
     </div>
+
     <div class="project-description">@Model.Description</div>
-    <div class="project-status">Status: @Model.Status?.StatusName</div>
-    <div class="project-budget">💰 @Model.Budget.ToString("C")</div>
+    <div class="project-status">Status: @Model.Status</div>
 
     <p class="time-left">
         @if (isOverdue)
@@ -31,8 +40,14 @@
         }
         else
         {
-            <span class="on-time text-success">⏳ @daysLeft day(s) left</span>
+            <span class="on-time text-success">@daysLeft day(s) left</span>
         }
     </p>
-</div>
 
+    <div class="avatar-group">
+        @foreach (var member in Model.TeamMembers)
+        {
+            <img src="@member.AvatarUrl" alt="@member.Name" title="@member.Name" />
+        }
+    </div>
+</div>

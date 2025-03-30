@@ -5,59 +5,82 @@ using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
+using Infrastructure.DTOs;
+using Infrastructure.Helpers;
 
 namespace MainApp.Controllers;
 
 [Route("projects")]
-public class ProjectsController : Controller
+public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, FileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService) : Controller
 {
-    private readonly IProjectService _projectService;
-    private readonly ILogger<ProjectsController> _logger;
-    private readonly FileService _fileService;
-    private readonly IClientService _clientService;
-    private readonly IMemberService _memberService;
-    private readonly IStatusService _statusService;
-
-    public ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, FileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService)
-    {
-        _projectService = projectService;
-        _logger = logger;
-        _fileService = fileService;
-        _clientService = clientService;
-        _memberService = memberService;
-        _statusService = statusService;
-    }
-
+    private readonly IProjectService _projectService = projectService;
+    private readonly ILogger<ProjectsController> _logger = logger;
+    private readonly FileService _fileService = fileService;
+    private readonly IClientService _clientService = clientService;
+    private readonly IMemberService _memberService = memberService;
+    private readonly IStatusService _statusService = statusService;
 
     [HttpGet("list")]
     public async Task<IActionResult> GetProjectsList()
     {
         var projects = await _projectService.GetAllProjectsAsync();
+        var viewModels = projects.Select(project => new ProjectViewModel
+        {
+            Id = project.Id,
+            AvatarUrl = project.AvatarUrl, 
+            Name = project.ProjectName,
+            Company = project.Client?.ClientName ?? "Unknown",
+            Description = project.Description,
+            Status = project.Status?.StatusName ?? "N/A",
+            Deadline = DateHelper.FormatDeadline(project.EndDate),
+            TeamMembers = project.ProjectMembers.Select(pm => new TeamMember
+            {
+                Name = pm.Member.FirstName + " " + pm.Member.LastName,
+                AvatarUrl = string.IsNullOrWhiteSpace(pm.Member.AvatarUrl) ? "/images/avatar.svg" : pm.Member.AvatarUrl
+            }).ToList()
+        }).ToList();
 
         if (projects == null || !projects.Any())
         {
             _logger.LogWarning(projects == null ? "Projects list is NULL!" : "Projects list is EMPTY!");
-            projects = new List<ProjectEntity>();
+            projects = [];
         }
         else
         {
             _logger.LogInformation($"Retrieved {projects.Count} projects from the database.");
         }
 
-        return PartialView("Partials/Sections/_ProjectTableBody", projects);
+        return PartialView("Partials/Sections/_ProjectTableBody", viewModels);
     }
 
     [HttpGet("")]
     public async Task<IActionResult> Index()
     {
         var projects = await _projectService.GetAllProjectsAsync();
-        return View(projects);
+
+        var viewModels = projects.Select(project => new ProjectViewModel
+        {
+            Id = project.Id,
+            Name = project.ProjectName,
+            Company = project.Client?.ClientName ?? "Unknown",
+            Description = project.Description,
+            Status = project.Status?.StatusName ?? "N/A",
+            Deadline = DateHelper.FormatDeadline(project.EndDate),
+            TeamMembers = project.ProjectMembers.Select(pm => new TeamMember
+            {
+                Name = pm.Member.FirstName + " " + pm.Member.LastName,
+                AvatarUrl = string.IsNullOrWhiteSpace(pm.Member.AvatarUrl) ? "/images/avatar.svg" : pm.Member.AvatarUrl
+            }).ToList()
+        }).ToList();
+
+        return View(viewModels); // ✅ Now passing the correct model type
     }
+
 
     [HttpPost("upload-avatar")]
     public async Task<IActionResult> UploadProjectAvatar(IFormFile file)
     {
-        string? fileUrl = await _fileService.SaveFileAsync(file, "projects"); //  Use FileService
+        string? fileUrl = await _fileService.SaveFileAsync(file, "projects"); 
         if (fileUrl == null)
         {
             return BadRequest("Error uploading file.");
@@ -100,12 +123,12 @@ public class ProjectsController : Controller
         }
 
         string? avatarUrl = null;
-        if (form.ProjectImage != null)
+        if (form.ProjectImage is not null)
         {
             avatarUrl = await _fileService.SaveFileAsync(form.ProjectImage, "projects");
         }
 
-        var newProject = new ProjectEntity
+        var dto = new ProjectDTO
         {
             ProjectName = form.Name,
             Description = form.Description,
@@ -113,24 +136,25 @@ public class ProjectsController : Controller
             EndDate = form.EndDate,
             Budget = form.Budget,
             ClientId = form.ClientId,
-            CreatedByUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "system",
             StatusId = form.StatusId,
-            AvatarUrl = avatarUrl
+            AvatarUrl = avatarUrl,
+            CreatedByUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "system"
         };
 
         try
         {
-            await _projectService.CreateProjectAsync(newProject);
-            _logger.LogInformation("Project Created Successfully: {@Project}", newProject);
+            await _projectService.CreateProjectAsync(dto);
+            _logger.LogInformation("Project Created Successfully: {@DTO}", dto);
 
             return Json(new { success = true });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error Creating Project: {@Form}", form);
+            _logger.LogError(ex, "Error Creating Project: {@DTO}", dto);
             return StatusCode(500, new { success = false, message = "Internal Server Error" });
         }
     }
+
 
     [HttpGet("edit/{id}")]
     public async Task<IActionResult> Edit(int id)
@@ -192,6 +216,7 @@ public class ProjectsController : Controller
             }
 
             project.ProjectName = form.Name;
+            project.ClientId = form.ClientId;
             project.Description = form.Description;
             project.StartDate = form.StartDate;
             project.EndDate = form.EndDate;

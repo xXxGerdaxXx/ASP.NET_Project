@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Infrastructure.Entities;
+using Infrastructure.DTOs;
 
 namespace Infrastructure.Interfaces;
 
@@ -7,7 +8,7 @@ public interface IProjectService
 {
     Task<List<ProjectEntity>> GetAllProjectsAsync();
     Task<ProjectEntity?> GetProjectByIdAsync(int id);
-    Task<ProjectEntity> CreateProjectAsync(ProjectEntity project);
+    Task<ProjectEntity?> CreateProjectAsync(ProjectDTO dto);
     Task<bool> UpdateProjectAsync(ProjectEntity project);
     Task<bool> DeleteProjectAsync(int id);
 }
