@@ -13,12 +13,15 @@ namespace MainApp.Controllers;
 public class AuthController(
     UserManager<UserEntity> userManager,
     SignInManager<UserEntity> signInManager,
-    RoleManager<IdentityRole> roleManager)
-    : Controller
+    RoleManager<IdentityRole> roleManager,
+    IWebHostEnvironment env
+) : Controller
 {
     private readonly UserManager<UserEntity> _userManager = userManager;
     private readonly SignInManager<UserEntity> _signInManager = signInManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+    private readonly IWebHostEnvironment _env = env; 
+
 
     [HttpGet]
     public IActionResult SignIn()
@@ -75,7 +78,8 @@ public class AuthController(
             UserName = model.Email,
             Email = model.Email,
             FirstName = model.FirstName,
-            LastName = model.LastName
+            LastName = model.LastName,
+            AvatarUrl = "/images/default-avatar.png"
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
@@ -134,6 +138,85 @@ public class AuthController(
 
         return RedirectToAction("Dashboard", "Admin");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> EditProfile()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return NotFound();
+
+        var model = new EditProfileViewModel
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            CurrentAvatarUrl = user.AvatarUrl
+        };
+
+        return View(model);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return NotFound();
+
+        user.FirstName = model.FirstName;
+        user.LastName = model.LastName;
+
+        if (model.Avatar != null && model.Avatar.Length > 0)
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".svg" };
+            var extension = Path.GetExtension(model.Avatar.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("Avatar", "Only image files are allowed.");
+                return View(model);
+            }
+
+            // Delete old avatar if it's not the default one
+            if (!string.IsNullOrWhiteSpace(user.AvatarUrl) && user.AvatarUrl != "/images/default-avatar.png")
+            {
+                var oldAvatarPath = Path.Combine(_env.WebRootPath, user.AvatarUrl.TrimStart('/'));
+                if (System.IO.File.Exists(oldAvatarPath))
+                {
+                    System.IO.File.Delete(oldAvatarPath);
+                }
+            }
+
+            // Save new avatar
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "avatars");
+            Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName = Guid.NewGuid() + extension;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await model.Avatar.CopyToAsync(fileStream);
+            }
+
+            user.AvatarUrl = "/uploads/avatars/" + uniqueFileName;
+        }
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (result.Succeeded)
+        {
+            TempData["Success"] = "Profile updated successfully.";
+            return RedirectToAction("EditProfile");
+        }
+
+        foreach (var error in result.Errors)
+            ModelState.AddModelError(string.Empty, error.Description);
+
+        return View(model);
+    }
+
 
 
 }

@@ -1,0 +1,40 @@
+﻿@model EditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<h2>Edit Profile</h2>
+
+<form asp-action="EditProfile" enctype="multipart/form-data" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label>Current Avatar</label><br />
+        <img src="@(string.IsNullOrEmpty(Model.CurrentAvatarUrl) ? "/images/default-avatar.png" : Model.CurrentAvatarUrl)"
+             alt="Avatar" width="100" height="100" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Avatar"></label>
+        <input asp-for="Avatar" type="file" class="form-control-file" />
+        <span asp-validation-for="Avatar" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FirstName"></label>
+        <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LastName"></label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <button type="submit" class="btn btn-">Go back</button>
+</form>
+

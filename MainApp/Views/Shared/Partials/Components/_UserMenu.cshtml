@@ -5,6 +5,12 @@
 @{
     var user = await UserManager.GetUserAsync(User);
     var fullName = user?.FirstName + " " + user?.LastName;
+
+    var avatarFileName = string.IsNullOrWhiteSpace(user?.AvatarUrl)
+        ? "images/default-avatar.png"
+        : user.AvatarUrl.TrimStart('/'); // remove leading slash if needed
+
+    var avatarPath = Url.Content("~/" + avatarFileName);
 }
 
 <div class="user-menu">
@@ -23,8 +29,10 @@
         <!-- Dropdown -->
         <div class="dropdown-content" id="userDropdown">
             <div class="dropdown-item dropdown-header">
-                <img src="~/images/clients/1aad7ab0-caa9-4ee5-9fcf-fe5c8fccc1f9.svg" class="dropdown-avatar" alt="User Avatar" />
-                <div class="dropdown-user-name">@fullName</div>
+                <img src="@avatarPath" class="dropdown-avatar" alt="User Avatar" />
+                <a asp-controller="Auth" asp-action="EditProfile" class="dropdown-user-name">
+                    @fullName
+                </a>
             </div>
 
 
@@ -38,7 +46,7 @@
                 </div>
             </div>
 
-            <form method="post" asp-controller="Account" asp-action="Logout">
+            <form method="post" asp-controller="Auth" asp-action="Logout">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="dropdown-item logout-button">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
@@ -50,6 +58,7 @@
 
     <!-- Always visible avatar (tiny one beside gear, optional) -->
     <div class="avatar-display">
-        <img src="~/images/clients/1aad7ab0-caa9-4ee5-9fcf-fe5c8fccc1f9.svg" alt="User Avatar">
+        <img src="@avatarPath" alt="User Avatar" />
+
     </div>
 </div>

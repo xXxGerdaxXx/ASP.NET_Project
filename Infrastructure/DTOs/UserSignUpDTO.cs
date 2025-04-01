@@ -3,7 +3,7 @@ using Infrastructure.Enums;
 
 namespace Infrastructure.DTOs
 {
-    public class UserDTO
+    public class UserSignUpDTO
     {
         [Required]
         [MaxLength(100, ErrorMessage = "Full name must be at most 100 characters.")]

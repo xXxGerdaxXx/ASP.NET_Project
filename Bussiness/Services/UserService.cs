@@ -11,7 +11,7 @@ public class UserService(IUserRepository userRepository)
     private readonly IUserRepository _userRepository = userRepository;
 
     //  Register User
-    public async Task<ServiceResponse<string>> RegisterUser(UserDTO userDTO)
+    public async Task<ServiceResponse<string>> SignUp(UserSignUpDTO userDTO)
     {
         var response = new ServiceResponse<string>();
 
@@ -54,22 +54,22 @@ public class UserService(IUserRepository userRepository)
         return response;
     }
 
-    // ✅ Get All Users
+    // Get All Users
     public async Task<List<UserEntity>> GetAllUsersAsync()
     {
         return await _userRepository.GetAllAsync();
     }
 
-    // ✅ Authenticate User
+    // Authenticate User
     public async Task<UserEntity?> AuthenticateUserAsync(string email, string password)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);
 
         if (user == null || !PasswordHasher.VerifyPassword(password, user.PasswordHash))
         {
-            return null; // ❌ Authentication failed
+            return null;
         }
 
-        return user; // ✅ Authentication successful
+        return user; 
     }
 }

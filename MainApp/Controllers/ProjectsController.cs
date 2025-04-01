@@ -73,7 +73,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             }).ToList()
         }).ToList();
 
-        return View(viewModels); // ✅ Now passing the correct model type
+        return View(viewModels); 
     }
 
 
@@ -177,7 +177,10 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             Budget = project.Budget,
             StatusId = project.StatusId, 
             StatusList = new SelectList(statuses, "Id", "StatusName"),
-            ClientList = new SelectList(clients, "Id", "ClientName")
+            ClientList = new SelectList(clients, "Id", "ClientName"),
+            AvatarUrl = string.IsNullOrWhiteSpace(project.AvatarUrl)
+            ? "/images/Avatar.svg"
+            : project.AvatarUrl
 
         };
 

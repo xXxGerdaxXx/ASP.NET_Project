@@ -16,6 +16,8 @@ public class UserEntity : IdentityUser
     [ProtectedPersonalData]
     public string LastName { get; set; } = null!;
 
+    public string? AvatarUrl { get; set; }
+
     public JobTitle JobTitle { get; set; }
 
     public List<ProjectEntity>? CreatedProjects { get; set; } = [];

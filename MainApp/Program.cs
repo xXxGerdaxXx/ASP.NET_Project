@@ -23,6 +23,8 @@ builder.Services.AddIdentity<UserEntity, IdentityRole>()
 
 // ? MVC
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
 
 // ? Infrastructure - Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -65,5 +67,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

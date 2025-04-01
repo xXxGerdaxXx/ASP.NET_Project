@@ -1390,7 +1390,6 @@ footer {
 .dropdown-header {
     display: flex;
     align-items: center;
-    gap: 10px;
     padding: 10px 15px;
 
 }
@@ -1407,6 +1406,8 @@ footer {
     font-weight: var(--font-semibold);
     color: var(--text-color);
     cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
     transition: background 0.3s ease;
 }
 
@@ -1420,7 +1421,7 @@ footer {
     display: none;
     position: absolute;
     top: 45px;
-    right: 100px; /* Aligns right edge with gear */
+    right: 100px; 
     background: var(--white-100);
     border-radius: 14px;
     width: 300px;
@@ -1429,7 +1430,7 @@ footer {
     padding: 0.5rem 0;
 }
 
-/* Optional: Avatar next to gear icon */
+/* Avatar next to gear icon */
 .avatar-display {
     width: 40px;
     height: 40px;
