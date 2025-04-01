@@ -12,7 +12,8 @@
             <input asp-for="Id" readonly type="hidden" /> <!-- ✅ Ensure the ID is passed -->
 
             <div class="image-previewer circle">
-                <img src="" class="image-preview" />
+                <img src="@(!string.IsNullOrEmpty(Model.AvatarUrl) ? Model.AvatarUrl : "/images/Avatar.svg")"
+                     class="image-preview" />
                 <input asp-for="File" type="file" accept="image/*" class="hide" />
             </div>
 

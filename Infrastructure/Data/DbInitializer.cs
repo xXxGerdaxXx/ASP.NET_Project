@@ -12,7 +12,7 @@ public static class DbInitializer
         var userManager = serviceProvider.GetRequiredService<UserManager<UserEntity>>();
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        string adminEmail = "admin@yourapp.com";
+        string adminEmail = "admin@domain.com";
         string adminPassword = "Admin@1234"; 
 
         if (!await roleManager.RoleExistsAsync("Admin"))

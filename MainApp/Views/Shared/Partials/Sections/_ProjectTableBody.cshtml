@@ -13,51 +13,10 @@ else
     <section id="projectsList" class="project-grid">
         @foreach (var project in Model)
         {
-            var isUrgent = project.Deadline.Contains("day") && project.Deadline.Contains("left") && project.Deadline.Contains("5");
+            <partial name="Partials/Sections/_ProjectCard" model="project" />
 
-            <div class="project-card">
-                <div class="card-header">
-                    <div class="avatar-group">
-                    <div class="card-logo" style="background-color: #fef3c7;">
-                        @if (!string.IsNullOrWhiteSpace(project.AvatarUrl))
-                        {
-                            <img src="@project.AvatarUrl" alt="@project.Name" />
-                        }
-                        else
-                        {
-                            @project.Name.Substring(0, 1).ToUpper()
-                        }
-                    </div>
-                    </div>
-
-                    <div>
-                        <div class="card-title">@project.Name</div>
-                        <div class="card-desc">@project.Company</div>
-                    </div>
-                    <div class="member-actions">
-                    <i class="fa-solid fa-ellipsis edit-project-btn"
-                       data-project-id="@project.Id"
-                       data-modal="true"
-                       data-target="#edit-project-modal"></i></div>
-                </div>
-
-                <div class="card-desc">@project.Description</div>
-
-                <div class="card-footer">
-                    <span class="time-label @(isUrgent ? "urgent" : "")">@project.Deadline</span>
-
-                    <div class="avatar-group">
-                        @foreach (var member in project.TeamMembers)
-                        {
-                            <img src="@member.AvatarUrl" alt="@member.Name" title="@member.Name" />
-                        }
-
-                    </div>
-                </div>
-            </div>
         }
     </section>
-
 }
 
 

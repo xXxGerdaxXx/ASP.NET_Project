@@ -1939,7 +1939,7 @@ table {
 
 .project-card {
     background-color: var(--surface-color);
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 1.5rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     width: 100%;
@@ -1985,8 +1985,8 @@ table {
 }
 
 .project-title {
-    font-size: 1.2rem;
-    font-weight: var(--font-bold);
+    font-size: 18px;
+    font-weight: var(--font-semibold);
     color: var(--headline-color);
 }
 
@@ -1994,7 +1994,8 @@ table {
 .project-status,
 .project-description,
 .project-budget {
-    font-size: 0.95rem;
+    font-size: 15px;
+    font-weight: var(--font-regular);
     color: var(--text-muted-color);
     line-height: 1.4;
 }
@@ -2201,9 +2202,56 @@ table {
 }
 
     .avatar-group img {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
         border: 2px solid white;
         margin-left: -8px;
     }
+
+.project-actions {
+    position: relative;
+    margin-left: auto; 
+    align-self: flex-start; 
+}
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    padding: 0.5rem 0;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: #111827;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s ease;
+}
+
+    .dropdown-item:hover {
+        background-color: #f9fafb;
+    }
+
+    .dropdown-item.text-danger {
+        color: #dc2626;
+    }
+
+        .dropdown-item.text-danger:hover {
+            background-color: #fef2f2;
+        }

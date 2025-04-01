@@ -217,6 +217,11 @@ public class AuthController(
         return View(model);
     }
 
+    public IActionResult Denied()
+    {
+        return View();
+    }
+
 
 
 }

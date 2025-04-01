@@ -8,7 +8,7 @@
 
     var avatarFileName = string.IsNullOrWhiteSpace(user?.AvatarUrl)
         ? "images/default-avatar.png"
-        : user.AvatarUrl.TrimStart('/'); // remove leading slash if needed
+        : user.AvatarUrl.TrimStart('/'); 
 
     var avatarPath = Url.Content("~/" + avatarFileName);
 }
