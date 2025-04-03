@@ -55,7 +55,7 @@
                     modal.querySelector("#closeAddProjectModal")?.addEventListener("click", () => {
                         modal.remove();
                     });
-                    // 🧠 Tom Select initialization
+                    // Tom Select initialization
                     const teamMemberSelect = modal.querySelector("#teamMemberSelect");
                     if (teamMemberSelect && typeof TomSelect !== 'undefined') {
                         new TomSelect(teamMemberSelect, {
@@ -128,6 +128,17 @@
                     });
 
                     setupFileUploadPreview("editProjectForm");
+                    // INIT TOM SELECT for team members
+                    const teamMemberSelect = modal.querySelector("#editTeamMemberSelect");
+                    if (teamMemberSelect && typeof TomSelect !== 'undefined') {
+                        new TomSelect(teamMemberSelect, {
+                            plugins: ['remove_button'],
+                            placeholder: "Select team members...",
+                            persist: false,
+                            create: false
+                        });
+                    }
+
                     setupEditFormSubmission(projectId);
 
                     const deleteButton = modal.querySelector("#deleteProjectBtn");

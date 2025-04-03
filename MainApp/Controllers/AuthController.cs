@@ -24,8 +24,9 @@ public class AuthController(
 
 
     [HttpGet]
-    public IActionResult SignIn()
+    public IActionResult SignIn(string returnUrl = "~/")
     {
+        ViewBag.ReturnUrl = returnUrl;
         return View();
     }
 
@@ -240,7 +241,13 @@ public class AuthController(
 
     public async Task<IActionResult> ExternalSignInCallback(string returnUrl = null!, string remoteError = null!)
     {
-        returnUrl ??= Url.Content("~/");
+        if (!string.IsNullOrEmpty(returnUrl) || returnUrl == "/") 
+        {
+            returnUrl = Url.Content("/dashboard");
+        }
+
+       
+        
 
         if (!string.IsNullOrEmpty(remoteError))
         {
@@ -286,7 +293,8 @@ public class AuthController(
 
             var identityResult = await _userManager.CreateAsync(user);
             if (identityResult.Succeeded)
-            { 
+            {
+                await _userManager.AddToRoleAsync(user, "User");
                 await _userManager.AddLoginAsync(user, info);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return LocalRedirect(returnUrl);

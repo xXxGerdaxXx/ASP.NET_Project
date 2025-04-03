@@ -173,7 +173,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
 
         if (project == null) return NotFound();
 
-
+        var allMembers = await _memberService.GetAllMembersAsync();
 
         var model = new ProjectEditFormModel
         {
@@ -183,14 +183,20 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             StartDate = project.StartDate,
             EndDate = project.EndDate,
             Budget = project.Budget,
-            StatusId = project.StatusId, 
-            StatusList = new SelectList(statuses, "Id", "StatusName"),
+            StatusId = project.StatusId,
+            ClientId = project.ClientId,
+            AvatarUrl = string.IsNullOrWhiteSpace(project.AvatarUrl) ? "/images/Avatar.svg" : project.AvatarUrl,
             ClientList = new SelectList(clients, "Id", "ClientName"),
-            AvatarUrl = string.IsNullOrWhiteSpace(project.AvatarUrl)
-            ? "/images/Avatar.svg"
-            : project.AvatarUrl
-
+            StatusList = new SelectList(statuses, "Id", "StatusName"),
+            TeamMemberList = allMembers.Select(m => new SelectListItem
+            {
+                Value = m.Id.ToString(),
+                Text = $"{m.FirstName} {m.LastName}",
+                Selected = project.ProjectMembers.Any(pm => pm.MemberId == m.Id) // pre-select members
+            }).ToList(),
+            SelectedTeamMemberIds = project.ProjectMembers.Select(pm => pm.MemberId).ToList()
         };
+
 
         return PartialView("~/Views/Shared/Partials/Sections/_EditProject.cshtml", model);
     }
