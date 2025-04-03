@@ -55,7 +55,19 @@
                     modal.querySelector("#closeAddProjectModal")?.addEventListener("click", () => {
                         modal.remove();
                     });
-
+                    // 🧠 Tom Select initialization
+                    const teamMemberSelect = modal.querySelector("#teamMemberSelect");
+                    if (teamMemberSelect && typeof TomSelect !== 'undefined') {
+                        new TomSelect(teamMemberSelect, {
+                            plugins: ['remove_button'],
+                            placeholder: "Select or search for team members...",
+                            persist: false,
+                            create: false,
+                            closeAfterSelect: false
+                        });
+                    } else {
+                        console.warn("TomSelect not loaded or #teamMemberSelect not found.");
+                    }
                     // Setup file preview (if used)
                     if (typeof setupFileUploadPreview === 'function') {
                         setupFileUploadPreview("createProjectForm");
@@ -94,68 +106,8 @@
             })
             .catch(error => console.error("Error loading create project modal:", error));
     }
-    //function bindLiveValidation(input, errorSpan) {
-    //    if (!input.dataset.validationBound) {
-    //        input.addEventListener("input", function () {
-    //            if (input.value.trim() !== "") {
-    //                input.classList.remove("input-validation-error");
-    //                errorSpan.textContent = "";
-    //                errorSpan.style.display = "none";
-    //            }
-    //        });
-    //        input.dataset.validationBound = "true";
-    //    }
-    //}
-
-    //function validateForm(form) {
-    //    let isValid = true;
-
-    //    form.querySelectorAll("[required]").forEach(input => {
-    //        let errorSpan = input.nextElementSibling;
-
-    //        if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-    //            errorSpan = document.createElement("span");
-    //            errorSpan.classList.add("field-validation-error");
-    //            input.insertAdjacentElement("afterend", errorSpan);
-    //        }
-
-    //        if (input.value.trim() === "") {
-    //            input.classList.add("input-validation-error");
-    //            errorSpan.textContent = "This field is required";
-    //            errorSpan.style.display = "inline";
-    //            isValid = false;
-    //        } else {
-    //            input.classList.remove("input-validation-error");
-    //            errorSpan.textContent = "";
-    //            errorSpan.style.display = "none";
-    //        }
-
-    //        bindLiveValidation(input, errorSpan);
-    //    });
-
-    //    return isValid;
-    //}
 
 
-    //function displayServerErrors(errors) {
-    //    Object.keys(errors).forEach(key => {
-    //        const inputField = document.querySelector(`[name="${key}"]`);
-    //        if (inputField) {
-    //            let errorSpan = inputField.nextElementSibling;
-    //            if (!errorSpan || !errorSpan.classList.contains("field-validation-error")) {
-    //                errorSpan = document.createElement("span");
-    //                errorSpan.classList.add("field-validation-error");
-    //                inputField.insertAdjacentElement("afterend", errorSpan);
-    //            }
-
-    //            errorSpan.textContent = errors[key].join(", ");
-    //            errorSpan.style.display = "inline";
-    //            inputField.classList.add("input-validation-error");
-
-    //            bindLiveValidation(inputField, errorSpan); // 🧠 This is the missing piece
-    //        }
-    //    });
-    //}
     function loadEditProjectModal(projectId) {
         fetch(`/projects/edit/${projectId}`)
             .then(response => response.text())

@@ -1,0 +1,8 @@
+﻿<form asp-controller="Auth" asp-action="ExternalSignIn" method="post" class="external-account" novalidate>
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+    <button type="submit" name="provider" value="Google" class="google-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" />
+        Log In with Google
+    </button>
+</form>

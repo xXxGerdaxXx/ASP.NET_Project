@@ -15,7 +15,6 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
     private readonly ILogger<MembersController> _logger = logger;
     private readonly FileService _fileService = fileService;
 
-    // THIS RETURNS THE PARTIAL VIEW (NOT A FULL PAGE)
     [HttpGet("list")]
     public async Task<IActionResult> GetMembersList()
     {
@@ -31,13 +30,13 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             _logger.LogInformation($"Retrieved {members.Count} members from the database.");
         }
 
-        return PartialView("Partials/Sections/_MemberTableBody", members); // ✅ Returns only the partial!
+        return PartialView("Partials/Sections/_MemberTableBody", members); 
     }
 
     [HttpPost("upload-avatar")]
     public async Task<IActionResult> UploadClientAvatar(IFormFile file)
     {
-        string? fileUrl = await _fileService.SaveFileAsync(file, "members"); //  Use FileService
+        string? fileUrl = await _fileService.SaveFileAsync(file, "members"); 
         if (fileUrl == null)
         {
             return BadRequest("Error uploading file.");

@@ -20,7 +20,7 @@ public class AuthController(
     private readonly UserManager<UserEntity> _userManager = userManager;
     private readonly SignInManager<UserEntity> _signInManager = signInManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
-    private readonly IWebHostEnvironment _env = env; 
+    private readonly IWebHostEnvironment _env = env;
 
 
     [HttpGet]
@@ -45,7 +45,7 @@ public class AuthController(
 
         if (!result.Succeeded)
         {
-            ModelState.AddModelError("", "Invalid email or password.");
+            ModelState.AddModelError("Invalid", "Invalid email or password.");
             return View(model);
         }
 
@@ -222,6 +222,85 @@ public class AuthController(
         return View();
     }
 
+    #region External Logins
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult ExternalSignIn(string provider, string returnUrl = null!)
+    {
+        if (string.IsNullOrEmpty(provider))
+        {
+            ModelState.AddModelError("", "Invalid provider");
+            return View("SignIn");
+        }
+        var redirectUrl = Url.Action("ExternalSignInCallback", "Auth", new { returnUrl })!;
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
 
+        return Challenge(properties, provider);
+    }
+
+    public async Task<IActionResult> ExternalSignInCallback(string returnUrl = null!, string remoteError = null!)
+    {
+        returnUrl ??= Url.Content("~/");
+
+        if (!string.IsNullOrEmpty(remoteError))
+        {
+            ModelState.AddModelError("", $"Error from external provider: {remoteError}");
+            return View("SignIn");
+        }
+
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+        if (info == null)
+            return RedirectToAction("SignIn");
+
+
+        var signInResult = await _signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider,
+            info.ProviderKey,
+            isPersistent: false,
+            bypassTwoFactor: true
+        );
+
+        if (signInResult.Succeeded)
+        {
+            return LocalRedirect(returnUrl);
+        }
+        else
+        {
+            string firstName = string.Empty;
+            string lastName = string.Empty;
+            try
+            {
+                firstName = info.Principal.FindFirstValue(ClaimTypes.GivenName)!;
+                lastName = info.Principal.FindFirstValue(ClaimTypes.Surname)!;
+
+            } catch { }
+            string email = info.Principal.FindFirstValue(ClaimTypes.Email)!;
+            string username = $"ext_{info.LoginProvider.ToLower()}_{email}";
+            var user = new UserEntity
+            {
+                Email = email,
+                UserName = username, 
+                FirstName = firstName,
+                LastName = lastName
+            };
+
+            var identityResult = await _userManager.CreateAsync(user);
+            if (identityResult.Succeeded)
+            { 
+                await _userManager.AddLoginAsync(user, info);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return LocalRedirect(returnUrl);
+            }
+
+            foreach (var error in identityResult.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View("SignIn");
+            
+        }
+    }
+
+    #endregion
 
 }

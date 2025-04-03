@@ -46,9 +46,27 @@ namespace Infrastructure.Services
                 CreatedByUserId = dto.CreatedByUserId
             };
 
+            // Step 1: Create the project
             var createdProject = await _projectRepository.CreateAsync(newProject);
+            if (createdProject == null)
+                return null;
+
+            // Step 2: Save team members to ProjectMemberEntity table
+            if (dto.TeamMemberIds != null && dto.TeamMemberIds.Any())
+            {
+                createdProject.ProjectMembers = dto.TeamMemberIds.Select(memberId => new ProjectMemberEntity
+                {
+                    ProjectId = createdProject.Id,
+                    MemberId = memberId
+                }).ToList();
+
+                // Update the project with the associated members
+                await _projectRepository.UpdateAsync(createdProject);
+            }
+
             return createdProject;
         }
+
 
 
         public async Task<bool> UpdateProjectAsync(ProjectEntity project)

@@ -13,11 +13,6 @@
         <form id="editProfileForm" method="post" asp-controller="Auth" asp-action="EditProfile" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-
-
-
-
-
             <div class="image-previewer square">
                 <img src="@(!string.IsNullOrEmpty(Model.CurrentAvatarUrl) ? Model.CurrentAvatarUrl : "/uploads/projects.svg")"
                      class="image-preview" />

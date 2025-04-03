@@ -37,6 +37,12 @@ public class ProjectEditFormModel
     [Display(Name = "Budget", Prompt = "Enter project budget")]
     public decimal? Budget { get; set; }
 
+    public List<SelectListItem> TeamMemberList { get; set; } = [];
+
+    [Display(Name = "Members")]
+    public List<int> SelectedTeamMemberIds { get; set; } = [];
+
+
     [Display(Name = "Project Image")]
     public IFormFile? ProjectImage { get; set; }
 

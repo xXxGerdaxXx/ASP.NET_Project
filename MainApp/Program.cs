@@ -4,6 +4,7 @@ using Infrastructure.Entities;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// ? Register DbContext
+// Register DbContext
 builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
 
-// ? Register Identity
+// Register Identity
 builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 8;
@@ -26,22 +27,25 @@ builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.LoginPath = "/auth/signin";
     options.AccessDeniedPath = "/auth/denied";
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
-// ? MVC
+// MVC
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 
-// ? Infrastructure - Repositories
+// Infrastructure - Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
-// ? Business - Services
+// Business - Services
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -52,29 +56,46 @@ builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProjectService>();
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!; 
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+});
+
 var app = builder.Build();
 
-// ? Seed Admin User & Role
+// Seed Admin User & Role
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await DbInitializer.SeedAdminAsync(services);
 }
 
-// ? Middleware
+// Middleware
 app.UseHsts();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Identity Auth
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax, // or None with secure HTTPS
+});
+app.UseAuthentication(); 
 app.UseAuthorization();
 
-// ? Routing
+// Routing
+app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.MapRazorPages();
 

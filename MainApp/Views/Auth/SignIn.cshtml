@@ -4,11 +4,17 @@
     <div class="form-container">
         <div class="form-box">
             <h2>Log In</h2>
-
+@* 
             <button class="google-btn">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
                 Log In with Google
+
             </button>
+ *@
+
+
+            @await Html.PartialAsync("_ExternalAuthenticationPartial", Model)
+
 
             <div class="divider">
                 <span>OR</span>

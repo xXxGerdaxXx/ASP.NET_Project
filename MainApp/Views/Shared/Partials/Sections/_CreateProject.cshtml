@@ -51,11 +51,18 @@
                 </div>
             </div>
 
-@*             <div class="form-group team-member-search-container">
-                <label asp-for="TeamMemberSearch"></label>
-                <input asp-for="TeamMemberSearch" placeholder="Search Team Members..." class="form-control" />
-                <span asp-validation-for="TeamMemberSearch" class="text-danger"></span>
-            </div> *@
+            <div class="form-group">
+                <label asp-for="SelectedTeamMemberIds"></label>
+                <select asp-for="SelectedTeamMemberIds"
+                        asp-items="Model.TeamMemberList"
+                        id="teamMemberSelect"
+                        class="form-control"
+                        multiple>
+                </select>
+                <span asp-validation-for="SelectedTeamMemberIds" class="text-danger"></span>
+            </div>
+
+
             <div class="form-group">
                 <label asp-for="StatusId"></label>
                 <select asp-for="StatusId" asp-items="Model.StatusList" class="form-control">

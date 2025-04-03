@@ -32,8 +32,10 @@ public class ProjectCreateFormModel
     //[Display(Name = "Members")]
     //public string TeamMemberSearch { get; set; } = null!;
 
-    //[Display(Name = "Selected Team Members")]
-    //public List<int> SelectedTeamMemberIds { get; set; } = [];
+    public List<SelectListItem> TeamMemberList { get; set; } = [];
+
+    [Display(Name = "Members")]
+    public List<int> SelectedTeamMemberIds { get; set; } = [];
 
     [Required(ErrorMessage = "Budget is required.")]
     [Range(0, double.MaxValue, ErrorMessage = "Budget must be a positive number.")]

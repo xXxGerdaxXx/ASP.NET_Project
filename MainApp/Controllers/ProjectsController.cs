@@ -94,15 +94,22 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     {
         var clients = await _clientService.GetAllClientsAsync();
         var statuses = await _statusService.GetAllAsync();
+        var members = await _memberService.GetAllMembersAsync();
 
         var model = new ProjectCreateFormModel
         {
             ClientList = new SelectList(clients, "Id", "ClientName"),
-            StatusList = new SelectList(statuses, "Id", "StatusName")
+            StatusList = new SelectList(statuses, "Id", "StatusName"),
+            TeamMemberList = members.Select(m => new SelectListItem
+            {
+                Value = m.Id.ToString(),
+                Text = $"{m.FirstName} {m.LastName}"
+            }).ToList()
         };
 
         return PartialView("Partials/Sections/_CreateProject", model);
     }
+
 
 
 
@@ -135,6 +142,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             StartDate = form.StartDate,
             EndDate = form.EndDate,
             Budget = form.Budget,
+            TeamMemberIds = form.SelectedTeamMemberIds,
             ClientId = form.ClientId,
             StatusId = form.StatusId,
             AvatarUrl = avatarUrl,
