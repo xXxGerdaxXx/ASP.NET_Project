@@ -50,16 +50,13 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="SelectedTeamMemberIds"></label>
-                <select asp-for="SelectedTeamMemberIds"
-                        asp-items="Model.TeamMemberList"
-                        id="editTeamMemberSelect"
-                        class="form-control"
-                        multiple>
-                </select>
-                <span asp-validation-for="SelectedTeamMemberIds" class="text-danger"></span>
+            <div id="edit-tags" class="form-input form-tag-select">
+                <label class="form-label">Members</label>
+                <input type="text" id="edit-tag-search" class="form-tag-input" placeholder="Add member(s)..." />
+                <label for="edit-tag-search" class="fa-solid fa-ellipsis"></label>
+                <div id="edit-tag-search-results" class="search-results"></div>
             </div>
+
 
             <div class="form-group">
                 <label asp-for="StatusId"></label>

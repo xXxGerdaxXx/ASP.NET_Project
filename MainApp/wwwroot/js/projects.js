@@ -18,7 +18,6 @@
     }
 
     function attachEventListeners() {
-
         document.querySelectorAll(".edit-project-btn").forEach(button => {
             button.addEventListener("click", function () {
                 const projectId = this.getAttribute("data-project-id");
@@ -36,44 +35,45 @@
         fetch('/projects/create')
             .then(response => response.text())
             .then(html => {
-                // Remove any existing modal to prevent duplicates
                 const existingModal = document.getElementById("add-project-modal");
                 if (existingModal) existingModal.remove();
 
-                // Add the new modal HTML
                 const modalContainer = document.createElement("div");
                 modalContainer.innerHTML = html;
                 document.body.appendChild(modalContainer);
 
-                // Open modal
                 const modal = document.getElementById("add-project-modal");
                 if (modal) {
                     modal.classList.add("active");
                     modal.style.display = "flex";
 
-                    // Close button
                     modal.querySelector("#closeAddProjectModal")?.addEventListener("click", () => {
                         modal.remove();
                     });
-                    // Tom Select initialization
-                    const teamMemberSelect = modal.querySelector("#teamMemberSelect");
-                    if (teamMemberSelect && typeof TomSelect !== 'undefined') {
-                        new TomSelect(teamMemberSelect, {
-                            plugins: ['remove_button'],
-                            placeholder: "Select or search for team members...",
-                            persist: false,
-                            create: false,
-                            closeAfterSelect: false
-                        });
-                    } else {
-                        console.warn("TomSelect not loaded or #teamMemberSelect not found.");
-                    }
-                    // Setup file preview (if used)
+                    console.log("Calling initTagSelector...");
+                    initTagSelector({
+                        containerId: 'tagged-members',
+                        inputId: 'member-search',
+                        resultsId: 'member-search-results',
+                        searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
+                        displayProperty: 'tagName',
+                        imageProperty: 'avatar',
+                        tagClass: 'tag',
+                        tagType: 'member',
+                        avatarFolder: '',
+                        emptyMessage: 'No members found.',
+                        preselected: []
+                    });
+
                     if (typeof setupFileUploadPreview === 'function') {
                         setupFileUploadPreview("createProjectForm");
                     }
 
-                    // Handle form submit
+                    // Enable client-side validation on dynamically added form
+                    if (window.jQuery && $.validator && $.validator.unobtrusive) {
+                        $.validator.unobtrusive.parse("#createProjectForm");
+                    }
+
                     const form = modal.querySelector("#createProjectForm");
                     if (form) {
                         form.addEventListener("submit", function (event) {
@@ -91,14 +91,13 @@
                                         showSuccessMessage("Project created successfully!");
                                         location.reload();
                                     } else {
-                                        if (data.errors && typeof displayServerErrors === 'function') {
+                                        if (data.errors) {
                                             displayServerErrors(data.errors);
                                         } else {
                                             showErrorMessage(data.message || "An unknown error occurred.");
                                         }
                                     }
                                 })
-
                                 .catch(error => console.error("Error creating project:", error));
                         });
                     }
@@ -106,7 +105,6 @@
             })
             .catch(error => console.error("Error loading create project modal:", error));
     }
-
 
     function loadEditProjectModal(projectId) {
         fetch(`/projects/edit/${projectId}`)
@@ -128,15 +126,23 @@
                     });
 
                     setupFileUploadPreview("editProjectForm");
-                    // INIT TOM SELECT for team members
-                    const teamMemberSelect = modal.querySelector("#editTeamMemberSelect");
-                    if (teamMemberSelect && typeof TomSelect !== 'undefined') {
-                        new TomSelect(teamMemberSelect, {
-                            plugins: ['remove_button'],
-                            placeholder: "Select team members...",
-                            persist: false,
-                            create: false
-                        });
+
+                    initTagSelector({
+                        containerId: 'edit-tags',
+                        inputId: 'edit-tag-search',
+                        resultsId: 'edit-tag-search-results',
+                        searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
+                        displayProperty: 'tagName',
+                        imageProperty: 'avatar',
+                        tagClass: 'tag',
+                        tagType: 'member',
+                        avatarFolder: '',
+                        emptyMessage: 'No members found.',
+                        preselected: JSON.parse(document.getElementById("SelectedIds").value || '[]')
+                    });
+
+                    if (window.jQuery && $.validator && $.validator.unobtrusive) {
+                        $.validator.unobtrusive.parse("#editProjectForm");
                     }
 
                     setupEditFormSubmission(projectId);
@@ -182,6 +188,7 @@
                 .catch(error => showErrorMessage("Error updating project."));
         });
     }
+
     function deleteProject(projectId) {
         if (!confirm("Are you sure you want to delete this project?")) return;
 
@@ -195,14 +202,15 @@
             .then(data => {
                 if (data.success) {
                     showSuccessMessage("Project deleted successfully.");
-                    document.getElementById("edit-project-modal")?.remove(); // Close modal if open
-                    loadProjects(); // Refresh projects list
+                    document.getElementById("edit-project-modal")?.remove();
+                    loadProjects();
                 } else {
                     showErrorMessage("Error: " + data.message);
                 }
             })
             .catch(error => console.error("Error deleting project:", error));
     }
+
     function setupFileUploadPreview(formId) {
         const fileInput = document.querySelector(`#${formId} input[type='file']`);
         const imagePreview = document.querySelector(`#${formId} .image-preview`);
@@ -231,5 +239,15 @@
         const existingModal = document.getElementById(modalId);
         if (existingModal) existingModal.remove();
     }
-});
 
+    // ✅ Displays server-side validation errors in form
+    function displayServerErrors(errors) {
+        for (const [field, messages] of Object.entries(errors)) {
+            const span = document.querySelector(`[data-valmsg-for="${field}"]`);
+            if (span) {
+                span.innerText = messages.join(", ");
+                span.classList.add("text-danger");
+            }
+        }
+    }
+});

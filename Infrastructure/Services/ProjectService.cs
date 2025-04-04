@@ -67,12 +67,40 @@ namespace Infrastructure.Services
             return createdProject;
         }
 
-
-
-        public async Task<bool> UpdateProjectAsync(ProjectEntity project)
+        public async Task<bool> UpdateProjectAsync(ProjectUpdateDTO dto)
         {
+            var project = await _projectRepository.GetByIdAsync(dto.Id);
+            if (project == null)
+            {
+                Console.WriteLine("Project not found.");
+                return false;
+            }
+
+            // Update project properties
+            project.ProjectName = dto.ProjectName;
+            project.Description = dto.Description;
+            project.StartDate = dto.StartDate;
+            project.EndDate = dto.EndDate;
+            project.Budget = dto.Budget;
+            project.ClientId = dto.ClientId;
+            project.StatusId = dto.StatusId;
+            project.AvatarUrl = dto.AvatarUrl;
+
+            // Update team members:
+            project.ProjectMembers.Clear();
+            if (dto.TeamMemberIds != null && dto.TeamMemberIds.Any())
+            {
+                project.ProjectMembers = dto.TeamMemberIds.Select(memberId => new ProjectMemberEntity
+                {
+                    ProjectId = project.Id,
+                    MemberId = memberId
+                }).ToList();
+            }
+
             return await _projectRepository.UpdateAsync(project);
         }
+
+
 
         public async Task<bool> DeleteProjectAsync(int projectId)
         {

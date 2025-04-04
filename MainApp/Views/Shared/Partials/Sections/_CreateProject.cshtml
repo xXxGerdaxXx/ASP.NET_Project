@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <div class="form-group">
+@*             <div class="form-group">
                 <label asp-for="SelectedTeamMemberIds"></label>
                 <select asp-for="SelectedTeamMemberIds"
                         asp-items="Model.TeamMemberList"
@@ -60,8 +60,27 @@
                         multiple>
                 </select>
                 <span asp-validation-for="SelectedTeamMemberIds" class="text-danger"></span>
-            </div>
+            </div> *@
 
+@*             <div class="form-group">
+                <label class="form-label">Tags</label>
+
+                <div class="search-input-wrapper">
+                    <input type="text" id="tag-search" class="form-tag-input" placeholder="Add tag(s)..." />
+                    <i class="fa-solid fa-ellipsis search-icon"></i>
+                </div>
+
+                <div id="tag-search-results" class="search-results"></div>
+            </div> *@
+
+            <div class="form-group">
+                <label class="form-label">Members</label>
+                <div id="tagged-members" class="form-input form-tag-select">
+                    <input type="text" id="member-search" class="form-tag-input" placeholder="Add member(s)..." />
+@*                     <label for="member-search" class="fa-solid fa-ellipsis"></label> *@
+                    <div id="member-search-results" class="search-results"></div>
+                </div>
+            </div>
 
             <div class="form-group">
                 <label asp-for="StatusId"></label>
@@ -70,7 +89,6 @@
                 </select>
                 <span asp-validation-for="StatusId" class="text-danger"></span>
             </div>
-
 
             <div class="form-group">
                 <label asp-for="Budget"></label>
@@ -87,3 +105,21 @@
         </form>
     </div>
 </div>
+@* <script>
+    const preSelectedMemberTags = [];
+
+    initTagSelector({
+        containerId: 'tagged-members',
+        inputId: 'member-search',
+        resultsId: 'member-search-results',
+        searchUrl: (query) => '@Url.Action("SearchMembers", "Members")' + '?term=' + encodeURIComponent(query),
+        displayProperty: 'tagName',
+        imageProperty: 'avatar', 
+        tagClass: 'user-tag',
+        tagType: 'member',       
+        avatarFolder: '',        
+        emptyMessage: 'No members found.',
+        preselected: preSelectedMemberTags
+    });
+</script>
+ *@

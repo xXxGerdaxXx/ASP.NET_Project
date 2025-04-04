@@ -170,10 +170,10 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         var project = await _projectService.GetProjectByIdAsync(id);
         var statuses = await _statusService.GetAllAsync();
         var clients = await _clientService.GetAllClientsAsync();
-
-        if (project == null) return NotFound();
-
         var allMembers = await _memberService.GetAllMembersAsync();
+
+        if (project == null)
+            return NotFound();
 
         var model = new ProjectEditFormModel
         {
@@ -188,18 +188,19 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             AvatarUrl = string.IsNullOrWhiteSpace(project.AvatarUrl) ? "/images/Avatar.svg" : project.AvatarUrl,
             ClientList = new SelectList(clients, "Id", "ClientName"),
             StatusList = new SelectList(statuses, "Id", "StatusName"),
+            // Here you set up the team members list:
             TeamMemberList = allMembers.Select(m => new SelectListItem
             {
                 Value = m.Id.ToString(),
                 Text = $"{m.FirstName} {m.LastName}",
-                Selected = project.ProjectMembers.Any(pm => pm.MemberId == m.Id) // pre-select members
+                Selected = project.ProjectMembers.Any(pm => pm.MemberId == m.Id)
             }).ToList(),
             SelectedTeamMemberIds = project.ProjectMembers.Select(pm => pm.MemberId).ToList()
         };
 
-
         return PartialView("~/Views/Shared/Partials/Sections/_EditProject.cshtml", model);
     }
+
 
 
     [HttpPost("editproject")]
@@ -221,8 +222,10 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         try
         {
             var project = await _projectService.GetProjectByIdAsync(form.Id);
-            if (project == null) return NotFound();
+            if (project == null)
+                return NotFound();
 
+            // Update the avatar if a new image is provided
             if (form.ProjectImage != null)
             {
                 var uploadedFilePath = await _fileService.SaveFileAsync(form.ProjectImage, "projects");
@@ -232,17 +235,30 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
                 }
             }
 
-            project.ProjectName = form.Name;
-            project.ClientId = form.ClientId;
-            project.Description = form.Description;
-            project.StartDate = form.StartDate;
-            project.EndDate = form.EndDate;
-            project.Budget = form.Budget;
-            project.StatusId = form.StatusId;
+            // Create the update DTO
+            var updateDto = new ProjectUpdateDTO
+            {
+                Id = project.Id,
+                ProjectName = form.Name,
+                Description = form.Description,
+                StartDate = form.StartDate,
+                EndDate = form.EndDate,
+                Budget = form.Budget,
+                ClientId = form.ClientId,
+                StatusId = form.StatusId,
+                AvatarUrl = project.AvatarUrl, // use the updated avatar if available
+                TeamMemberIds = form.SelectedTeamMemberIds,
+                // Optionally set CreatedByUserId if needed
+                CreatedByUserId = project.CreatedByUserId
+            };
 
-            await _projectService.UpdateProjectAsync(project);
+            bool success = await _projectService.UpdateProjectAsync(updateDto);
+            if (!success)
+            {
+                return NotFound();
+            }
+
             _logger.LogInformation("Project updated successfully: {@Project}", project);
-
             return Json(new { success = true });
         }
         catch (Exception ex)
@@ -251,6 +267,8 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             return StatusCode(500, new { success = false, message = "Error updating project." });
         }
     }
+
+
 
 
     [HttpPost("delete/{projectId}")]

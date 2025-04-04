@@ -201,5 +201,28 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
         }
     }
 
+    [HttpGet("search")]
+    public async Task<JsonResult> SearchMembers(string term)
+    {
+        if (string.IsNullOrWhiteSpace(term))
+            return Json(new List<object>());
+
+        var members = await _memberService.GetAllMembersAsync();
+
+        var filtered = members
+            .Where(m => m.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                        m.LastName.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .Select(m => new
+            {
+                id = m.Id,
+                tagName = $"{m.FirstName} {m.LastName}",
+                avatar = string.IsNullOrWhiteSpace(m.AvatarUrl) ? "/images/avatar.svg" : m.AvatarUrl
+            })
+            .ToList();
+
+        return Json(filtered);
+
+    }
+
 
 }

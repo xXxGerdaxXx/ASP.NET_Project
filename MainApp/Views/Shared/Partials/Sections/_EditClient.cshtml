@@ -9,7 +9,7 @@
         <form id="editClientForm" asp-action="EditClient" novalidate asp-controller="Clients" method="post" enctype="multipart/form-data">
         
 
-            <input asp-for="Id" readonly type="hidden" /> <!-- ✅ Ensure the ID is passed -->
+            <input asp-for="Id" readonly type="hidden" /> <!-- Ensure the ID is passed -->
 
             <div class="image-previewer circle">
                 <img src="@(!string.IsNullOrEmpty(Model.AvatarUrl) ? Model.AvatarUrl : "/images/Avatar.svg")"
