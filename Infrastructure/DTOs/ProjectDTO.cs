@@ -7,7 +7,7 @@ public class ProjectDTO
     public string Description { get; set; } = null!;
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public List<int> TeamMemberIds { get; set; } = [];
+    public List<int> ProjectMemberIds { get; set; } = new();
     public decimal? Budget { get; set; }
     public int ClientId { get; set; }
     public int StatusId { get; set; }

@@ -11,13 +11,13 @@
         </header>
 
         <form novalidate id="createProjectForm" method="post" asp-controller="Projects" asp-action="Create" enctype="multipart/form-data">
-            <!-- 🔹 Validation Summary for Global Errors -->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="image-previewer square">
-                <img src="" class="image-preview" />
+                <img src="#" alt="Image Preview" class="image-preview d-none" />
                 <input asp-for="ProjectImage" type="file" accept="image/*" class="hide" />
             </div>
+
 
             <div class="form-group">
                 <label asp-for="Name"></label>
@@ -27,9 +27,17 @@
 
             <div class="form-group">
                 <label asp-for="ClientId"></label>
-                <select asp-for="ClientId" asp-items="Model.ClientList" class="form-control"></select>
+                <select asp-for="ClientId" asp-items="Model.ClientList" class="form-control">
+                    <option value="">-- Select a client --</option>
+                </select>
                 <span asp-validation-for="ClientId" class="text-danger"></span>
             </div>
+
+@*             <div class="form-group">
+                <label asp-for="ClientId"></label>
+                <select asp-for="ClientId" asp-items="Model.ClientList" class="form-control"></select>
+                <span asp-validation-for="ClientId" class="text-danger"></span>
+            </div> *@
 
             <div class="form-group">
                 <label asp-for="Description"></label>
@@ -51,34 +59,16 @@
                 </div>
             </div>
 
-@*             <div class="form-group">
-                <label asp-for="SelectedTeamMemberIds"></label>
-                <select asp-for="SelectedTeamMemberIds"
-                        asp-items="Model.TeamMemberList"
-                        id="teamMemberSelect"
-                        class="form-control"
-                        multiple>
-                </select>
-                <span asp-validation-for="SelectedTeamMemberIds" class="text-danger"></span>
-            </div> *@
-
-@*             <div class="form-group">
-                <label class="form-label">Tags</label>
-
-                <div class="search-input-wrapper">
-                    <input type="text" id="tag-search" class="form-tag-input" placeholder="Add tag(s)..." />
-                    <i class="fa-solid fa-ellipsis search-icon"></i>
-                </div>
-
-                <div id="tag-search-results" class="search-results"></div>
-            </div> *@
 
             <div class="form-group">
                 <label class="form-label">Members</label>
                 <div id="tagged-members" class="form-input form-tag-select">
                     <input type="text" id="member-search" class="form-tag-input" placeholder="Add member(s)..." />
-@*                     <label for="member-search" class="fa-solid fa-ellipsis"></label> *@
+                    <label for="member-search"></label>
                     <div id="member-search-results" class="search-results"></div>
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <!-- This input must exist! -->
+                    <input type="hidden" name="SelectedTeamMemberIds" id="SelectedTeamMemberIds" />
                 </div>
             </div>
 

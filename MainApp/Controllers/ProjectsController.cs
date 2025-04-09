@@ -4,7 +4,7 @@ using Infrastructure.Services;
 using MainApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Net;
+using System.Text.Json;
 using Infrastructure.DTOs;
 using Infrastructure.Helpers;
 
@@ -76,7 +76,6 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         return View(viewModels); 
     }
 
-
     [HttpPost("upload-avatar")]
     public async Task<IActionResult> UploadProjectAvatar(IFormFile file)
     {
@@ -110,9 +109,6 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         return PartialView("Partials/Sections/_CreateProject", model);
     }
 
-
-
-
     [HttpPost("create")]
     public async Task<IActionResult> CreateProject(ProjectCreateFormModel form)
     {
@@ -142,7 +138,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             StartDate = form.StartDate,
             EndDate = form.EndDate,
             Budget = form.Budget,
-            TeamMemberIds = form.SelectedTeamMemberIds,
+            ProjectMemberIds = form.SelectedTeamMemberIds,  
             ClientId = form.ClientId,
             StatusId = form.StatusId,
             AvatarUrl = avatarUrl,
@@ -163,7 +159,6 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         }
     }
 
-
     [HttpGet("edit/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
@@ -174,6 +169,15 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
 
         if (project == null)
             return NotFound();
+
+        var preselected = project.ProjectMembers.Select(pm => new
+        {
+            id = pm.MemberId,
+            tagName = $"{pm.Member.FirstName} {pm.Member.LastName}",
+            avatar = string.IsNullOrWhiteSpace(pm.Member.AvatarUrl) ? "/images/avatar.svg" : pm.Member.AvatarUrl
+        }).ToList();
+
+        ViewBag.PreselectedTeamMembersJson = JsonSerializer.Serialize(preselected);
 
         var model = new ProjectEditFormModel
         {
@@ -188,19 +192,19 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             AvatarUrl = string.IsNullOrWhiteSpace(project.AvatarUrl) ? "/images/Avatar.svg" : project.AvatarUrl,
             ClientList = new SelectList(clients, "Id", "ClientName"),
             StatusList = new SelectList(statuses, "Id", "StatusName"),
-            // Here you set up the team members list:
+
             TeamMemberList = allMembers.Select(m => new SelectListItem
             {
                 Value = m.Id.ToString(),
                 Text = $"{m.FirstName} {m.LastName}",
                 Selected = project.ProjectMembers.Any(pm => pm.MemberId == m.Id)
             }).ToList(),
+
             SelectedTeamMemberIds = project.ProjectMembers.Select(pm => pm.MemberId).ToList()
         };
 
         return PartialView("~/Views/Shared/Partials/Sections/_EditProject.cshtml", model);
     }
-
 
 
     [HttpPost("editproject")]
@@ -225,7 +229,6 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             if (project == null)
                 return NotFound();
 
-            // Update the avatar if a new image is provided
             if (form.ProjectImage != null)
             {
                 var uploadedFilePath = await _fileService.SaveFileAsync(form.ProjectImage, "projects");
@@ -235,7 +238,6 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
                 }
             }
 
-            // Create the update DTO
             var updateDto = new ProjectUpdateDTO
             {
                 Id = project.Id,
@@ -246,9 +248,8 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
                 Budget = form.Budget,
                 ClientId = form.ClientId,
                 StatusId = form.StatusId,
-                AvatarUrl = project.AvatarUrl, // use the updated avatar if available
+                AvatarUrl = project.AvatarUrl, 
                 TeamMemberIds = form.SelectedTeamMemberIds,
-                // Optionally set CreatedByUserId if needed
                 CreatedByUserId = project.CreatedByUserId
             };
 
@@ -267,7 +268,6 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             return StatusCode(500, new { success = false, message = "Error updating project." });
         }
     }
-
 
 
 

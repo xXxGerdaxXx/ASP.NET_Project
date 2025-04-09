@@ -48,9 +48,10 @@ public class ProjectCreateFormModel
 
     public SelectList StatusList { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
 
-
     public string? AvatarUrl { get; set; } 
 
     [Display(Name = "Project Image")]
     public IFormFile? ProjectImage { get; set; }
 }
+
+

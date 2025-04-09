@@ -152,3 +152,23 @@
         }
     }
 });
+
+// Toggle the dropdown menu for the project actions *@
+ function toggleDropdown(button) { 
+            const menu = button.nextElementSibling; 
+
+                // Close other open dropdowns
+         document.querySelectorAll('.dropdown-menu').forEach(m => {
+                        if (m !== menu) m.style.display = 'none';
+                        }); 
+
+                             // Toggle the clicked menu *@
+                     menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; 
+                            } 
+
+                          // Close the dropdown if the user clicks outside *@
+    document.addEventListener("click", function (e) { 
+               if (!e.target.closest('.project-actions')) { 
+             document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none'); 
+                        } 
+                        }); 

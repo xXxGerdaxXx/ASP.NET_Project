@@ -52,9 +52,9 @@ namespace Infrastructure.Services
                 return null;
 
             // Step 2: Save team members to ProjectMemberEntity table
-            if (dto.TeamMemberIds != null && dto.TeamMemberIds.Any())
+            if (dto.ProjectMemberIds != null && dto.ProjectMemberIds.Any())
             {
-                createdProject.ProjectMembers = dto.TeamMemberIds.Select(memberId => new ProjectMemberEntity
+                createdProject.ProjectMembers = dto.ProjectMemberIds.Select(memberId => new ProjectMemberEntity
                 {
                     ProjectId = createdProject.Id,
                     MemberId = memberId

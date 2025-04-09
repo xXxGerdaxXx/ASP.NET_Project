@@ -657,10 +657,14 @@ form .field-validation-error {
         border-radius: 14px !important;
         outline: none;
     }
+    .input-icon-wrapper input {
+        padding-left: 1.5rem; 
+    }
 
         .input-group input:focus {
             border-color: var(--blue-accent);
         }
+
 
 /* === Checkbox Group (Shared) === */
 .checkbox-group {
@@ -1617,13 +1621,29 @@ footer {
         outline: none;
     }
 
+.form-control.form-tag-preview {
+    position: relative;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0.4rem 2rem 0.4rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    gap: 0.5rem;
+}
+
 .search-icon {
     position: absolute;
-    right: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    color: var(--gray-700);
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 1rem;
+    pointer-events: none;
 }
+
 
 .input-icon-wrapper {
     position: relative;
@@ -1634,7 +1654,7 @@ footer {
 
     .input-icon-wrapper i {
         position: absolute;
-        left: 12px; /* Adjust icon position */
+        left: 12px; 
         font-size: 14px;
         color: var(--gray-700);
         cursor: pointer;
@@ -1651,18 +1671,138 @@ footer {
         font-size: 16px;
     }
 .search-results {
-    background-color: var(--form-input-background-color);
-    border: 1px solid var(--form-input-border-color);
-    border-top: none;
-    border-radius: 0 0 13px 13px;
-    padding: 1rem;
-    width: 100%;
     position: absolute;
-    top: 85%;
+    top: 66%; /* appear directly below the input */
     left: 0;
-    z-index: 10;
+    width: 100%;
+    background-color: var(--white-100);
+    border: 1px solid var(--gray-300);
+    border-top: none;
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 200;
+    margin-top: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0;
     display: none;
 }
+
+    .search-results ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-radius: 14px;
+}
+
+    .search-item:hover {
+        background-color: var(--gray-100);
+    }
+
+.search-item-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.search-item .member-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.search-item .member-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+/*.search-results li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 10px 10px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}*/
+/*
+    .search-results li:hover {
+        background-color: var(--gray-100);
+    }
+*/
+
+.form-tag-select {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid var(--gray-300);
+    padding: 0.5rem;
+    border-radius: 14px;
+    background-color: var(--white-100);
+    position: relative;
+    min-height: 56px;
+}
+
+.form-tag-input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    padding: 0.3rem;
+    min-width: 150px;
+    font-family: var(--font-standard);
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--white-300);
+    border: 1px solid var(--gray-300);
+    padding: 0.4rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-color);
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+.member-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.btn-remove {
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--gray-700);
+    transition: color 0.2s ease;
+}
+
+    .btn-remove:hover {
+        color: var(--red-dark);
+    }
+
+    .search-results .member-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-color);
+    }
+
 /* Tag style for selected members (pill layout) */
 .tag {
     display: inline-flex;
@@ -1690,7 +1830,6 @@ footer {
     background-color: var(--white-100);
 }
 
-
     /* Small circular avatar inside the tag */
     .tag img.member-avatar {
         width: 22px;
@@ -1700,7 +1839,7 @@ footer {
         object-fit: cover;
     }
 
-    /* Optional: Name inside tag */
+    /* Name inside tag */
     .tag .tag-name {
         margin-right: 0.4rem;
     }
@@ -1713,9 +1852,10 @@ footer {
         margin-left: 0.3rem;
     }
 
-        .tag .btn-remove:hover {
-            color: var(--red-dark);
-        }
+    .tag .btn-remove:hover {
+        color: var(--red-dark);
+    }
+
 .member-avatar {
     width: 24px;
     height: 24px;
@@ -1739,11 +1879,10 @@ footer {
         color: var(--dark-400);
     }
 
-
-.team-member-search-container{
+/*.team-member-search-container{
     margin-bottom: 1rem;
     margin-top: 1rem;
-}
+}*/
 /* Image Previewer */
 .image-previewer {
     border: 2px dashed var(--border-color);
@@ -1767,10 +1906,10 @@ footer {
         transform: translate(-50%, -50%);
     }
     .image-previewer::after {
-        content: '\f030'; /* FontAwesome Camera Icon */
-        font-family: "Font Awesome 6 Free"; /* Ensure correct font is used */
+        content: '\f030'; 
+        font-family: "Font Awesome 6 Free"; 
         font-weight: 900;
-        background-color: rgba(68, 68, 68, 0.6); /* Dark gray with 70% opacity */
+        background-color: rgba(68, 68, 68, 0.6); 
         color: var(--white-100);
         width: 40px;
         height: 40px;
@@ -1804,7 +1943,6 @@ footer {
     input[type="file"] {
         display: none;
     }
-
 
     /* lists */
 
@@ -2328,11 +2466,11 @@ table {
 }
 
     .avatar-group img {
-        width: 56px;
-        height: 56px;
+        width: 30px;
+        height: 30px;
         border-radius: 14px;
         border: 2px solid white;
-        margin-left: -8px;
+
     }
 
 .project-actions {

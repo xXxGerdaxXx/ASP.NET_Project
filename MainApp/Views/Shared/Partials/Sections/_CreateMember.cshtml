@@ -13,13 +13,15 @@
         </header>
 
         <form novalidate method="post" id="createMemberForm" asp-controller="Members" enctype="multipart/form-data">
-            <!-- 🔹 Validation Summary for Global Errors -->
+            <!-- Validation Summary for Global Errors -->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="image-previewer circle">
-                <img src="" class="image-preview" />
+                <i class="fa-solid fa-camera camera-icon"></i>
+                <img src="#" alt="Image Preview" class="image-preview d-none" />
                 <input asp-for="File" type="file" accept="image/*" class="hide" />
             </div>
+
 
             <div class="sidebyside-fields">
                 <!-- First Name -->

@@ -17,4 +17,19 @@ public class ProjectRepository(AppDbContext context) : BaseRepository<ProjectEnt
 
             .ToListAsync();
     }
+
+    public override async Task<ProjectEntity?> GetByIdAsync(int id)
+    {
+        return await _context.Projects
+            .Where(p => p.Id == id)
+            .Include(p => p.Client)
+            .Include(p => p.Status)
+            .Include(p => p.ProjectMembers)
+            .ThenInclude(pm => pm.Member)
+            .FirstOrDefaultAsync();
+
+
+    }
+
+    
 }

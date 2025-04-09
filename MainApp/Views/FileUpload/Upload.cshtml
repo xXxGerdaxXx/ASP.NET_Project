@@ -32,29 +32,31 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const fileInput = document.querySelector("#File")
-        if (!fileInput) return
+        document.querySelectorAll('.image-previewer').forEach(previewer => {
+            const input = previewer.querySelector('input[type="file"]');
+            const img = previewer.querySelector('.image-preview');
 
-        fileInput.addEventListener("change", (e) => {
-            const file = e.target.files[0]
-            const circle = document.querySelector("#circle-container")
-            const img = document.querySelector("#image-preview")
+            if (!input || !img) return;
 
-            if (file) {
-                const reader = new FileReader()
-
-                reader.onload = (e) => {
-                    img.src = e.target.result
-                    img.classList.remove("d-none")
-                    circle.classList.add("d-none")
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        img.src = event.target.result;
+                        img.classList.remove("d-none");
+                        previewer.classList.add("selected"); 
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    img.src = "";
+                    img.classList.add("d-none");
+                    previewer.classList.remove("selected"); 
                 }
+            });
 
-                reader.readAsDataURL(file)
-
-            } else {
-                img.classList.add("d-none")
-                circle.classList.remove("d-none")
-            }
-        })
-    })
+            previewer.addEventListener("click", () => input.click());
+        });
+    });
+ 
 </script>

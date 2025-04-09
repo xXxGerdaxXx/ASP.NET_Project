@@ -52,24 +52,24 @@
                     });
                     console.log("Calling initTagSelector...");
                     initTagSelector({
-                        containerId: 'tagged-members',
-                        inputId: 'member-search',
-                        resultsId: 'member-search-results',
+                        containerId: 'tagged-members',    
+                        inputId: 'member-search',         
+                        resultsId: 'member-search-results', 
                         searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
-                        displayProperty: 'tagName',
-                        imageProperty: 'avatar',
+                        displayProperty: 'tagName',       
+                        imageProperty: 'avatar',           
                         tagClass: 'tag',
                         tagType: 'member',
                         avatarFolder: '',
                         emptyMessage: 'No members found.',
-                        preselected: []
+                        preselected: [],                  
+                        hiddenInputId: 'SelectedTeamMemberIds'  
                     });
 
                     if (typeof setupFileUploadPreview === 'function') {
                         setupFileUploadPreview("createProjectForm");
                     }
 
-                    // Enable client-side validation on dynamically added form
                     if (window.jQuery && $.validator && $.validator.unobtrusive) {
                         $.validator.unobtrusive.parse("#createProjectForm");
                     }
@@ -107,8 +107,13 @@
     }
 
     function loadEditProjectModal(projectId) {
+
+        console.log("1")
+
         fetch(`/projects/edit/${projectId}`)
             .then(response => response.text())
+
+            console.log(respone)
             .then(html => {
                 removeExistingModal("edit-project-modal");
 
@@ -125,21 +130,27 @@
                         modal.remove();
                     });
 
-                    setupFileUploadPreview("editProjectForm");
+                    setupFileUploadPreview(projectId);
+
+                    const preSelectedMembersJson = document.getElementById("editProjectForm").dataset.preselectedMembers;
+                    const preSelectedMembers = JSON.parse(preSelectedMembersJson || "[]");
+                    console.log("Preselected members:", preSelectedMembers);
 
                     initTagSelector({
-                        containerId: 'edit-tags',
-                        inputId: 'edit-tag-search',
-                        resultsId: 'edit-tag-search-results',
+                        containerId: 'edit-tags',                
+                        inputId: 'edit-tag-search',              
+                        resultsId: 'edit-tag-search-results',    
                         searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
-                        displayProperty: 'tagName',
-                        imageProperty: 'avatar',
+                        displayProperty: 'tagName',              
+                        imageProperty: 'avatar',              
                         tagClass: 'tag',
                         tagType: 'member',
                         avatarFolder: '',
                         emptyMessage: 'No members found.',
-                        preselected: JSON.parse(document.getElementById("SelectedIds").value || '[]')
+                        preselected: preSelectedMembers,         
+                        hiddenInputId: 'SelectedTeamMemberIds'     
                     });
+
 
                     if (window.jQuery && $.validator && $.validator.unobtrusive) {
                         $.validator.unobtrusive.parse("#editProjectForm");
@@ -157,6 +168,7 @@
             })
             .catch(error => console.error("Error loading edit project modal.", error));
     }
+
 
     function setupEditFormSubmission(projectId) {
         const editForm = document.getElementById("editProjectForm");
@@ -240,7 +252,6 @@
         if (existingModal) existingModal.remove();
     }
 
-    // ✅ Displays server-side validation errors in form
     function displayServerErrors(errors) {
         for (const [field, messages] of Object.entries(errors)) {
             const span = document.querySelector(`[data-valmsg-for="${field}"]`);
