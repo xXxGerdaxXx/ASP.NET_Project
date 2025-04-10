@@ -1341,14 +1341,13 @@ footer {
     font-size: 14px;
     color: var(--text-color);
     cursor: pointer;
-
     transition: background 0.3s ease;
 }
 
     .dropdown-item:hover {
         background-color: #F5F7FA;
         border-radius: 14px;
-        margin: 0.3rem;
+       /* margin: 0.3rem;*/
     }
 
 .logout-button {
@@ -1923,11 +1922,17 @@ footer {
         display: none;
     }
 
-    /* lists */
+.image-preview:not([src]),
+.image-preview[src=""] {
+    display: none;
+}
 
-    .client-list {
-        height: 100%;
-    }
+
+
+/* lists */
+.client-list {
+    height: 100%;
+}
     .client-list table tr {
         grid-template-areas: "check info location phone date status actions";
         grid-template-columns: auto 3fr 3fr 2fr 2fr 2fr 50px;
@@ -1983,7 +1988,7 @@ footer {
         .team-member-list li:hover {
             background: var(--gray-100);
         }
-/* Ritch rext editor section */
+/* Ritch text editor section */
 .quill-wrapper {
     border: 1px solid var(--border-color);
     border-radius: 14px;

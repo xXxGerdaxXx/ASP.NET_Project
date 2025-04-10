@@ -13,18 +13,16 @@
         </header>
 
         <form novalidate method="post" id="createMemberForm" asp-controller="Members" enctype="multipart/form-data">
-            <!-- Validation Summary for Global Errors -->
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="image-previewer circle">
-                <i class="fa-solid fa-camera camera-icon"></i>
-                <img src="#" alt="Image Preview" class="image-preview d-none" />
+                <img src="" alt="Image Preview" class="image-preview d-none" />
                 <input asp-for="File" type="file" accept="image/*" class="hide" />
             </div>
 
 
             <div class="sidebyside-fields">
-                <!-- First Name -->
                 <div class="form-group">
                     <label asp-for="FirstName"></label>
                     <div class="field-group">
@@ -33,7 +31,6 @@
                     </div>
                 </div>
 
-                <!-- Last Name -->
                 <div class="form-group">
                     <label asp-for="LastName"></label>
                     <div class="field-group">
@@ -42,7 +39,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Email -->
             <div class="form-group">
                 <label asp-for="Email"></label>
                 <div class="field-group">
@@ -51,7 +47,6 @@
                 </div>
             </div>
 
-            <!-- Phone -->
             <div class="form-group">
                 <label asp-for="PhoneNumber"></label>
                 <div class="field-group">
