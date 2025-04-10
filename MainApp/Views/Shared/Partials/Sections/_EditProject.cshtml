@@ -44,7 +44,12 @@
 
             <div class="form-group">
                 <label asp-for="Description"></label>
-                <textarea asp-for="Description" class="form-control textarea"></textarea>
+                <input type="hidden" asp-for="Description" id="Description" />
+                <div class="quill-wrapper">
+                    <div id="quill-editor"></div>
+                    <div id="quill-toolbar"></div>
+                </div>
+
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
@@ -103,27 +108,3 @@
     </div>
 </div>
 
-
-@* <script> *@
-@*     document.addEventListener("DOMContentLoaded", function () { *@
-
-@*         const preSelectedMembersJson = document.getElementById("editProjectForm").dataset.preselectedMembers; *@
-@*         const preSelectedMembers = JSON.parse(preSelectedMembersJson || "[]"); *@
-@*         console.log("Preselected Members:", preSelectedMembers); *@
-
-@*         initTagSelector({ *@
-@*             containerId: 'edit-tags',                 *@
-@*             inputId: 'edit-tag-search',               *@
-@*             resultsId: 'edit-tag-search-results',     *@
-@*             searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`, *@
-@*             displayProperty: 'tagName',               *@
-@*             imageProperty: 'avatar',               *@
-@*             tagClass: 'tag', *@
-@*             tagType: 'member', *@
-@*             avatarFolder: '', *@
-@*             emptyMessage: 'No members found.', *@
-@*             preselected: preSelectedMembers,          *@
-@*             hiddenInputId: 'SelectedTeamMemberIds'      *@
-@*         }); *@
-@*     }); *@
-@* </script> *@

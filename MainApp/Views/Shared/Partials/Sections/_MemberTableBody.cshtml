@@ -15,29 +15,23 @@ else
         @foreach (var member in Model)
         {
             <div class="member-card">
-                <!-- More Options Button -->
                 <div class="member-actions">
                     <div class="member-actions">
                         <i class="fa-solid fa-ellipsis edit-member-btn" data-member-id="@member.Id"></i>
                     </div>
 
                 </div>
-
-                <!-- Profile Avatar -->
-
                 <div class="member-image">
                     <img src="@(!string.IsNullOrEmpty(member.AvatarUrl) ? member.AvatarUrl : "/images/Avatar.svg")"
                          alt="Avatar of @member.FirstName @member.LastName"
                          class="avatar-img" />
                 </div>
 
-                <!-- Member Details -->
                 <h3 class="member-name">@member.FirstName @member.LastName</h3>
                 <div class="member-role">@EnumHelper.GetEnumDescription(member.JobTitle)</div>
                 <div class="member-email">@member.Email</div>
                 <div class="member-phone">@member.PhoneNumber</div>
 
-                <!-- Contact Button -->
                 <button class="message-btn" aria-label="Send message to @member.FirstName @member.LastName">
                     Message
                 </button>

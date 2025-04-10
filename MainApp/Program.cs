@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ? Logging
+//  Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
@@ -31,6 +31,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/auth/denied";
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.HttpOnly = true;
+    options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromHours(1); 
 });
 
 // MVC
@@ -86,7 +89,7 @@ app.UseRouting();
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.Lax, // or None with secure HTTPS
+    MinimumSameSitePolicy = SameSiteMode.Lax, 
 });
 app.UseAuthentication(); 
 app.UseAuthorization();

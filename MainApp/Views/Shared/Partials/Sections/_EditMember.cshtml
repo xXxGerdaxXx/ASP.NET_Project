@@ -8,15 +8,14 @@
         </header>
 
         <form id="editMemberForm" asp-action="EditMember" method="post" enctype="multipart/form-data" novalidate asp-controller="Admin">
-            <input asp-for="Id" type="hidden" /> <!-- Ensure ID is passed -->
-            <!-- Profile Image -->
+            <input asp-for="Id" type="hidden" />
+
             <div class="image-previewer circle">
                 <img src="@(!string.IsNullOrEmpty(Model.AvatarUrl) ? Model.AvatarUrl : "/images/Avatar.svg")"
                      class="image-preview" />
                 <input asp-for="File" accept="image/*" class="hide" />
             </div>
 
-            <!-- First Name and Last Name in the Same Row -->
             <div class="sidebyside-fields">
                 <div class="form-group">
                     <label asp-for="FirstName"></label>
@@ -55,7 +54,6 @@
                 <span asp-validation-for="Address"></span>
             </div>
 
-            <!-- Birthdate Fields (Dropdowns) -->
             <div class="form-group">
                 <label>Date of Birth</label>
                 <div class="date-inputs">

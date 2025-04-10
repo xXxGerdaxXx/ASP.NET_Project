@@ -1,10 +1,13 @@
 ﻿@model ProjectViewModel
 
 @{
-    var validEndDate = Model.EndDate != default(DateTime);
-    var daysLeft = validEndDate ? (Model.EndDate - DateTime.Now).Days : 0;
-    var isOverdue = validEndDate && daysLeft < 0;
+    var validEndDate = Model.EndDate.HasValue;
+    var totalDaysLeft = validEndDate ? (Model.EndDate.Value - DateTime.Now).TotalDays : 0;
+    var daysLeft = (int)Math.Ceiling(totalDaysLeft);
+    var isOverdue = validEndDate && totalDaysLeft < 0;
 }
+
+
 
 <div class="project-card">
     <div class="card-header">
@@ -63,6 +66,7 @@
             <span class="time-label">@daysLeft day(s) left</span>
         }
 
+
         <div class="avatar-group">
             @foreach (var member in Model.TeamMembers)
             {
@@ -72,167 +76,3 @@
     </div>
 </div>
 
-
-<script>
-
-     function loadEditProjectModal(projectId) {
-
-        console.log("1")
-
-        fetch(`/projects/edit/${projectId}`)
-            .then(response => response.text())
-
-       
-            .then(html => {
-                // removeExistingModal("edit-project-modal");
-
-                const modalContainer = document.createElement("div");
-                modalContainer.innerHTML = html;
-                document.body.appendChild(modalContainer);
-
-                const modal = document.getElementById("edit-project-modal");
-                if (modal) {
-                    modal.classList.add("active");
-                    modal.style.display = "flex";
-
-                    modal.querySelector("#closeEditProjectModal")?.addEventListener("click", function () {
-                        modal.remove();
-                    });
-
-                 
-
-                    const preSelectedMembersJson = document.getElementById("editProjectForm").dataset.preselectedMembers;
-                    const preSelectedMembers = JSON.parse(preSelectedMembersJson || "[]");
-                    console.log("Preselected members:", preSelectedMembers);
-
-                    initTagSelector({
-                        containerId: 'edit-tags',
-                        inputId: 'edit-tag-search',
-                        resultsId: 'edit-tag-search-results',
-                        searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
-                        displayProperty: 'tagName',
-                        imageProperty: 'avatar',
-                        tagClass: 'tag',
-                        tagType: 'member',
-                        avatarFolder: '',
-                        emptyMessage: 'No members found.',
-                        preselected: preSelectedMembers,
-                        hiddenInputId: 'SelectedTeamMemberIds'
-                    });
-
-
-                    if (window.jQuery && $.validator && $.validator.unobtrusive) {
-                        $.validator.unobtrusive.parse("#editProjectForm");
-                    }
-
-                  
-
-                    const deleteButton = modal.querySelector("#deleteProjectBtn");
-                    if (deleteButton) {
-                        deleteButton.addEventListener("click", function () {
-                            deleteProject(projectId);
-                        });
-                    }
-                }
-            })
-            .catch(error => console.error("Error loading edit project modal.", error));
-    }
-
-</script>
-
-@* <script> *@
-@*     // Toggle the dropdown menu for the project actions *@
-@*     function toggleDropdown(button) { *@
-@*         const menu = button.nextElementSibling; *@
-
-@*         // Close other open dropdowns *@
-@*         document.querySelectorAll('.dropdown-menu').forEach(m => { *@
-@*             if (m !== menu) m.style.display = 'none'; *@
-@*         }); *@
-
-@*         // Toggle the clicked menu *@
-@*         menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; *@
-@*     } *@
-
-@*     // Close the dropdown if the user clicks outside *@
-@*     document.addEventListener("click", function (e) { *@
-@*         if (!e.target.closest('.project-actions')) { *@
-@*             document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none'); *@
-@*         } *@
-@*     }); *@
-
-@*     // Load the modal to edit the project *@
-@*     function loadEditProjectModal(projectId) { *@
-
-@*         console.log("projectcard") *@
-@*         fetch(`/projects/edit/${projectId}`) *@
-@*             .then(response => response.text()) *@
-@*             .then(html => { *@
-@*                 // Remove any existing modal to prevent duplicates *@
-@*                 removeExistingModal("edit-project-modal"); *@
-
-@*                 console.log(response) *@
-
-@*                 const modalContainer = document.createElement("div"); *@
-@*                 modalContainer.innerHTML = html; *@
-@*                 document.body.appendChild(modalContainer); *@
-
-@*                 const modal = document.getElementById("edit-project-modal"); *@
-@*                 if (modal) { *@
-@*                     modal.classList.add("active"); *@
-@*                     modal.style.display = "flex"; *@
-
-@*                     modal.querySelector("#closeEditProjectModal")?.addEventListener("click", function () { *@
-@*                         modal.remove(); *@
-@*                     }); *@
-
-@*                     // setupFileUploadPreview("editProjectForm"); *@
-@*                     // setupEditFormSubmission(projectId); *@
-
-@*                     const deleteButton = modal.querySelector("#deleteProjectBtn"); *@
-@*                     if (deleteButton) { *@
-@*                         deleteButton.addEventListener("click", function () { *@
-@*                             deleteProject(projectId); *@
-@*                         }); *@
-@*                     } *@
-@*                 } *@
-@*             }) *@
-@*             .catch(error => console.error("Error loading edit project modal.", error)); *@
-@*     } *@
-
-@*     // Utility function to remove any existing modal before appending a new one *@
-@*     function removeExistingModal(modalId) { *@
-@*         const existingModal = document.getElementById(modalId); *@
-@*         if (existingModal) existingModal.remove(); *@
-@*     } *@
-
-@*     // Handle form submission for editing the project (to be implemented in your modal) *@
-@*     function setupEditFormSubmission(projectId) { *@
-@*         const editForm = document.getElementById("editProjectForm"); *@
-@*         if (!editForm) { *@
-@*             console.error("Edit form not found!"); *@
-@*             return; *@
-@*         } *@
-
-@*         editForm.addEventListener("submit", function (event) { *@
-@*             event.preventDefault(); *@
-@*             const formData = new FormData(editForm); *@
-
-@*             fetch(`/projects/editproject`, { *@
-@*                 method: 'POST', *@
-@*                 body: formData *@
-@*             }) *@
-@*             .then(response => response.json()) *@
-@*             .then(data => { *@
-@*                 if (data.success) { *@
-@*                     showSuccessMessage("Project updated successfully!"); *@
-@*                     document.getElementById("edit-project-modal").remove(); *@
-@*                     loadProjects(); *@
-@*                 } else { *@
-@*                     displayServerErrors(data.errors); *@
-@*                 } *@
-@*             }) *@
-@*             .catch(error => showErrorMessage("Error updating project.")); *@
-@*         }); *@
-@*     } *@
-@* </script> *@

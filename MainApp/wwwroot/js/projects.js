@@ -1,5 +1,8 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     loadProjects();
+    attachEventListeners();
+
+    // --- FUNCTIONS ---
 
     function loadProjects() {
         fetch('/projects/list')
@@ -10,14 +13,15 @@
                     console.error("Error: #projectsList element not found.");
                     return;
                 }
-
                 projectsList.innerHTML = html;
+                // Reattach listeners since the content is dynamic.
                 attachEventListeners();
             })
             .catch(error => console.error("Error loading projects:", error));
     }
 
     function attachEventListeners() {
+        // Attach listener for edit project buttons using a common class.
         document.querySelectorAll(".edit-project-btn").forEach(button => {
             button.addEventListener("click", function () {
                 const projectId = this.getAttribute("data-project-id");
@@ -25,6 +29,7 @@
             });
         });
 
+        // Attach listener for the "add project" button if it exists.
         const addButton = document.getElementById("openAddProjectModal");
         if (addButton) {
             addButton.addEventListener("click", openAddProjectModal);
@@ -35,6 +40,7 @@
         fetch('/projects/create')
             .then(response => response.text())
             .then(html => {
+                // Remove any existing add-project modal to avoid duplicates.
                 const existingModal = document.getElementById("add-project-modal");
                 if (existingModal) existingModal.remove();
 
@@ -46,38 +52,43 @@
                 if (modal) {
                     modal.classList.add("active");
                     modal.style.display = "flex";
-
+                    initQuillEditor();
+                    // Close button listener.
                     modal.querySelector("#closeAddProjectModal")?.addEventListener("click", () => {
                         modal.remove();
                     });
-                    console.log("Calling initTagSelector...");
+
+                    // Initialize the tag selector.
                     initTagSelector({
-                        containerId: 'tagged-members',    
-                        inputId: 'member-search',         
-                        resultsId: 'member-search-results', 
+                        containerId: 'tagged-members',
+                        inputId: 'member-search',
+                        resultsId: 'member-search-results',
                         searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
-                        displayProperty: 'tagName',       
-                        imageProperty: 'avatar',           
+                        displayProperty: 'tagName',
+                        imageProperty: 'avatar',
                         tagClass: 'tag',
                         tagType: 'member',
                         avatarFolder: '',
                         emptyMessage: 'No members found.',
-                        preselected: [],                  
-                        hiddenInputId: 'SelectedTeamMemberIds'  
+                        preselected: [],
+                        hiddenInputId: 'SelectedTeamMemberIds'
                     });
 
-                    if (typeof setupFileUploadPreview === 'function') {
-                        setupFileUploadPreview("createProjectForm");
-                    }
+                    // Set up file upload preview.
+                    setupFileUploadPreview("createProjectForm");
 
+                    // If using jQuery unobtrusive validation, reparse the form.
                     if (window.jQuery && $.validator && $.validator.unobtrusive) {
                         $.validator.unobtrusive.parse("#createProjectForm");
                     }
 
+                    // Handle the form submission.
                     const form = modal.querySelector("#createProjectForm");
                     if (form) {
                         form.addEventListener("submit", function (event) {
                             event.preventDefault();
+
+                            // Optionally validate form if you have a validateForm function.
                             if (typeof validateForm === 'function' && !validateForm(form)) return;
 
                             const formData = new FormData(form);
@@ -106,14 +117,10 @@
             .catch(error => console.error("Error loading create project modal:", error));
     }
 
-    function loadEditProjectModal(projectId) {
-
-        console.log("1")
-
+    // Expose loadEditProjectModal to the global scope for inline calls if necessary.
+    window.loadEditProjectModal = function (projectId) {
         fetch(`/projects/edit/${projectId}`)
             .then(response => response.text())
-
-            console.log(respone)
             .then(html => {
                 removeExistingModal("edit-project-modal");
 
@@ -125,38 +132,41 @@
                 if (modal) {
                     modal.classList.add("active");
                     modal.style.display = "flex";
+                    initQuillEditor();
+
 
                     modal.querySelector("#closeEditProjectModal")?.addEventListener("click", function () {
                         modal.remove();
                     });
 
-                    setupFileUploadPreview(projectId);
+                    setupFileUploadPreview("editProjectForm");
 
-                    const preSelectedMembersJson = document.getElementById("editProjectForm").dataset.preselectedMembers;
-                    const preSelectedMembers = JSON.parse(preSelectedMembersJson || "[]");
-                    console.log("Preselected members:", preSelectedMembers);
+                    const editProjectForm = document.getElementById("editProjectForm");
+                    if (editProjectForm) {
+                        const preSelectedMembersJson = editProjectForm.dataset.preselectedMembers;
+                        const preSelectedMembers = JSON.parse(preSelectedMembersJson || "[]");
 
-                    initTagSelector({
-                        containerId: 'edit-tags',                
-                        inputId: 'edit-tag-search',              
-                        resultsId: 'edit-tag-search-results',    
-                        searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
-                        displayProperty: 'tagName',              
-                        imageProperty: 'avatar',              
-                        tagClass: 'tag',
-                        tagType: 'member',
-                        avatarFolder: '',
-                        emptyMessage: 'No members found.',
-                        preselected: preSelectedMembers,         
-                        hiddenInputId: 'SelectedTeamMemberIds'     
-                    });
+                        initTagSelector({
+                            containerId: 'edit-tags',
+                            inputId: 'edit-tag-search',
+                            resultsId: 'edit-tag-search-results',
+                            searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
+                            displayProperty: 'tagName',
+                            imageProperty: 'avatar',
+                            tagClass: 'tag',
+                            tagType: 'member',
+                            avatarFolder: '',
+                            emptyMessage: 'No members found.',
+                            preselected: preSelectedMembers,
+                            hiddenInputId: 'SelectedTeamMemberIds'
+                        });
 
+                        if (window.jQuery && $.validator && $.validator.unobtrusive) {
+                            $.validator.unobtrusive.parse("#editProjectForm");
+                        }
 
-                    if (window.jQuery && $.validator && $.validator.unobtrusive) {
-                        $.validator.unobtrusive.parse("#editProjectForm");
+                        setupEditFormSubmission(projectId);
                     }
-
-                    setupEditFormSubmission(projectId);
 
                     const deleteButton = modal.querySelector("#deleteProjectBtn");
                     if (deleteButton) {
@@ -167,8 +177,7 @@
                 }
             })
             .catch(error => console.error("Error loading edit project modal.", error));
-    }
-
+    };
 
     function setupEditFormSubmission(projectId) {
         const editForm = document.getElementById("editProjectForm");
@@ -179,10 +188,10 @@
 
         editForm.addEventListener("submit", function (event) {
             event.preventDefault();
-            if (!validateForm(editForm)) return;
+
+            if (typeof validateForm === 'function' && !validateForm(editForm)) return;
 
             const formData = new FormData(editForm);
-
             fetch("/projects/editproject", {
                 method: 'POST',
                 body: formData
@@ -206,9 +215,7 @@
 
         fetch(`/projects/delete/${projectId}`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
+            headers: { "Content-Type": "application/json" }
         })
             .then(response => response.json())
             .then(data => {
@@ -262,3 +269,4 @@
         }
     }
 });
+

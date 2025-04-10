@@ -32,6 +32,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             Company = project.Client?.ClientName ?? "Unknown",
             Description = project.Description,
             Status = project.Status?.StatusName ?? "N/A",
+            EndDate = project.EndDate, 
             Deadline = DateHelper.FormatDeadline(project.EndDate),
             TeamMembers = project.ProjectMembers.Select(pm => new TeamMember
             {
@@ -65,6 +66,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             Company = project.Client?.ClientName ?? "Unknown",
             Description = project.Description,
             Status = project.Status?.StatusName ?? "N/A",
+            EndDate = project.EndDate, 
             Deadline = DateHelper.FormatDeadline(project.EndDate),
             TeamMembers = project.ProjectMembers.Select(pm => new TeamMember
             {
