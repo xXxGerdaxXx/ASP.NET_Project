@@ -101,7 +101,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .HasOne(f => f.User)
             .WithMany(u => u.Files)
             .HasForeignKey(f => f.UserId)
-            .OnDelete(DeleteBehavior.Cascade); // Delete files if the user is deleted
+            .OnDelete(DeleteBehavior.Cascade); 
 
         modelBuilder.Entity<FileEntity>()
             .Property(f => f.FileName)
@@ -114,16 +114,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .HasMaxLength(255);
 
         modelBuilder.Entity<FileEntity>()
-            .HasKey(f => f.FileId); // ✅ Define primary key for FileEntity
+            .HasKey(f => f.FileId); 
 
 
-
-        // ✅ One-to-Many: One Project → Many Files
         modelBuilder.Entity<FileEntity>()
             .HasOne(f => f.Project)
             .WithMany(p => p.Files)
             .HasForeignKey(f => f.ProjectId)
-            .OnDelete(DeleteBehavior.Cascade); // Delete files if the project is deleted
+            .OnDelete(DeleteBehavior.Cascade); 
 
 
 

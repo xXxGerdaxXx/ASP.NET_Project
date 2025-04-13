@@ -1,5 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    loadClients(); // Load clients list on page load
+    loadClients(); 
 
     function loadClients() {
         fetch('/admin/clients/list')
@@ -98,7 +98,7 @@
                                 .then(data => {
                                     if (data.success) {
                                         showSuccessMessage("Client created successfully!");
-                                        location.reload(); // Refresh or update the UI
+                                        location.reload(); 
                                     } else {
                         
                                         displayServerErrors(data.errors);
@@ -149,7 +149,7 @@
 
         editForm.addEventListener("submit", function (event) {
             event.preventDefault();
-            if (!validateForm(editForm)) return; // Validate before submitting
+            if (!validateForm(editForm)) return; 
             const formData = new FormData(editForm);
 
             fetch("/admin/clients/editclient", {

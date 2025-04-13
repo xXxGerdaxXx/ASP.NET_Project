@@ -4,7 +4,6 @@
     attachGeneralEventListeners();
     initializeThemeToggle();
 
-    // ✅ General UI Events
     function attachGeneralEventListeners() {
         console.log("Attaching general event listeners...");
 
@@ -38,7 +37,6 @@
         }
     }
 
-    // ✅ Theme Toggle
     function initializeThemeToggle() {
         const toggle = document.getElementById("themeToggle");
         const slider = toggle?.querySelector(".toggle-switch");
@@ -61,7 +59,6 @@
         });
     }
 
-    // ✅ Global Success Message
     window.showSuccessMessage = function (message) {
         const notification = document.getElementById("createSuccessNotification");
         if (notification) {
@@ -75,7 +72,6 @@
         }
     };
 
-    // ✅ Global Error Message
     window.showErrorMessage = function (message) {
         const notification = document.getElementById("deleteErrorNotification");
         if (notification) {
@@ -89,7 +85,6 @@
         }
     };
 
-    // ✅ Validation Helpers
     window.validateForm = function (form) {
         let isValid = true;
 

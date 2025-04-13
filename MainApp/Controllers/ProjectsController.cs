@@ -7,11 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Text.Json;
 using Infrastructure.DTOs;
 using Infrastructure.Helpers;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+
 
 namespace MainApp.Controllers;
 
 [Route("projects")]
-public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, FileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService) : Controller
+public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, FileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService, ICompositeViewEngine viewEngine) : Controller
 {
     private readonly IProjectService _projectService = projectService;
     private readonly ILogger<ProjectsController> _logger = logger;
@@ -19,6 +23,8 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     private readonly IClientService _clientService = clientService;
     private readonly IMemberService _memberService = memberService;
     private readonly IStatusService _statusService = statusService;
+    private readonly ICompositeViewEngine _viewEngine = viewEngine;
+
 
     [HttpGet("list")]
     public async Task<IActionResult> GetProjectsList()
@@ -298,4 +304,80 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         }
     }
 
+    [HttpGet("filter")]
+    public async Task<IActionResult> Filter(string status)
+    {
+        var allProjects = await _projectService.GetAllProjectsAsync();
+
+        var filtered = allProjects;
+        if (!string.IsNullOrWhiteSpace(status) && status != "all")
+        {
+            filtered = allProjects
+                .Where(p => p.Status?.StatusName?.Equals(status, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+        }
+
+        var viewModels = filtered.Select(project => new ProjectViewModel
+        {
+            Id = project.Id,
+            AvatarUrl = project.AvatarUrl,
+            Name = project.ProjectName,
+            Company = project.Client?.ClientName ?? "Unknown",
+            Description = project.Description,
+            Status = project.Status?.StatusName ?? "N/A",
+            EndDate = project.EndDate,
+            Deadline = DateHelper.FormatDeadline(project.EndDate),
+            TeamMembers = project.ProjectMembers.Select(pm => new TeamMember
+            {
+                Name = pm.Member.FirstName + " " + pm.Member.LastName,
+                AvatarUrl = string.IsNullOrWhiteSpace(pm.Member.AvatarUrl) ? "/images/avatar.svg" : pm.Member.AvatarUrl
+            }).ToList()
+        }).ToList();
+
+        var html = await RenderViewAsync("Views/Shared/Partials/Sections/_ProjectList.cshtml", viewModels, partial: false);
+
+        return Json(new
+        {
+            html,
+            counts = new
+            {
+                all = allProjects.Count,
+                started = allProjects.Count(p => p.Status?.StatusName == "In Progress"),
+                completed = allProjects.Count(p => p.Status?.StatusName == "Completed"),
+                notStarted = allProjects.Count(p => p.Status?.StatusName == "Not Started")
+            }
+        });
+    }
+
+    private async Task<string> RenderViewAsync<TModel>(string viewName, TModel model, bool partial = true)
+    {
+        var actionContext = new ActionContext(HttpContext, RouteData, ControllerContext.ActionDescriptor);
+
+        using var sw = new StringWriter();
+        var viewResult = partial
+            ? _viewEngine.FindView(actionContext, viewName, false)
+            : _viewEngine.GetView(null, viewName, false);
+
+        if (!viewResult.Success)
+            throw new InvalidOperationException($"Could not find view {viewName}");
+
+        var viewDictionary = new ViewDataDictionary<TModel>(
+            metadataProvider: new EmptyModelMetadataProvider(),
+            modelState: ModelState)
+        {
+            Model = model
+        };
+
+        var viewContext = new ViewContext(
+            actionContext,
+            viewResult.View,
+            viewDictionary,
+            TempData,
+            sw,
+            new HtmlHelperOptions()
+        );
+
+        await viewResult.View.RenderAsync(viewContext);
+        return sw.ToString();
+    }
 }

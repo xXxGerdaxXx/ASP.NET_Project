@@ -212,7 +212,7 @@ h6 {
 .surface-modal {
     width: 550px;
     max-width: 100%;
-    height: 100vh; /* Adjust height to fit within viewport */
+    height: 100vh; 
     background-color: var(--surface-color);
     padding: 2rem;
     border-radius: 16px;
@@ -256,13 +256,13 @@ h6 {
         }
 
 
-.portal {
-    display: grid;
-    grid-template-columns: minmax(50px, 270px) 1fr;
-    grid-template-rows: auto 1fr;
-    grid-template-areas: "logo top" "side main";
-    height: 100dvh;
-}
+    .portal {
+        display: grid;
+        grid-template-columns: minmax(50px, 270px) 1fr;
+        grid-template-rows: auto 1fr;
+        grid-template-areas: "logo top" "side main";
+        height: 100dvh;
+    }
     .portal > .logotype {
         grid-area: side top;
         border-right: 1px solid var(--border-color);
@@ -2258,14 +2258,6 @@ table {
     color: var(--green-dark);
 }
 
-.project-actions {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: var(--gray-700);
-}
 
 .time-left {
     font-size: 0.9rem;
@@ -2279,14 +2271,6 @@ table {
 .on-time {
     color: var(--green-dark);
 }
-
-
-
-
-
-
-
-
 
 .admin-login-layout {
     margin: 0;
@@ -2374,8 +2358,9 @@ table {
 
 /* Grid Layout for cards */
 .project-grid {
+    max-width: 1113px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 20px;
 }
 

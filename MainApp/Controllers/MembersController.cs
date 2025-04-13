@@ -52,7 +52,6 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
     }
 
 
-    // POST: /members/create
     [HttpPost("create")]
     public async Task<IActionResult> CreateMember(MemberCreateForm form)
     {
@@ -117,7 +116,7 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             Address = member.Address,
             DateOfBirth = member.DateOfBirth,
             JobTitle = member.JobTitle,
-            AvatarUrl = member.AvatarUrl
+            AvatarUrl = member.AvatarUrl,
         };
 
         return PartialView("~/Views/Shared/Partials/Sections/_EditMember.cshtml", model);
@@ -155,7 +154,6 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
                 }
             }
 
-            // Update member properties
             member.FirstName = form.FirstName;
             member.LastName = form.LastName;
             member.Email = form.Email;

@@ -4,6 +4,10 @@
 @{
     Layout = "~/Views/Shared/_PortalLayout.cshtml";
     ViewData["Title"] = "Projects";
+    var totalCount = Model.Count;
+    var notStartedCount = Model.Count(p => p.Status?.ToLower() == "not started");
+    var startedCount = Model.Count(p => p.Status?.ToLower() == "in progress");
+    var completedCount = Model.Count(p => p.Status?.ToLower() == "completed");
 }
 
 <section id="projects">
@@ -19,10 +23,12 @@
     </header>
 
     <div class="project-tabs">
-        <button class="tab active" data-filter="all">All <span>[0]</span></button>
-        <button class="tab" data-filter="started">Started <span>[0]</span></button>
-        <button class="tab" data-filter="completed">Completed <span>[0]</span></button>
+        <button class="tab active" data-filter="all">All <span>[@totalCount]</span></button>
+        <button class="tab" data-filter="Not Started">Not Started <span>[@notStartedCount]</span></button>
+        <button class="tab" data-filter="In Progress">In Progress <span>[@startedCount]</span></button>
+        <button class="tab" data-filter="Completed">Completed <span>[@completedCount]</span></button>
     </div>
+
     <div id="projectsList">
         <partial name="~/Views/Shared/Partials/Sections/_ProjectList.cshtml" model="Model" />
     </div>
