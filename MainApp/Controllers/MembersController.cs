@@ -114,9 +114,11 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             Email = member.Email,
             PhoneNumber = member.PhoneNumber,
             Address = member.Address,
-            DateOfBirth = member.DateOfBirth,
             JobTitle = member.JobTitle,
             AvatarUrl = member.AvatarUrl,
+            BirthDay = member.DateOfBirth.Day,
+            BirthMonth = member.DateOfBirth.Month,
+            BirthYear = member.DateOfBirth.Year
         };
 
         return PartialView("~/Views/Shared/Partials/Sections/_EditMember.cshtml", model);
@@ -160,6 +162,16 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             member.PhoneNumber = form.PhoneNumber;
             member.Address = form.Address;
             member.JobTitle = form.JobTitle;
+            member.DateOfBirth = new DateTime(form.BirthYear, form.BirthMonth, form.BirthDay);
+            try
+            {
+                var dob = new DateTime(form.BirthYear, form.BirthMonth, form.BirthDay);
+            }
+            catch
+            {
+                ModelState.AddModelError("BirthDay", "Invalid date of birth selected.");
+                return BadRequest(ModelState);
+            }
 
             await _memberService.UpdateMemberAsync(member);
             _logger.LogInformation("Member Updated Successfully: {@Member}", member);

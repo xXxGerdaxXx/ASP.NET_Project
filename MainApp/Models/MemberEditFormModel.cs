@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Infrastructure.Enums; 
 
 namespace MainApp.Models
@@ -34,9 +35,15 @@ namespace MainApp.Models
         [StringLength(100)]
         public string Address { get; set; } = string.Empty;
 
-        [Required]
-        [Display(Name = "Date of Birth")]
-        public DateTime DateOfBirth { get; set; }
+        //[Required]
+        //[Display(Name = "Date of Birth")]
+        //public DateTime DateOfBirth { get; set; }
+        [NotMapped]
+        public int BirthDay { get; set; }
+        public int BirthMonth { get; set; }
+        public int BirthYear { get; set; }
+
+        public DateTime DateOfBirth => new(BirthYear, BirthMonth, BirthDay);
 
         [Required]
         [Display(Name = "Job Title")]

@@ -11,6 +11,6 @@ public static class EnumHelper
         FieldInfo field = value.GetType().GetField(value.ToString());
         DescriptionAttribute? attribute = field?.GetCustomAttribute<DescriptionAttribute>();
 
-        return attribute?.Description ?? value.ToString(); // Use Description if available, otherwise fallback to Enum name
+        return attribute?.Description ?? value.ToString(); 
     }
 }

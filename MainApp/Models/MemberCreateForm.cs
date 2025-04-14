@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MainApp.Models;
 
@@ -37,8 +38,15 @@ public class MemberCreateForm
     [Required(ErrorMessage = "Address is required")]
     public string Address { get; set; } = null!;
 
-    [DataType(DataType.Date)]
-    [Display(Name = "Date of Birth", Prompt = "Select date of birth")]
-    [Required(ErrorMessage = "You must enter date of birth")]
-    public DateTime DateOfBirth { get; set; }
+    [NotMapped]
+    public int BirthDay { get; set; }
+    public int BirthMonth { get; set; }
+    public int BirthYear { get; set; }
+
+    public DateTime DateOfBirth => new(BirthYear, BirthMonth, BirthDay);
+
+    //[DataType(DataType.Date)]
+    //[Display(Name = "Date of Birth", Prompt = "Select date of birth")]
+    //[Required(ErrorMessage = "You must enter date of birth")]
+    //public DateTime DateOfBirth { get; set; }
 }

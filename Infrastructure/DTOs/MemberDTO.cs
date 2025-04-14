@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Infrastructure.Enums;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.DTOs;
 
@@ -10,7 +12,14 @@ public class MemberDTO
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Address { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Date of birth is required")]
+    [DataType(DataType.Date)]
     public DateTime DateOfBirth { get; set; }
-    public string JobTitle { get; set; } = string.Empty; // Assuming JobTitle is stored as a string in DTO
-    public string? AvatarUrl { get; set; } // Optional profile image URL
+
+    [Required(ErrorMessage = "Job title is required")]
+    [EnumDataType(typeof(JobTitle), ErrorMessage = "Invalid job title")]
+    public JobTitle JobTitle { get; set; }
+
+    public string? AvatarUrl { get; set; }
 }
