@@ -13,7 +13,9 @@ public class NotificationDismissedEntity
     public string NotificationId { get; set; } = null!;
     public NotificationEntity Notification { get; set; } = null!;
 
+    [ForeignKey(nameof(User))]
     public string UserId { get; set; } = null!;
+    public UserEntity User { get; set; } = null!;
 
     public DateTime DismissedAt { get; set; } = DateTime.UtcNow;
 }

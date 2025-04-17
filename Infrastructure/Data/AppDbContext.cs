@@ -88,7 +88,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             .HasOne(d => d.Notification)
             .WithMany(n => n.DismissedNotifications)
             .HasForeignKey(d => d.NotificationId)
-            .OnDelete(DeleteBehavior.Cascade); ;
+            .OnDelete(DeleteBehavior.Cascade); 
+
+        modelBuilder.Entity<NotificationDismissedEntity>()
+            .HasOne(d => d.User)
+            .WithMany(u => u.DismissedNotifications)
+            .HasForeignKey(d => d.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<NotificationEntity>()
             .HasKey(n => n.Id);
