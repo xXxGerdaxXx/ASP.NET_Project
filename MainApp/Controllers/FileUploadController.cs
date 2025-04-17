@@ -12,15 +12,15 @@ public class FileUploadController(IWebHostEnvironment env) : Controller
         if (!ModelState.IsValid || model.File == null || model.File.Length == 0)
             return BadRequest(new { success = false, message = "Invalid file upload" });
 
-        // Ensure folder is provided
+
         if (string.IsNullOrEmpty(model.Folder))
             return BadRequest(new { success = false, message = "Folder name is required" });
 
-        // Create folder path
+
         var uploadFolder = Path.Combine(_env.WebRootPath, "uploads", model.Folder);
         Directory.CreateDirectory(uploadFolder);
 
-        // Generate a unique filename
+
         var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(model.File.FileName)}";
         var filePath = Path.Combine(uploadFolder, fileName);
 
@@ -29,35 +29,9 @@ public class FileUploadController(IWebHostEnvironment env) : Controller
             await model.File.CopyToAsync(stream);
         }
 
-        // Return file path to be stored in the database
         var relativePath = $"/uploads/{model.Folder}/{fileName}";
 
         return Json(new { success = true, filePath = relativePath });
     }
 
-    //public IActionResult Upload()
-    //{
-    //    return View();
-    //}
-
-    //[HttpPost]
-    //public async Task<IActionResult> Upload(FileUploadViewModel model)
-    //{
-    //    if (!ModelState.IsValid || model.File == null || model.File.Length == 0)
-    //        return View(model);
-
-    //    var uploadFolder = Path.Combine(_env.WebRootPath, "uploads");
-    //    Directory.CreateDirectory(uploadFolder);
-
-    //    var filePath = Path.Combine(uploadFolder, $"{Guid.NewGuid()}_{Path.GetFileName(model.File.FileName)}");
-
-    //    using (var stream = new FileStream(filePath, FileMode.Create))
-    //    {
-    //        await model.File.CopyToAsync(stream);
-    //    }
-
-    //    ViewBag.Message = "File was uploaded successfully.";
-
-    //    return View();
-    //}
 }

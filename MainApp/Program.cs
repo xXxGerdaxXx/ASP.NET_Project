@@ -1,6 +1,7 @@
 using Business.Services;
 using Infrastructure.Data;
 using Infrastructure.Entities;
+using Infrastructure.Hubs;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -53,11 +54,18 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // ? Utility Services
 builder.Services.AddScoped<FileService>();
-builder.Services.AddScoped<UserService>();
+//builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProjectService>();
+
+
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -102,5 +110,6 @@ app.MapControllerRoute(
 
 
 app.MapRazorPages();
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

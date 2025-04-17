@@ -1,12 +1,12 @@
-﻿using Business.Services;
-using Infrastructure.DTOs;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Infrastructure.Hubs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity;
 using MainApp.Models;
+using Infrastructure.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MainApp.Controllers;
 
@@ -14,13 +14,17 @@ public class AuthController(
     UserManager<UserEntity> userManager,
     SignInManager<UserEntity> signInManager,
     RoleManager<IdentityRole> roleManager,
-    IWebHostEnvironment env
+    IWebHostEnvironment env,
+    INotificationService notificationService,
+    IHubContext<NotificationHub> notificationHub 
 ) : Controller
 {
     private readonly UserManager<UserEntity> _userManager = userManager;
     private readonly SignInManager<UserEntity> _signInManager = signInManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IWebHostEnvironment _env = env;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly IHubContext<NotificationHub> _notificationHub = notificationHub;
 
 
     [HttpGet]
@@ -50,16 +54,37 @@ public class AuthController(
             return View(model);
         }
 
+        // ✅ Fetch user and send notification
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user != null)
+        {
+            await _notificationService.AddNotificationAsync(
+                notificationTypeId: 1, // login type or generic
+                message: $"{user.FirstName} {user.LastName} just signed in",
+                image: "fa-solid fa-right-to-bracket"
+            );
+        }
+
         return RedirectToAction("Index", "Dashboard");
     }
 
-
     public async Task<IActionResult> Logout()
     {
+        var user = await _userManager.GetUserAsync(User);
+
         await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+        if (user != null)
+        {
+            await _notificationService.AddNotificationAsync(
+                notificationTypeId: 2,
+                message: $"{user.FirstName} {user.LastName} logged out",
+                image: "fa-solid fa-right-from-bracket"
+            );
+        }
+
         return RedirectToAction("SignIn");
     }
-
 
     [HttpGet]
     public IActionResult SignUp()
@@ -137,8 +162,16 @@ public class AuthController(
             return View(model);
         }
 
+        // ✅ Now that login succeeded, send notification
+        await _notificationService.AddNotificationAsync(
+            notificationTypeId: 1,
+            message: $"🛡️ Admin {user.FirstName} {user.LastName} signed in",
+            image: "fa-solid fa-shield-halved"
+        );
+
         return RedirectToAction("Dashboard", "Admin");
     }
+
 
     [HttpGet]
     public async Task<IActionResult> EditProfile()

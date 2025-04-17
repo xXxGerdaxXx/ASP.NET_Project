@@ -1,8 +1,10 @@
 ﻿using Infrastructure.DTOs;
 using Infrastructure.Entities;
 using Infrastructure.Helpers;
+using Infrastructure.Hubs;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +13,27 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services;
 
-public class AuthService(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager) : IAuthService
+public class AuthService(
+    UserManager<UserEntity> userManager,
+    SignInManager<UserEntity> signInManager,
+    INotificationService notificationService, IHubContext<NotificationHub> notificationHub) : IAuthService
 {
     private readonly UserManager<UserEntity> _userManager = userManager;
     private readonly SignInManager<UserEntity> _signInManager = signInManager;
+    private readonly INotificationService _notificationService = notificationService;
+    private readonly IHubContext<NotificationHub> _notificationHub = notificationHub;
 
+    //public async Task<bool> LoginAsync(UserSignInDTO loginDto)
+    //{
+    //    var result = await _signInManager.PasswordSignInAsync(
+    //        loginDto.Email,
+    //        loginDto.Password,
+    //        loginDto.RememberMe,
+    //        lockoutOnFailure: false
+    //    );
+
+    //    return result.Succeeded;
+    //}
     public async Task<bool> LoginAsync(UserSignInDTO loginDto)
     {
         var result = await _signInManager.PasswordSignInAsync(
@@ -24,6 +42,22 @@ public class AuthService(UserManager<UserEntity> userManager, SignInManager<User
             loginDto.RememberMe,
             lockoutOnFailure: false
         );
+
+        if (result.Succeeded)
+        {
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            if (user != null)
+            {
+                var notificationEntity = new NotificationEntity
+                {
+                    Message = $"{user.FirstName} {user.LastName} signed in.",
+                    NotificationTypeId = 1,
+                    NotificationTargetGroupId = 1 
+                };
+
+                await _notificationService.AddNotificationAsync(notificationEntity);
+            }
+        }
 
         return result.Succeeded;
     }
@@ -35,7 +69,6 @@ public class AuthService(UserManager<UserEntity> userManager, SignInManager<User
         if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             return false;
 
-        // Check if the user is in the "Admin" role
         if (!await _userManager.IsInRoleAsync(user, "Admin"))
             return false;
 

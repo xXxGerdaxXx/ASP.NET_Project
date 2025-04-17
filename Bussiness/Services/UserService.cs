@@ -6,16 +6,15 @@ using Infrastructure.Interfaces;
 
 namespace Business.Services;
 
-public class UserService(IUserRepository userRepository)
+public class UserService(IUserRepository userRepository) : IUserService
 {
     private readonly IUserRepository _userRepository = userRepository;
 
-    //  Register User
+
     public async Task<ServiceResponse<string>> SignUp(UserSignUpDTO userDTO)
     {
         var response = new ServiceResponse<string>();
 
-        // Check if email already exists
         var existingUser = await _userRepository.GetUserByEmailAsync(userDTO.Email);
         if (existingUser != null)
         {
@@ -24,7 +23,6 @@ public class UserService(IUserRepository userRepository)
             return response;
         }
 
-        // Ensure terms are accepted
         if (!userDTO.AcceptTerms)
         {
             response.Success = false;
@@ -42,7 +40,7 @@ public class UserService(IUserRepository userRepository)
             FirstName = firstName,
             LastName = lastName,
             Email = userDTO.Email,
-            UserName = userDTO.Email, //  Use email as username
+            UserName = userDTO.Email, 
             PasswordHash = PasswordHasher.HashPassword(userDTO.Password),
 
         };
@@ -54,13 +52,11 @@ public class UserService(IUserRepository userRepository)
         return response;
     }
 
-    // Get All Users
     public async Task<List<UserEntity>> GetAllUsersAsync()
     {
         return await _userRepository.GetAllAsync();
     }
 
-    // Authenticate User
     public async Task<UserEntity?> AuthenticateUserAsync(string email, string password)
     {
         var user = await _userRepository.GetUserByEmailAsync(email);

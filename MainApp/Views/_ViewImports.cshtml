@@ -1,4 +1,10 @@
 ﻿@using MainApp
 @using MainApp.Models
+@using Infrastructure.Services
+@using Business.Services
 @using System.Security.Claims
+@using Infrastructure.Interfaces
+
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IUserService userService
+@inject INotificationService notificationService

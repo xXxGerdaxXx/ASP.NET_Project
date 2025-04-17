@@ -1,6 +1,6 @@
 ﻿using System;
 namespace Infrastructure.Helpers;
-
+// this helper allows me to format the deadline date in a user-friendly way.
 public static class DateHelper
 {
     public static string FormatDeadline(DateTime? endDate)

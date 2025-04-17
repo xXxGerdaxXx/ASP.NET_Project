@@ -25,7 +25,7 @@ public class ClientsController : Controller
         _fileService = fileService;
     }
 
-    // ✅ Get all clients (Partial View)
+
     [HttpGet("list")]
     public async Task<IActionResult> GetClientsList()
     {
@@ -62,7 +62,7 @@ public class ClientsController : Controller
             return StatusCode(500, new { success = false, message = "Error deleting clients" });
         }
     }
-    // Handle Avatar Uploads
+
     [HttpPost("upload-avatar")]
     public async Task<IActionResult> UploadClientAvatar(IFormFile file)
     {
@@ -74,7 +74,7 @@ public class ClientsController : Controller
 
         return Ok(new { url = fileUrl });
     }
-    // GET: /admin/clients/create
+
     [HttpGet("create")]
     public IActionResult Create()
     {
@@ -82,7 +82,7 @@ public class ClientsController : Controller
     }
 
 
-    // Create a new client
+
     [HttpPost("create")]
     public async Task<IActionResult> CreateClient(ClientCreateFormModel form)
     {
@@ -170,7 +170,6 @@ public class ClientsController : Controller
             var client = await _clientService.GetClientByIdAsync(form.Id);
             if (client == null) return NotFound();
 
-            // Save file only if a new one is uploaded
             if (form.File != null)
             {
                 var uploadedFilePath = await _fileService.SaveFileAsync(form.File, "clients");

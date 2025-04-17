@@ -22,3 +22,5 @@ public static class EnumExtensions
     }
 }
 
+// this helper allows me to display the enum values in a dropdown list with their descriptions therefore i can separate 
+// the display name from the actual value of the enum

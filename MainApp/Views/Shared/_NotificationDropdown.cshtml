@@ -1,0 +1,50 @@
+﻿@using Infrastructure.Entities
+@model IEnumerable<NotificationEntity>
+    @{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+    var notifications = await notificationService.GetNotificationsAsync(userId);
+    notifications = notifications.OrderByDescending(x => x.CreatedAt);
+    }
+
+<div class="notification-dropdown-container">
+    <button id="notification-dropdown-button" data-type="dropdown" data-target="#notification-dropdown" class="btn-notification fa-solid fa-bell">
+        @if (notifications.Any())
+        {
+            <div class="dot dot-red"></div>
+        }
+    </button>
+
+    <div id="notification-dropdown" class="notification-dropdown">
+        <div class="notification-header">
+            <h4>Notifications</h4>
+            <span class="notification-number">@notifications.Count()</span>
+        </div>
+        <div class="dropdown-divider"></div>
+
+        <div class="notifications">
+            @foreach (var notification in notifications)
+            {
+                <div class="notification-item" data-id="@notification.Id">
+                    <div class="icon-box">
+                        <i class="@notification.Icon"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="message">@notification.Message</div>
+                        <div class="time" data-created="@notification.CreatedAt.ToString("s")">
+                            @notification.CreatedAt.ToShortTimeString()
+                        </div>
+                    </div>
+                    <button class="btn-close" data-id="@notification.Id">×</button>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.js"
+            integrity="sha512-FzakzcmrNSXS5+DuuYSO6+5DcUZ417Na0vH1oAIo49mMBA8rHSgkKSjE2ALFOxdQ/kPqF3HZRzb0HQ+AvwXttg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/js/notifications.js"></script>
+}

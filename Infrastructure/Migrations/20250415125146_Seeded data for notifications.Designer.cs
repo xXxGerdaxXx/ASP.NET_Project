@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250415125146_Seeded data for notifications")]
+    partial class Seededdatafornotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,14 +205,17 @@ namespace Infrastructure.Migrations
                     b.Property<int>("NotificationTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TargetGroupId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserEntityId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NotificationTargetGroupId");
-
                     b.HasIndex("NotificationTypeId");
+
+                    b.HasIndex("TargetGroupId");
 
                     b.HasIndex("UserEntityId");
 
@@ -634,15 +640,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Entities.NotificationEntity", b =>
                 {
-                    b.HasOne("Infrastructure.Entities.NotificationTargetGroupEntity", "TargetGroup")
-                        .WithMany("Notifications")
-                        .HasForeignKey("NotificationTargetGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Infrastructure.Entities.NotificationTypeEntity", "NotificationType")
                         .WithMany("Notifications")
                         .HasForeignKey("NotificationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Entities.NotificationTargetGroupEntity", "TargetGroup")
+                        .WithMany("Notifications")
+                        .HasForeignKey("TargetGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

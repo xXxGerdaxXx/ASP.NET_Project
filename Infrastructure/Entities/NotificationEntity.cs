@@ -1,17 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.Entities;
 
 public class NotificationEntity
 {
-    public int NotificationId { get; set; } // Primary Key
+    [Key]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    [ForeignKey("TargetGroup")]
+    public int NotificationTargetGroupId { get; set; }
+    public NotificationTargetGroupEntity TargetGroup { get; set; } = null!;
+
+    public int NotificationTypeId { get; set; }
+    public NotificationTypeEntity NotificationType { get; set; } = null!;
+
+    public string Icon { get; set; } = null!;
     public string Message { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation Property for Many-to-Many
-    public List<UserNotificationEntity> UserNotifications { get; set; } = new();
+    public ICollection<NotificationDismissedEntity> DismissedNotifications { get; set; } = new List<NotificationDismissedEntity>();
+
 }

@@ -1,6 +1,10 @@
 ﻿@using Infrastructure.Entities
+@using Infrastructure.Interfaces
+@inject INotificationService notificationService
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<UserEntity> UserManager
+
+
 
 @{
     var user = await UserManager.GetUserAsync(User);
@@ -11,22 +15,21 @@
         : user.AvatarUrl.TrimStart('/'); 
 
     var avatarPath = Url.Content("~/" + avatarFileName);
+
+
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+    var notifications = await notificationService.GetNotificationsAsync(userId);
+    notifications = notifications.OrderByDescending(x => x.CreatedAt);
 }
 
 <div class="user-menu">
-    <!-- Notifications -->
-    <button class="icon-button" id="notificationsButton">
-        <i class="fa-solid fa-bell"></i>
-        <span class="notification-badge"></span>
-    </button>
+    @await Html.PartialAsync("_NotificationDropdown", notifications)
 
-    <!-- Gear Icon for Dropdown -->
     <div class="profile-dropdown">
         <button class="icon-button" id="settingsButton">
             <i class="fa-solid fa-gear"></i>
         </button>
 
-        <!-- Dropdown -->
         <div class="dropdown-content" id="userDropdown">
             <div class="dropdown-item dropdown-header">
                 <img src="@avatarPath" class="dropdown-avatar" alt="User Avatar" />
@@ -34,7 +37,6 @@
                     @fullName
                 </a>
             </div>
-
 
             <div class="dropdown-item toggle-theme" id="themeToggle">
                 <div class="label-group">
@@ -56,9 +58,9 @@
         </div>
     </div>
 
-    <!-- Always visible avatar (tiny one beside gear, optional) -->
     <div class="avatar-display">
         <img src="@avatarPath" alt="User Avatar" />
 
     </div>
 </div>
+
