@@ -34,7 +34,8 @@
                             @notification.CreatedAt.ToShortTimeString()
                         </div>
                     </div>
-                    <button class="btn-close" data-id="@notification.Id">×</button>
+                    <button class="btn-close" onclick="dismissNotification('@notification.Id')">×</button>
+
 
                 </div>
             }

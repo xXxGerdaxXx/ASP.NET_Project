@@ -56,19 +56,32 @@
 
 
 
-    window.dismissNotification = function (notificationId) {
-        fetch(`/api/notification/dismiss/${notificationId}`, { method: 'POST' })
-            .then(res => {
-                if (res.ok) {
-                    const element = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
-                    if (element) {
-                        element.remove();
-                        updateNotificationCount();
-                    }
+    window.dismissNotification = async function (notificationId) {
+        try {
+            const response = await fetch(`/api/notification/dismiss/${notificationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            })
-            .catch(error => console.error('Error removing notification: ', error));
-    }
+            });
+
+            if (!response.ok) {
+                console.error(`❌ Failed to dismiss notification. Status: ${response.status}`);
+                return;
+            }
+
+            const element = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+            if (element) {
+                element.remove();
+                updateNotificationCount();
+            }
+
+            console.log(`✅ Notification ${notificationId} dismissed successfully`);
+        } catch (error) {
+            console.error('🔥 Error dismissing notification:', error);
+        }
+    };
+
 
 
 

@@ -43,6 +43,7 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
 
         await _notificationService.DismissNotificationAsync(id, userId);
         await _notificationHub.Clients.All.SendAsync("NotificationDismissed", id);
+
         return Ok(new { success = true });
     }
 }
