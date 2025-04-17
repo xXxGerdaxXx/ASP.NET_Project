@@ -26,7 +26,7 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
     [HttpGet]
     public async Task<IActionResult> GetNotifications()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)?? "anonymous";
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
@@ -37,7 +37,7 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
     [HttpPost("dismiss/{id}")]
     public async Task<IActionResult> DismissNotification(string id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 

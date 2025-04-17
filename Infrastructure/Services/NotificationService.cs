@@ -19,7 +19,7 @@ namespace Infrastructure.Services
                 switch (notificationEntity.NotificationTypeId)
                 {
                     case 1:
-                        notificationEntity.Icon = "~/images/user-template.svg";
+                        notificationEntity.Icon = "/images/user-template.svg";
                         break;
                     case 2:
                         notificationEntity.Icon = "~/images/project-template.svg";

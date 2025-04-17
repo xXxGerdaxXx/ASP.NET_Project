@@ -153,6 +153,31 @@
 //             document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none'); 
 //                        } 
 //    }); 
+window.dismissNotification = async function (notificationId) {
+    try {
+        const response = await fetch(`/api/notification/dismiss/${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            console.error(`❌ Failed to dismiss notification. Status: ${response.status}`);
+            return;
+        }
+
+        const element = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+        if (element) {
+            element.remove();
+            updateNotificationCount();
+        }
+
+        console.log(`Notification ${notificationId} dismissed successfully`);
+    } catch (error) {
+        console.error('Error dismissing notification:', error);
+    }
+};
 
 
 document.addEventListener("DOMContentLoaded", function () {

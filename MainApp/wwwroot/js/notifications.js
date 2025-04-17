@@ -25,18 +25,14 @@
         item.className = 'notification-item';
         item.setAttribute('data-id', notification.id);
         item.innerHTML = `
-                    <div class="icon-box">
-                        <i class="${notification.icon}"></i>
-                    </div>
-                    <div class="notification-content">
-                        <div class="message">${notification.message}</div>
-                        <div class="time" data-created="${new Date(notification.created).toISOString()}">
-                            ${new Date(notification.created).toLocaleTimeString()}
-                        </div>
-                    </div>
-                    <button class="btn-close" onclick="dismissNotification('${notification.id}')">×</button>
-                `;
 
+                    <img class="image" src="${notification.icon}" />
+                    <div class="message">${notification.message}</div>
+                    <div class="notification-content">
+                    <div class="message">${notification.message}</div>
+                    <div class="time" data-created="${new Date(notification.created).toISOString()}">${notification.created}</div>
+                    <button class="btn-close" onclick="dismissNotification('${notification.id}')">×</button>
+                `
         notifications.insertBefore(item, notifications.firstChild);
 
         updateNotificationCount();
@@ -52,37 +48,6 @@
     });
 
     connection.start().catch(error => console.error(error));
-
-
-
-
-    window.dismissNotification = async function (notificationId) {
-        try {
-            const response = await fetch(`/api/notification/dismiss/${notificationId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                console.error(`❌ Failed to dismiss notification. Status: ${response.status}`);
-                return;
-            }
-
-            const element = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
-            if (element) {
-                element.remove();
-                updateNotificationCount();
-            }
-
-            console.log(`✅ Notification ${notificationId} dismissed successfully`);
-        } catch (error) {
-            console.error('🔥 Error dismissing notification:', error);
-        }
-    };
-
-
 
 
     function updateNotificationCount() {

@@ -61,7 +61,8 @@ public class AuthController(
             await _notificationService.AddNotificationAsync(
                 notificationTypeId: 1, // login type or generic
                 message: $"{user.FirstName} {user.LastName} just signed in",
-                image: "fa-solid fa-right-to-bracket"
+                image: "/images/user-template.svg"
+
             );
         }
 
@@ -79,7 +80,7 @@ public class AuthController(
             await _notificationService.AddNotificationAsync(
                 notificationTypeId: 2,
                 message: $"{user.FirstName} {user.LastName} logged out",
-                image: "fa-solid fa-right-from-bracket"
+                image: "/images/user-template.svg"
             );
         }
 
@@ -162,11 +163,10 @@ public class AuthController(
             return View(model);
         }
 
-        // ✅ Now that login succeeded, send notification
         await _notificationService.AddNotificationAsync(
             notificationTypeId: 1,
-            message: $"🛡️ Admin {user.FirstName} {user.LastName} signed in",
-            image: "fa-solid fa-shield-halved"
+            message: $"Admin {user.FirstName} {user.LastName} signed in",
+            image: "/images/user-template.svg"
         );
 
         return RedirectToAction("Dashboard", "Admin");
