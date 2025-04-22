@@ -73,9 +73,20 @@ namespace Infrastructure.Services
             await AddNotificationAsync(notification);
         }
 
-        public async Task DismissNotificationAsync(string notificationId, string userId)
+        public async Task<bool> DismissNotificationAsync(string notificationId, string userId)
         {
-            Console.WriteLine($"Dismissing notification: {notificationId} for user {userId}");
+            var notification = await _context.Notifications
+                .AsNoTracking()
+                .FirstOrDefaultAsync(n => n.Id == notificationId);
+
+            if (notification == null)
+                return false;
+
+            var alreadyDismissed = await _context.DismissedNotifications
+                .AnyAsync(x => x.NotificationId == notificationId && x.UserId == userId);
+
+            if (alreadyDismissed)
+                return true; 
 
             var dismissed = new NotificationDismissedEntity
             {
@@ -86,7 +97,9 @@ namespace Infrastructure.Services
 
             _context.DismissedNotifications.Add(dismissed);
             await _context.SaveChangesAsync();
+            return true;
         }
+
 
     }
 }

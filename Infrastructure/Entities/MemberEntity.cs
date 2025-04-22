@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Entities;
 
@@ -14,9 +15,10 @@ public class MemberEntity
     public string Email { get; set; } = null!;
     public string PhoneNumber { get; set; } = null!;
     public string Address { get; set; } = null!;
-
     public DateTime DateOfBirth { get; set; }
-    public JobTitle JobTitle { get; set; }
+    [Required]
+    public JobTitle? JobTitle { get; set; }
+
 
     // Many-to-Many: Members ↔ Projects (via join table)
     public List<ProjectMemberEntity> ProjectMembers { get; set; } = new();

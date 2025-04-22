@@ -235,26 +235,40 @@
         }, { once: true });
     }
 
+    window.showProjectDeleteModal = function (projectId) {
+        const modal = document.getElementById("deleteConfirmationModal");
+        const confirmBtn = document.getElementById("confirmDelete");
+        const cancelBtn = document.getElementById("cancelDelete");
+        const message = document.getElementById("deleteModalMessage");
 
-    function deleteProject(projectId) {
-        if (!confirm("Are you sure you want to delete this project?")) return;
+        modal.dataset.projectId = projectId;
 
-        fetch(`/projects/delete/${projectId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showSuccessMessage("Project deleted successfully.");
-                    document.getElementById("edit-project-modal")?.remove();
-                    loadProjects();
-                } else {
-                    showErrorMessage("Error: " + data.message);
-                }
+        modal.style.display = "flex";
+        message.textContent = "Are you sure you want to delete this project?";
+
+        confirmBtn.onclick = function () {
+            const id = modal.dataset.projectId;
+            fetch(`/projects/delete/${id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
             })
-            .catch(error => console.error("Error deleting project:", error));
-    }
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessMessage("Project deleted successfully.");
+                        modal.style.display = "none";
+                        loadProjects(); 
+                    } else {
+                        showErrorMessage("Error: " + data.message);
+                    }
+                });
+        };
+
+        cancelBtn.onclick = function () {
+            modal.style.display = "none";
+        };
+    };
+
 
     function setupFileUploadPreview(formId) {
         const fileInput = document.querySelector(`#${formId} input[type='file']`);
@@ -284,15 +298,4 @@
         const existingModal = document.getElementById(modalId);
         if (existingModal) existingModal.remove();
     }
-
-    function displayServerErrors(errors) {
-        for (const [field, messages] of Object.entries(errors)) {
-            const span = document.querySelector(`[data-valmsg-for="${field}"]`);
-            if (span) {
-                span.innerText = messages.join(", ");
-                span.classList.add("text-danger");
-            }
-        }
-    }
 });
-

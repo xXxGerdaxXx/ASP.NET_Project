@@ -8,29 +8,29 @@ namespace MainApp.Models
     public class MemberEditFormModel
     {
         [Required]
-        public int Id { get; set; } 
+        public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "First name is required.")]
         [Display(Name = "First Name")]
         [StringLength(50)]
         public string FirstName { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Last name is required.")]
         [Display(Name = "Last Name")]
         [StringLength(50)]
         public string LastName { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Email address is required.")]
         [Display(Name = "Email")]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Phone number is required.")]
         [Display(Name = "Phone")]
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Address is required.")]
         [Display(Name = "Address")]
         [StringLength(100)]
         public string Address { get; set; } = string.Empty;

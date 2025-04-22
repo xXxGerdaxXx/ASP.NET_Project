@@ -30,8 +30,10 @@
 
             <div class="form-group">
                 <label asp-for="Name"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="field-group">
+                    <input asp-for="Name" class="form-control"/>
+                    <span asp-validation-for="Name"></span>
+                </div>
             </div>
 
             <div class="form-group">
@@ -44,19 +46,19 @@
 
             <div class="form-group">
                 <label asp-for="Description"></label>
-                <input type="hidden" asp-for="Description" id="Description" />
+                <input type="hidden" asp-for="Description" id="Description"/>
                 <div class="quill-wrapper">
                     <div id="quill-editor"></div>
                     <div id="quill-toolbar"></div>
                 </div>
 
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <span asp-validation-for="Description"></span>
             </div>
 
             <div class="sidebyside-fields">
                 <div class="form-group">
                     <label asp-for="StartDate"></label>
-                    <input asp-for="StartDate" type="date" class="form-control" />
+                    <input asp-for="StartDate" type="date" class="form-control"/>
                     <span asp-validation-for="StartDate" class="text-danger"></span>
                 </div>
 
@@ -66,8 +68,6 @@
                     <span asp-validation-for="EndDate" class="text-danger"></span>
                 </div>
             </div>
-
-
 
             <div class="form-group">
                 <label class="form-label">Members</label>
@@ -81,14 +81,12 @@
                 </div>
             </div>
 
-
-
             <div class="form-group">
                 <label asp-for="StatusId"></label>
                 <select asp-for="StatusId" asp-items="Model.StatusList" class="form-control">
                     <option value="">-- Select status --</option>
                 </select>
-                <span asp-validation-for="StatusId" class="text-danger"></span>
+                <span asp-validation-for="StatusId"></span>
             </div>
 
             <div class="form-group">
@@ -97,7 +95,7 @@
                     <i class="fa-solid fa-dollar-sign"></i>
                     <input asp-for="Budget" type="number" class="form-control" placeholder="Enter amount" />
                 </div>
-                <span asp-validation-for="Budget" class="text-danger"></span>
+                <span asp-validation-for="Budget"></span>
             </div>
 
             <footer class="modal-footer">
@@ -108,3 +106,6 @@
     </div>
 </div>
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

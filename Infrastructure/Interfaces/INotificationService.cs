@@ -10,5 +10,6 @@ public interface INotificationService
 
     Task AddNotificationAsync(int notificationTypeId, string message, string? image = null, int notificationTargetGroup = 1);
 
-    Task DismissNotificationAsync(string notificationId, string userId);
+    Task<bool> DismissNotificationAsync(string notificationId, string userId);
+
 }

@@ -111,11 +111,11 @@
 
                     setupFileUploadPreview("editMemberForm");
                     setupEditFormSubmission(memberId);
-                    // ✅ FIX: Attach delete button event listener inside modal
+
                     const deleteButton = modal.querySelector("#deleteMemberBtn");
                     if (deleteButton) {
                         deleteButton.addEventListener("click", function () {
-                            deleteMember(memberId); // ✅ Delete only the selected member
+                            deleteMember(memberId); 
                         });
                     }
                 }
@@ -153,27 +153,53 @@
                 .catch(error => showErrorMessage("Error updating member."));
         });
     }
-    function deleteMember(memberId) {
-        if (!confirm("Are you sure you want to delete this member?")) return;
 
-        fetch(`/admin/members/delete/${memberId}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showSuccessMessage("Member deleted successfully.");
-                    document.getElementById("edit-member-modal")?.remove(); // Close modal if open
-                    loadMembers(); // Refresh members list
-                } else {
-                    showErrorMessage("Error: " + data.message);
+    function deleteMember(memberId) {
+        const modal = document.getElementById("deleteConfirmationModal");
+        const confirmBtn = document.getElementById("confirmDelete");
+        const cancelBtn = document.getElementById("cancelDelete");
+        const message = document.getElementById("deleteModalMessage");
+
+        if (!modal || !confirmBtn || !cancelBtn || !message) {
+            console.error("Delete modal elements not found.");
+            return;
+        }
+        const editModal = document.getElementById("edit-member-modal");
+        if (editModal) editModal.remove(); 
+
+        message.textContent = "Are you sure you want to delete this member?";
+
+        modal.style.display = "flex";
+
+        confirmBtn.onclick = function () {
+            fetch(`/admin/members/delete/${memberId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
                 }
             })
-            .catch(error => console.error("Error deleting member:", error));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccessMessage("Member deleted successfully.");
+                        modal.style.display = "none";
+                        loadMembers();
+                    } else {
+                        showErrorMessage("Error: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error deleting member:", error);
+                    showErrorMessage("An error occurred while deleting the member.");
+                });
+        };
+
+        // Cancel delete
+        cancelBtn.onclick = function () {
+            modal.style.display = "none";
+        };
     }
+
 
     function setupFileUploadPreview(formId) {
         const fileInput = document.querySelector(`#${formId} input[type='file']`);

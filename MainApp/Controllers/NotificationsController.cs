@@ -14,4 +14,5 @@ public class NotificationsController(INotificationService notificationService) :
         var notifications = await _notificationService.GetNotificationsAsync(userId);
         return PartialView("_NotificationDropdown", notifications);
     }
+
 }

@@ -54,12 +54,11 @@ public class AuthController(
             return View(model);
         }
 
-        // ✅ Fetch user and send notification
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user != null)
         {
             await _notificationService.AddNotificationAsync(
-                notificationTypeId: 1, // login type or generic
+                notificationTypeId: 1, 
                 message: $"{user.FirstName} {user.LastName} just signed in",
                 image: "/images/user-template.svg"
 
@@ -119,7 +118,6 @@ public class AuthController(
             return View(model);
         }
 
-        // Ensure role exists
         if (!await _roleManager.RoleExistsAsync("User"))
         {
             await _roleManager.CreateAsync(new IdentityRole("User"));
@@ -188,6 +186,7 @@ public class AuthController(
 
         return View(model);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditProfile(EditProfileViewModel model)
@@ -212,7 +211,7 @@ public class AuthController(
                 return View(model);
             }
 
-            // Delete old avatar if it's not the default one
+            
             if (!string.IsNullOrWhiteSpace(user.AvatarUrl) && user.AvatarUrl != "/images/default-avatar.png")
             {
                 var oldAvatarPath = Path.Combine(_env.WebRootPath, user.AvatarUrl.TrimStart('/'));
@@ -222,7 +221,7 @@ public class AuthController(
                 }
             }
 
-            // Save new avatar
+            
             var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "avatars");
             Directory.CreateDirectory(uploadsFolder);
 
@@ -242,7 +241,7 @@ public class AuthController(
         if (result.Succeeded)
         {
             TempData["Success"] = "Profile updated successfully.";
-            return RedirectToAction("EditProfile");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         foreach (var error in result.Errors)

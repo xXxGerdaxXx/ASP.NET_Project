@@ -147,8 +147,8 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             EndDate = form.EndDate,
             Budget = form.Budget,
             ProjectMemberIds = form.SelectedTeamMemberIds,  
-            ClientId = form.ClientId,
-            StatusId = form.StatusId,
+            ClientId = form.ClientId ?? 0,
+            StatusId = form.StatusId ?? 0,
             AvatarUrl = avatarUrl,
             CreatedByUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "system"
         };
@@ -195,8 +195,8 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             StartDate = project.StartDate,
             EndDate = project.EndDate,
             Budget = project.Budget,
-            StatusId = project.StatusId,
-            ClientId = project.ClientId,
+            StatusId = project.StatusId ?? 0,
+            ClientId = project.ClientId ?? 0,
             AvatarUrl = string.IsNullOrWhiteSpace(project.AvatarUrl) ? "/images/Avatar.svg" : project.AvatarUrl,
             ClientList = new SelectList(clients, "Id", "ClientName"),
             StatusList = new SelectList(statuses, "Id", "StatusName"),
@@ -254,8 +254,8 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
                 StartDate = form.StartDate,
                 EndDate = form.EndDate,
                 Budget = form.Budget,
-                ClientId = form.ClientId,
-                StatusId = form.StatusId,
+                ClientId = form.ClientId ?? 0,
+                StatusId = form.StatusId ?? 0,
                 AvatarUrl = project.AvatarUrl, 
                 TeamMemberIds = form.SelectedTeamMemberIds,
                 CreatedByUserId = project.CreatedByUserId

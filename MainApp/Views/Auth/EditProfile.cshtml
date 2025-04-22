@@ -9,34 +9,54 @@
 <form asp-action="EditProfile" enctype="multipart/form-data" method="post">
     @Html.AntiForgeryToken()
 
-    <div class="form-group">
-        <label>Current Avatar</label><br />
-        <img src="@(string.IsNullOrEmpty(Model.CurrentAvatarUrl) ? "/images/default-avatar.png" : Model.CurrentAvatarUrl)"
-             alt="Avatar" width="100" height="100" />
+    <div class="image-previewer circle" style="cursor: pointer;">
+        <label for="avatarInput" style="cursor: pointer; margin-bottom: 0;">
+            <img id="avatarPreview"
+                 src="@(string.IsNullOrEmpty(Model.CurrentAvatarUrl) ? "/images/default-avatar.png" : Model.CurrentAvatarUrl)"
+                 alt="Avatar"
+                 class="image-preview" />
+        </label>
+
+        <input id="avatarInput" asp-for="Avatar" type="file" accept="image/*" class="hide" onchange="previewAvatar(this)" />
+        <span asp-validation-for="Avatar" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="Avatar"></label>
-        <input asp-for="Avatar" type="file" class="form-control-file" />
+
+
+    <!-- Hidden file input -->
+    <div class="form-group d-none">
+        <input asp-for="Avatar" type="file" id="avatarInput" accept="image/*" onchange="previewAvatar(this)" />
         <span asp-validation-for="Avatar" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="FirstName"></label>
+        <label asp-for="FirstName">Update your first name</label>
         <input asp-for="FirstName" class="form-control" />
         <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="LastName"></label>
+        <label asp-for="LastName">Update your surname</label>
         <input asp-for="LastName" class="form-control" />
         <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
 
-
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <button type="submit" class="btn btn-primary">Go back</button>
+    <footer class="editprofile-footer">
+        <button type="submit" class="btn btn-savechanges">Save Changes</button>
+        <button type="button" class="btn btn-goback" onclick="window.history.back()">Go Back</button>
+    </footer>
 </form>
+<script>
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("avatarPreview").src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 
 
 

@@ -2,6 +2,7 @@
 
 <div id="add-client-modal" class="modal-overlay">
     <div class="surface-modal">
+
         <header>
             <h2>New Client</h2>
             <button id="closeAddClientModal" class="btn-close"><i class="fa-solid fa-xmark"></i></button>
@@ -13,11 +14,11 @@
                 <img src="" class="image-preview" />
                 <input asp-for="File" type="file" accept="image/*" class="hide" />
             </div>
-
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ClientName"></label>
                 <div class="field-group">
-                    <input name="ClientName" asp-for="ClientName">
+                    <input asp-for="ClientName" class="form-control"/>
                     <span asp-validation-for="ClientName" class="text-danger"></span>
                 </div>
             </div>
@@ -39,7 +40,7 @@
             <div class="form-group">
                 <label asp-for="ContactPerson"></label>
                 <div class="field-group">
-                    <input name="ContactPerson" asp-for="ContactPerson">
+                    <input asp-for="ContactPerson" class="form-control"/>
                     <span asp-validation-for="ContactPerson"></span>
                 </div>
             </div>
@@ -47,7 +48,7 @@
             <div class="form-group">
                 <label asp-for="Email"></label>
                 <div class="field-group">
-                    <input name="Email" asp-for="Email">
+                    <input asp-for="Email" class="form-control" type="email"/>
                     <span asp-validation-for="Email"></span>
                 </div>
             </div>
@@ -73,3 +74,6 @@
         </form>
     </div>
 </div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

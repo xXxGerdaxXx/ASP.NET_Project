@@ -22,11 +22,11 @@ public class ProjectEntity
     public UserEntity CreatedByUser { get; set; } = null!;
 
     // Foreign Key to StatusEntity
-    public int StatusId { get; set; }
+    public int? StatusId { get; set; }
     public StatusEntity Status { get; set; } = null!;
 
     // Foreign Key for Client
-    public int ClientId { get; set; }
+    public int? ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;
 
     public string? AvatarUrl { get; set; }

@@ -32,21 +32,23 @@ public class MemberCreateForm
 
     [Display(Name = "Job Title", Prompt = "Select job title")]
     [Required(ErrorMessage = "You must select a job title")]
-    public JobTitle JobTitle { get; set; }
+    public JobTitle? JobTitle { get; set; }
 
     [Display(Name = "Address", Prompt = "Enter member's address")]
     [Required(ErrorMessage = "Address is required")]
     public string Address { get; set; } = null!;
 
     [NotMapped]
-    public int BirthDay { get; set; }
-    public int BirthMonth { get; set; }
-    public int BirthYear { get; set; }
+    [Required(ErrorMessage = "Day is required")]
+    public int? BirthDay { get; set; }
 
-    public DateTime DateOfBirth => new(BirthYear, BirthMonth, BirthDay);
+    [NotMapped]
+    [Required(ErrorMessage = "Month is required")]
+    public int? BirthMonth { get; set; }
 
-    //[DataType(DataType.Date)]
-    //[Display(Name = "Date of Birth", Prompt = "Select date of birth")]
-    //[Required(ErrorMessage = "You must enter date of birth")]
-    //public DateTime DateOfBirth { get; set; }
+    [NotMapped]
+    [Required(ErrorMessage = "Year is required")]
+    public int? BirthYear { get; set; }
+
+
 }

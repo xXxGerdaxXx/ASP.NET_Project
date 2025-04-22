@@ -1,4 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
+    console.log("Notifications.js loaded and running");
     const button = document.getElementById("notification-dropdown-button");
     const dropdown = document.getElementById("notification-dropdown");
 
@@ -10,7 +11,8 @@
     }
 
     updateNotificationCount();
-    updateRelativeTimes();
+    updateRelativeTimes();  
+    setInterval(updateRelativeTimes, 60 * 1000); 
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/notificationHub")
@@ -18,49 +20,58 @@
 
     connection.on("ReceiveNotification", function (notification) {
         const notifications = document.querySelector('.notifications');
-
         if (!notifications) return;
 
         const item = document.createElement('div');
         item.className = 'notification-item';
         item.setAttribute('data-id', notification.id);
         item.innerHTML = `
+        <img class="image" src="${notification.icon}" />
+        <div class="notification-content">
+            <div class="message">${notification.message}</div>
+            <div class="time" data-created="${new Date(notification.created).toISOString()}">Loading...</div>
+            <button class="btn-close" onclick="dismissNotification('${notification.id}')">×</button>
+        </div>
+    `;
 
-                    <img class="image" src="${notification.icon}" />
-                    <div class="message">${notification.message}</div>
-                    <div class="notification-content">
-                    <div class="message">${notification.message}</div>
-                    <div class="time" data-created="${new Date(notification.created).toISOString()}">${notification.created}</div>
-                    <button class="btn-close" onclick="dismissNotification('${notification.id}')">×</button>
-                `
         notifications.insertBefore(item, notifications.firstChild);
-
         updateNotificationCount();
         updateRelativeTimes();
+        updateLocalTimes(); 
     });
 
-    connection.on("NotificationDismissed", function (notificationId) {
-        const element = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
-        if (element) {
-            element.remove();
-            updateNotificationCount();
-        }
-    });
+    function updateLocalTimes() {
+        const timeElements = document.querySelectorAll(".notification-item .time");
+
+        timeElements.forEach(el => {
+            const iso = el.getAttribute("data-created");
+            if (!iso) return;
+
+            const localTime = new Date(iso).toLocaleTimeString("sv-SE", {
+                timeZone: "Europe/Stockholm",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+
+            el.textContent = localTime;
+        });
+    }
+
+    //connection.on("NotificationDismissed", function (notificationId) {
+    //    const element = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+    //    if (element) {
+    //        element.remove();
+    //        updateNotificationCount();
+    //    }
+    //});
 
     connection.start().catch(error => console.error(error));
 
 
-    function updateNotificationCount() {
-        const items = document.querySelectorAll(".notification-item");
-        const numberDisplay = document.querySelector(".notification-number");
-        const dot = document.querySelector(".dot-red");
 
-        if (numberDisplay) numberDisplay.textContent = items.length;
-        if (dot) dot.style.display = items.length > 0 ? "block" : "none";
-    }
 
     function updateRelativeTimes() {
-        setInterval(updateRelativeTimes, 60 * 1000); 
+
 
         const timeElements = document.querySelectorAll(".notification-item .time");
 

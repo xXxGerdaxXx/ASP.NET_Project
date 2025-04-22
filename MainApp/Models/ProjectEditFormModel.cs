@@ -12,9 +12,9 @@ public class ProjectEditFormModel
     [Display(Name = "Project Name", Prompt = "Enter project name")]
     public string Name { get; set; } = null!;
 
-    [Required(ErrorMessage = "Client selection is required.")]
+    [Required(ErrorMessage = "You must select a client.")]
     [Display(Name = "Client", Prompt = "Select a client")]
-    public int ClientId { get; set; }
+    public int? ClientId { get; set; }
 
     public SelectList ClientList { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
 
@@ -48,9 +48,9 @@ public class ProjectEditFormModel
 
     public string? AvatarUrl { get; set; }
 
-    [Required(ErrorMessage = "Status selection is required.")]
+    [Required(ErrorMessage = "You must select a status.")]
     [Display(Name = "Status")]
-    public int StatusId { get; set; }
+    public int? StatusId { get; set; }
 
     public SelectList StatusList { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
 }

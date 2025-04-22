@@ -9,13 +9,12 @@ public class ProjectCreateFormModel
     [Display(Name = "Project Name", Prompt = "Enter project name")]
     public string Name { get; set; } = null!;
 
-    [Required(ErrorMessage = "Client selection is required.")]
+    [Required(ErrorMessage = "You must select a client.")]
     [Display(Name = "Client", Prompt = "Select a client")]
-    public int ClientId { get; set; }
+    public int? ClientId { get; set; }
 
     public SelectList ClientList { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
 
-    [Required(ErrorMessage = "Description is required.")]
     [Display(Name = "Description", Prompt = "Type something")]
     public string Description { get; set; } = null!;
 
@@ -29,11 +28,8 @@ public class ProjectCreateFormModel
     [Display(Name = "End Date")]
     public DateTime? EndDate { get; set; }
 
-    //[Display(Name = "Members")]
-    //public string TeamMemberSearch { get; set; } = null!;
-
     public List<SelectListItem> TeamMemberList { get; set; } = [];
-
+    [Required(ErrorMessage = "Please assign at least one member to the project.")]
     [Display(Name = "Members")]
     public List<int> SelectedTeamMemberIds { get; set; } = [];
 
@@ -42,9 +38,9 @@ public class ProjectCreateFormModel
     [Display(Name = "Budget", Prompt = "Enter project budget")]
     public decimal? Budget { get; set; }
 
-    [Required(ErrorMessage = "Status selection is required.")]
+    [Required(ErrorMessage = "You must select a status.")]
     [Display(Name = "Status")]
-    public int StatusId { get; set; }
+    public int? StatusId { get; set; }
 
     public SelectList StatusList { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
 

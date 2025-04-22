@@ -163,7 +163,7 @@
                         document.getElementById("edit-client-modal").remove();
                         loadClients();
                     } else {
-                displayServerErrors(data.errors); // Show server-side validation errors
+                displayServerErrors(data.errors); 
                     }
                 })
                 .catch(error => console.error("Error updating client:", error));

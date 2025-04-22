@@ -69,9 +69,14 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
         }
 
         string? avatarUrl = null;
+        DateTime? dob = null;
         if (form.File != null)
         {
             avatarUrl = await _fileService.SaveFileAsync(form.File, "members");
+        }
+        if (form.BirthYear.HasValue && form.BirthMonth.HasValue && form.BirthDay.HasValue)
+        {
+            dob = new DateTime(form.BirthYear.Value, form.BirthMonth.Value, form.BirthDay.Value);
         }
         var newMember = new MemberEntity
         {
@@ -80,7 +85,7 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             Email = form.Email,
             PhoneNumber = form.PhoneNumber ?? "N/A",
             Address = form.Address ?? "Unknown",
-            DateOfBirth = form.DateOfBirth,
+            DateOfBirth = dob ?? default,
             JobTitle = form.JobTitle,
             AvatarUrl = avatarUrl
         };
@@ -91,7 +96,7 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             await _memberService.CreateMemberAsync(newMember);
             _logger.LogInformation("Member Created Successfully: {@Member}", newMember);
 
-            return Json(new { success = true }); // AJAX-friendly response
+            return Json(new { success = true });
         }
         catch (Exception ex)
         {
@@ -114,7 +119,7 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             Email = member.Email,
             PhoneNumber = member.PhoneNumber,
             Address = member.Address,
-            JobTitle = member.JobTitle,
+            JobTitle = member.JobTitle ?? 0,
             AvatarUrl = member.AvatarUrl,
             BirthDay = member.DateOfBirth.Day,
             BirthMonth = member.DateOfBirth.Month,

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace MainApp.Controllers;
 
 [Authorize]
-[Route("api/[controller]")]
+[Route("api/notification")]
 [ApiController]
 public class NotificationController(IHubContext<NotificationHub> notificationHub, INotificationService notificationService) : ControllerBase
 {
@@ -33,7 +33,7 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
         var notifications = await _notificationService.GetNotificationsAsync(userId);
         return Ok(notifications);
     }
-
+    [Authorize]
     [HttpPost("dismiss/{id}")]
     public async Task<IActionResult> DismissNotification(string id)
     {
@@ -41,9 +41,11 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
-        await _notificationService.DismissNotificationAsync(id, userId);
-        await _notificationHub.Clients.All.SendAsync("NotificationDismissed", id);
+        var result = await _notificationService.DismissNotificationAsync(id, userId);
+        if (!result)
+            return NotFound();
 
         return Ok(new { success = true });
     }
+
 }

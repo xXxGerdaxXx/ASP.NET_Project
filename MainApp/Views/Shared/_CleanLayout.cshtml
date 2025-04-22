@@ -23,10 +23,14 @@
             @RenderBody()
         </main>
     </div>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+    }
 
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

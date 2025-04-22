@@ -41,17 +41,17 @@
                     </button>
                 </form>
 
-                <form method="post" asp-action="DeleteProject" asp-controller="Projects" asp-route-projectId="@Model.Id" onsubmit="return confirm('Are you sure you want to delete this project?')">
-                    <button type="submit" class="dropdown-item text-danger">
-                        <i class="fa-solid fa-trash"></i> Delete Project
-                    </button>
-                </form>
+                <button onclick="showProjectDeleteModal('@Model.Id')" class="dropdown-item text-danger">
+                    <i class="fa-solid fa-trash"></i> Delete Project
+                </button>
+
             </div>
         </div>
     </div>
 
-    <div class="card-desc">@Html.Raw(Model.Description)</div>
-
+    <div class="card-description">
+        @Html.Raw(Model.Description)
+    </div>
 
     <div class="card-footer">
         @if (!validEndDate)
