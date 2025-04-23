@@ -56,9 +56,11 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFileService, FileService>();
+
 
 // ? Utility Services
-builder.Services.AddScoped<FileService>();
+//builder.Services.AddScoped<FileService>();
 //builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProjectService>();
 

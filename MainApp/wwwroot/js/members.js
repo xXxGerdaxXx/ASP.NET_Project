@@ -1,8 +1,11 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    loadMembers(); 
+    const pageSizeSelector = document.getElementById("pageSize");
 
-    function loadMembers() {
-        fetch('/admin/members/list')
+    function loadMembers(page = 1) {
+        const pageSize = document.getElementById("pageSize")?.value || 6;
+
+        fetch(`/admin/members/list?page=${page}&pageSize=${pageSize}`)
+
             .then(response => response.text())
             .then(html => {
                 const membersList = document.getElementById("membersList");
@@ -13,9 +16,25 @@
 
                 membersList.innerHTML = html;
                 attachEventListeners();
+                attachPaginationEvents(); 
             })
             .catch(error => console.error("Error loading members:", error));
     }
+    function attachPaginationEvents() {
+        document.querySelectorAll(".pagination-link").forEach(link => {
+            link.addEventListener("click", function (e) {
+                e.preventDefault();
+                const page = this.getAttribute("data-page");
+                loadMembers(parseInt(page));
+            });
+        });
+    }
+
+    if (pageSizeSelector) {
+        pageSizeSelector.addEventListener("change", () => loadMembers(1));
+    }
+
+    loadMembers();
 
     function attachEventListeners() {
 
@@ -29,7 +48,13 @@
                 loadEditMemberModal(memberId);
             });
         });
-
+        document.querySelectorAll(".pagination-link").forEach(link => {
+            link.addEventListener("click", e => {
+                e.preventDefault();
+                const page = parseInt(link.dataset.page);
+                loadMembers(page);
+            });
+        });
         const addMemberModalButton = document.getElementById("openAddMemberModal");
         if (addMemberModalButton) {
             addMemberModalButton.addEventListener("click", openAddMemberModal);
@@ -229,4 +254,5 @@
         const existingModal = document.getElementById(modalId);
         if (existingModal) existingModal.remove();
     }
+
 });

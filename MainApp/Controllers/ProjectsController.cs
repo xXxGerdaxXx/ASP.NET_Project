@@ -15,11 +15,11 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 namespace MainApp.Controllers;
 
 [Route("projects")]
-public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, FileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService, ICompositeViewEngine viewEngine) : Controller
+public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, IFileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService, ICompositeViewEngine viewEngine) : Controller
 {
     private readonly IProjectService _projectService = projectService;
     private readonly ILogger<ProjectsController> _logger = logger;
-    private readonly FileService _fileService = fileService;
+    private readonly IFileService _fileService = fileService;
     private readonly IClientService _clientService = clientService;
     private readonly IMemberService _memberService = memberService;
     private readonly IStatusService _statusService = statusService;

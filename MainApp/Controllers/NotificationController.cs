@@ -20,31 +20,40 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
     public async Task<IActionResult> CreateNotification(NotificationEntity notificationEntity)
     {
         await _notificationService.AddNotificationAsync(notificationEntity); 
+
+        //var notifications = await _notificationService.GetNotificationsAsync("anonymous");
+        //var newNotification = notifications.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+
+        //if (newNotification != null)
+        //{
+        //    await _notificationHub.Clients.All.SendAsync("ReceiveNotification", newNotification);
+        //}
+
         return Ok(new { success = true });
     }
 
     [HttpGet]
     public async Task<IActionResult> GetNotifications()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
         var notifications = await _notificationService.GetNotificationsAsync(userId);
         return Ok(notifications);
     }
-    [Authorize]
+
+
+  
     [HttpPost("dismiss/{id}")]
     public async Task<IActionResult> DismissNotification(string id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
-        var result = await _notificationService.DismissNotificationAsync(id, userId);
-        if (!result)
-            return NotFound();
-
+        await _notificationService.DismissNotificationAsync(id, userId);
+        await _notificationHub.Clients.User(userId).SendAsync("DismissNotification", id);
         return Ok(new { success = true });
     }
 

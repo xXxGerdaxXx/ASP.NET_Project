@@ -9,51 +9,75 @@ using Microsoft.AspNetCore.Mvc;
 namespace MainApp.Controllers;
 
 [Route("admin/members")]
-public class MembersController(IMemberService memberService, ILogger<MembersController> logger, FileService fileService) : Controller
+public class MembersController(IMemberService memberService, ILogger<MembersController> logger, IFileService fileService) : Controller
 {
     private readonly IMemberService _memberService = memberService;
     private readonly ILogger<MembersController> _logger = logger;
-    private readonly FileService _fileService = fileService;
+    private readonly IFileService _fileService = fileService;
 
+
+    //[HttpGet("list")]
+    //public async Task<IActionResult> GetMembersList()
+    //{
+    //    var members = await _memberService.GetAllMembersAsync();
+
+    //    if (members == null || !members.Any())
+    //    {
+    //        _logger.LogWarning(members == null ? "Members list is NULL!" : "Members list is EMPTY!");
+    //        members = new List<MemberEntity>();
+    //    }
+    //    else
+    //    {
+    //        _logger.LogInformation($"Retrieved {members.Count} members from the database.");
+    //    }
+
+    //    return PartialView("Partials/Sections/_MemberTableBody", members);
+    //}
+
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 6)
+    {
+        var members = await _memberService.GetMembersAsync(page, pageSize);
+        var totalMembers = await _memberService.GetMembersCountAsync();
+        var totalPages = (int)Math.Ceiling(totalMembers / (double)pageSize);
+
+        var viewmodel = new MembersIndexViewModel
+        {
+            Members = members,
+            TotalMembers = totalMembers,
+            PageSize = pageSize,
+            CurrentPage = page,
+            TotalPages = totalPages
+        };
+
+        //return PartialView("Partials/Sections/_MemberList", viewmodel);
+        return View("~/Views/Admin/Members.cshtml", viewmodel);
+
+    }
     [HttpGet("list")]
-    public async Task<IActionResult> GetMembersList()
+    public async Task<IActionResult> GetMembersList(int page = 1, int pageSize = 6)
     {
-        var members = await _memberService.GetAllMembersAsync();
+        var members = await _memberService.GetMembersAsync(page, pageSize);
+        var totalMembers = await _memberService.GetMembersCountAsync();
+        var totalPages = (int)Math.Ceiling(totalMembers / (double)pageSize);
 
-        if (members == null || !members.Any())
+        var viewmodel = new MembersIndexViewModel
         {
-            _logger.LogWarning(members == null ? "Members list is NULL!" : "Members list is EMPTY!");
-            members = new List<MemberEntity>();
-        }
-        else
-        {
-            _logger.LogInformation($"Retrieved {members.Count} members from the database.");
-        }
+            Members = members,
+            TotalMembers = totalMembers,
+            PageSize = pageSize,
+            CurrentPage = page,
+            TotalPages = totalPages
+        };
 
-        return PartialView("Partials/Sections/_MemberTableBody", members); 
+        return PartialView("Partials/Sections/_MemberTableBody", viewmodel); 
+
     }
 
-    [HttpPost("upload-avatar")]
-    public async Task<IActionResult> UploadClientAvatar(IFormFile file)
-    {
-        string? fileUrl = await _fileService.SaveFileAsync(file, "members"); 
-        if (fileUrl == null)
-        {
-            return BadRequest("Error uploading file.");
-        }
 
-        return Ok(new { url = fileUrl });
-    }
-
-    [HttpGet("create")]
-    public IActionResult Create()
-    {
-        return PartialView("Partials/Sections/_CreateMember"); // Now used for AJAX
-    }
 
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreateMember(MemberCreateForm form)
+    public async Task<IActionResult> CreateMember(MemberCreateForm form, int pageSize = 6)
     {
         if (!ModelState.IsValid)
         {
@@ -70,14 +94,24 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
 
         string? avatarUrl = null;
         DateTime? dob = null;
+
         if (form.File != null)
         {
             avatarUrl = await _fileService.SaveFileAsync(form.File, "members");
         }
+
         if (form.BirthYear.HasValue && form.BirthMonth.HasValue && form.BirthDay.HasValue)
         {
-            dob = new DateTime(form.BirthYear.Value, form.BirthMonth.Value, form.BirthDay.Value);
+            try
+            {
+                dob = new DateTime(form.BirthYear.Value, form.BirthMonth.Value, form.BirthDay.Value);
+            }
+            catch
+            {
+                return BadRequest(new { success = false, message = "Invalid date of birth." });
+            }
         }
+
         var newMember = new MemberEntity
         {
             FirstName = form.FirstName,
@@ -90,13 +124,26 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             AvatarUrl = avatarUrl
         };
 
-
         try
         {
             await _memberService.CreateMemberAsync(newMember);
             _logger.LogInformation("Member Created Successfully: {@Member}", newMember);
 
-            return Json(new { success = true });
+            var members = await _memberService.GetMembersAsync(1, pageSize);
+            var totalMembers = await _memberService.GetMembersCountAsync();
+            var totalPages = (int)Math.Ceiling(totalMembers / (double)pageSize);
+
+            var viewmodel = new MembersIndexViewModel
+            {
+                Members = members,
+                TotalMembers = totalMembers,
+                PageSize = pageSize,
+                CurrentPage = 1,
+                TotalPages = totalPages
+            };
+
+            return PartialView("Partials/Sections/_MemberTableBody", viewmodel);
+
         }
         catch (Exception ex)
         {
@@ -104,6 +151,81 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
             return StatusCode(500, new { success = false, message = ex.Message });
         }
     }
+
+
+
+
+    [HttpPost("upload-avatar")]
+    public async Task<IActionResult> UploadClientAvatar(IFormFile file)
+    {
+        string? fileUrl = await _fileService.SaveFileAsync(file, "members"); 
+        if (fileUrl == null)
+        {
+            return BadRequest("Error uploading file.");
+        }
+
+        return Ok(new { url = fileUrl });
+    }
+
+    [HttpGet("create")]
+    public IActionResult Create()
+    {
+        return PartialView("Partials/Sections/_CreateMember");
+    }
+
+
+    //[HttpPost("create")]
+    //public async Task<IActionResult> CreateMember(MemberCreateForm form)
+    //{
+    //    if (!ModelState.IsValid)
+    //    {
+    //        var errors = ModelState
+    //            .Where(x => x.Value?.Errors.Count > 0)
+    //            .ToDictionary(
+    //                kvp => kvp.Key,
+    //                kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+    //            );
+
+    //        _logger.LogWarning("Form validation failed: {@Errors}", errors);
+    //        return BadRequest(new { success = false, errors });
+    //    }
+
+    //    string? avatarUrl = null;
+    //    DateTime? dob = null;
+    //    if (form.File != null)
+    //    {
+    //        avatarUrl = await _fileService.SaveFileAsync(form.File, "members");
+    //    }
+    //    if (form.BirthYear.HasValue && form.BirthMonth.HasValue && form.BirthDay.HasValue)
+    //    {
+    //        dob = new DateTime(form.BirthYear.Value, form.BirthMonth.Value, form.BirthDay.Value);
+    //    }
+    //    var newMember = new MemberEntity
+    //    {
+    //        FirstName = form.FirstName,
+    //        LastName = form.LastName,
+    //        Email = form.Email,
+    //        PhoneNumber = form.PhoneNumber ?? "N/A",
+    //        Address = form.Address ?? "Unknown",
+    //        DateOfBirth = dob ?? default,
+    //        JobTitle = form.JobTitle,
+    //        AvatarUrl = avatarUrl
+    //    };
+
+
+    //    try
+    //    {
+    //        await _memberService.CreateMemberAsync(newMember);
+    //        _logger.LogInformation("Member Created Successfully: {@Member}", newMember);
+
+    //        return Json(new { success = true });
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "Error Creating Member: {@Form}", form);
+    //        return StatusCode(500, new { success = false, message = ex.Message });
+    //    }
+    //}
 
     [HttpGet("edit/{id}")]
     public async Task<IActionResult> Edit(int id)

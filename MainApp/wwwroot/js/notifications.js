@@ -103,3 +103,18 @@
     }
 
 });
+window.dismissNotification = function (notificationId) {
+    fetch(`/api/notification/dismiss/${notificationId}`, {
+        method: "POST"
+    })
+        .then(response => {
+            if (!response.ok) throw new Error("Dismiss failed");
+
+            const el = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+            if (el) {
+                el.remove();
+                updateNotificationCount();
+            }
+        })
+        .catch(err => console.error("Dismiss error:", err));
+};

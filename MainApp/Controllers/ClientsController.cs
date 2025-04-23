@@ -16,9 +16,9 @@ public class ClientsController : Controller
 {
     private readonly IClientService _clientService;
     private readonly ILogger<ClientsController> _logger;
-    private readonly FileService _fileService;
+    private readonly IFileService _fileService;
 
-    public ClientsController(IClientService clientService, ILogger<ClientsController> logger, FileService fileService)
+    public ClientsController(IClientService clientService, ILogger<ClientsController> logger, IFileService fileService)
     {
         _clientService = clientService;
         _logger = logger;

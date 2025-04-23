@@ -1,4 +1,95 @@
-﻿@model List<Infrastructure.Entities.MemberEntity>
+﻿@model MainApp.Models.MembersIndexViewModel
+@using Infrastructure.Helpers
+
+<div class="userlist-wrapper">
+    <div class="memberlist-selection">
+        <label>Items:</label>
+        <select name="pageSize" id="pageSize">
+            @foreach (var size in Model.PageSizeOptions)
+            {
+                if (size == Model.PageSize)
+                {
+                    <option value="@size" selected="selected">@size</option>
+                }
+                else
+                {
+                    <option value="@size">@size</option>
+                }
+            }
+        </select>
+
+    </div>
+</div>
+
+
+@if (Model == null || Model.Members == null)
+{
+    <p>Model is NULL!</p>
+}
+else if (!Model.Members.Any())
+{
+    <p>No members available (empty list).</p>
+}
+else
+{
+    <section class="members-grid">
+        @foreach (var member in Model.Members)
+        {
+            <div class="member-card">
+
+                <div class="member-actions">
+                    <i class="fa-solid fa-ellipsis edit-member-btn" data-member-id="@member.Id"></i>
+                </div>
+
+
+                <div class="member-image">
+                    <img src="@(!string.IsNullOrEmpty(member.AvatarUrl) ? member.AvatarUrl : "/images/Avatar.svg")"
+                         alt="Avatar of @member.FirstName @member.LastName"
+                         class="avatar-img" />
+                </div>
+
+                <h3 class="member-name">@member.FirstName @member.LastName</h3>
+                <div class="member-role">@EnumHelper.GetEnumDescription(member.JobTitle)</div>
+                <div class="member-email">@member.Email</div>
+                <div class="member-phone">@member.PhoneNumber</div>
+
+                <button class="message-btn" aria-label="Send message to @member.FirstName @member.LastName">
+                    Message
+                </button>
+            </div>
+        }
+
+        <div class="pagination-container">
+            @if (Model.CurrentPage > 1)
+            {
+                <a href="#" class="pagination-link" data-page="@(Model.CurrentPage - 1)">&larr;</a>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                if (i == Model.CurrentPage)
+                {
+                    <span class="pagination-link active">@i</span>
+                }
+                else
+                {
+                    <a href="#" class="pagination-link" data-page="@i">@i</a>
+                }
+            }
+
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <a href="#" class="pagination-link" data-page="@(Model.CurrentPage + 1)">&rarr;</a>
+            }
+        </div>
+
+    </section>
+}
+
+
+
+
+@* @model List<Infrastructure.Entities.MemberEntity>
 @using Infrastructure.Helpers
 
 @if (Model == null)
@@ -39,3 +130,4 @@ else
         }
     </section>
 }
+ *@

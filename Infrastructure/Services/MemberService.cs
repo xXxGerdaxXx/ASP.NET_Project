@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Interfaces;
 
+
 namespace Infrastructure.Services
 {
     public class MemberService : IMemberService
@@ -11,6 +12,23 @@ namespace Infrastructure.Services
         {
             _memberRepository = memberRepository;
         }
+
+
+
+        /* Added this for pagination */
+        public async Task<IEnumerable<MemberEntity>> GetMembersAsync(int page = 1, int pageSize = 6)
+        {
+            return await _memberRepository.GetPagedAsync(page, pageSize);
+        }
+        public async Task<int> GetMembersCountAsync()
+        {
+            return await _memberRepository.GetCountAsync();
+        }
+
+
+
+
+
 
         public async Task<List<MemberEntity>> GetAllMembersAsync()
         {

@@ -1,4 +1,6 @@
-﻿@model List<Infrastructure.Entities.MemberEntity>
+﻿@* @model List<Infrastructure.Entities.MemberEntity> *@
+@model MainApp.Models.MembersIndexViewModel
+
 
 <div id="memberListContainer">
     @await Html.PartialAsync("Partials/Sections/_MemberTableBody", Model)

@@ -1421,11 +1421,6 @@ footer {
     transition: background 0.3s ease;
 }
 
-    .dropdown-user-name:hover {
-        background-color: #F5F7FA;
-        border-radius: 14px;
-        margin: 0.3rem;
-    }
 
 /* Dark Mode Toggle container */
 .toggle-theme {
@@ -1497,11 +1492,6 @@ footer {
     text-decoration: none;
     transition: background 0.3s ease;
 }
-
-    .dropdown-user-name:hover {
-        background-color: #F5F7FA;
-        border-radius: 14px;
-    }
 
 /* Dropdown alignment fix */
 .dropdown-content {
@@ -2152,7 +2142,7 @@ table {
 
 .members-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     padding: 20px;
     gap: 30px;
     justify-content: center;
@@ -2683,7 +2673,7 @@ table {
         position: absolute;
         right: 1px;
         top: 48px;
-        width: 380px;
+        width: 360px;
         background-color: white;
         border-radius: 14px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
@@ -2709,7 +2699,7 @@ table {
         background-color: #ff6640;
         color: white;
         border-radius: 50%;
-        padding: 0.4em 0.7em;
+        padding: 0.3em 0.7em;
         font-size: 11px;
     }
 
@@ -2739,22 +2729,55 @@ table {
         }
 
     /* Notification text */
-    .notification-content {
-        flex-grow: 1;
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    background-color: #f5f8fd;
+    padding: 12px;
+    border-radius: 10px;
+    gap: 12px;
+    position: relative;
+    max-width: 320px;
+}
+.notification-close {
+    position: absolute;
+    top: 50%;
+    right: 8px; 
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+    .notification-close:hover {
+        color: var(--red-dark);
     }
 
-        .notification-content .message {
-            font-weight: 600;
-            font-size: 14px;
-            margin-top: 10px;
-        }
+.notification-content {
+    position: relative; 
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding-right: 1rem; 
+}
 
-        .notification-content .time {
-            font-size: 12px;
-            color: var(--gray-700);
-        }
+    .notification-content .message {
+        font-weight: 600;
+        font-size: 14px;
+        margin-top: 10px;
+        margin-right: 3px;
+    }
 
-    /* Close (X) button */
+    .notification-content .time {
+        font-size: 12px;
+        color: var(--gray-700);
+    }
+
     .btn-close {
         background: none;
         border: none;
@@ -2763,11 +2786,10 @@ table {
         cursor: pointer;
     }
 
-        .btn-close:hover {
-            color: var(--red-dark);
-        }
+    .btn-close:hover {
+        color: var(--red-dark);
+    }
 
-    /* Empty message */
     .no-notifications {
         text-align: center;
         font-size: 14px;
@@ -2794,3 +2816,44 @@ textarea.input-validation-error {
     color: var(--text-muted-color);
 }
 
+.pagination-container {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f9fafb;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    z-index: 1000;
+}
+
+    .pagination-link,
+    .pagination-container span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        min-width: 40px;
+        height: 40px;
+        background-color: #f3f4f6;
+        color: #374151;
+        border-radius: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .pagination-link:hover {
+            background-color: #e5e7eb;
+            color: #111827;
+        }
+
+        .pagination-link.active {
+            background-color: #3b82f6;
+            color: white;
+            pointer-events: none;
+        }
