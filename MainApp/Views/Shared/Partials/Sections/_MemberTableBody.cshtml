@@ -3,7 +3,7 @@
 
 <div class="userlist-wrapper">
     <div class="memberlist-selection">
-        <label>Items:</label>
+        <label>Items per page:</label>
         <select name="pageSize" id="pageSize">
             @foreach (var size in Model.PageSizeOptions)
             {
@@ -89,45 +89,3 @@ else
 
 
 
-@* @model List<Infrastructure.Entities.MemberEntity>
-@using Infrastructure.Helpers
-
-@if (Model == null)
-{
-    <p>Model is NULL!</p>
-}
-else if (!Model.Any())
-{
-    <p>No members available (empty list).</p>
-}
-else
-{
-    <section id="membersList" class="members-grid">
-        @foreach (var member in Model)
-        {
-            <div class="member-card">
-                <div class="member-actions">
-                    <div class="member-actions">
-                        <i class="fa-solid fa-ellipsis edit-member-btn" data-member-id="@member.Id"></i>
-                    </div>
-
-                </div>
-                <div class="member-image">
-                    <img src="@(!string.IsNullOrEmpty(member.AvatarUrl) ? member.AvatarUrl : "/images/Avatar.svg")"
-                         alt="Avatar of @member.FirstName @member.LastName"
-                         class="avatar-img" />
-                </div>
-
-                <h3 class="member-name">@member.FirstName @member.LastName</h3>
-                <div class="member-role">@EnumHelper.GetEnumDescription(member.JobTitle)</div>
-                <div class="member-email">@member.Email</div>
-                <div class="member-phone">@member.PhoneNumber</div>
-
-                <button class="message-btn" aria-label="Send message to @member.FirstName @member.LastName">
-                    Message
-                </button>
-            </div>
-        }
-    </section>
-}
- *@

@@ -44,9 +44,10 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
+            <div class="select-wrapper">
                 <label asp-for="JobTitle"></label>
                 <select asp-for="JobTitle" asp-items="EnumExtensions.GetEnumSelectListWithDescription<JobTitle>()" class="form-control"></select>
+                <i class="fa-solid fa-chevron-down select-icon"></i>
                 <span asp-validation-for="JobTitle" class="text-danger"></span>
             </div>
 
@@ -56,40 +57,46 @@
                 <input asp-for="Address">
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label>Date of Birth</label>
                 <div class="date-inputs">
-                <select name="BirthDay" id="BirthDay">
-                    <option value="" disabled>Day</option>
-                    @for (int i = 1; i <= 31; i++)
-                    {
-                        var selected = Model.BirthDay == i ? "selected" : "";
-                        <option value="@i" selected="@(Model.BirthDay == i ? "selected" : null)">@i</option>
-                    }
-                </select>
 
-                <select name="BirthMonth" id="BirthMonth">
-                    <option value="" disabled>Month</option>
-                    @for (int i = 1; i <= 12; i++)
-                    {
-                        var monthName = new DateTime(2000, i, 1).ToString("MMMM");
-                        var selected = Model.BirthMonth == i ? "selected" : "";
-                        <option value="@i" selected="@(Model.BirthMonth == i ? "selected" : null)">@monthName</option>
-                    }
-                </select>
+                    <div class="select-wrapper">
+                        <select class="form-control" name="BirthDay" id="BirthDay">
+                            <option value="" disabled>Day</option>
+                            @for (int i = 1; i <= 31; i++)
+                            {
+                                <option value="@i" selected="@(Model.BirthDay == i ? "selected" : null)">@i</option>
+                            }
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
 
-                <select name="BirthYear" id="BirthYear">
-                    <option value="" disabled>Year</option>
-                    @for (int i = DateTime.Now.Year; i >= 1900; i--)
-                    {
-                    var selected = Model.BirthYear == i ? "selected" : "";
-                    <option value="@i" selected="@(Model.BirthYear == i ? "selected" : null)">@i</option>
-                    }
-                </select>
+                    <div class="select-wrapper">
+                        <select class="form-control" name="BirthMonth" id="BirthMonth">
+                            <option value="" disabled>Month</option>
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                var monthName = new DateTime(2000, i, 1).ToString("MMMM");
+                                <option value="@i" selected="@(Model.BirthMonth == i ? "selected" : null)">@monthName</option>
+                            }
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
+
+                    <div class="select-wrapper">
+                        <select class="form-control" name="BirthYear" id="BirthYear">
+                            <option value="" disabled>Year</option>
+                            @for (int i = DateTime.Now.Year; i >= 1900; i--)
+                            {
+                                <option value="@i" selected="@(Model.BirthYear == i ? "selected" : null)">@i</option>
+                            }
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-icon"></i>
+                    </div>
 
                 </div>
-                </div>
+            </div>
 
             <footer class="modal-footer">
                 <button type="submit" class="btn-blue-submit">Update Member</button>

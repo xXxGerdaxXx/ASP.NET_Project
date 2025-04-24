@@ -111,7 +111,7 @@
                     }
                 }
             })
-            .catch(error => showErrorMessage("Error loading create member modal."));
+            .catch(error => console.error("Error loading create member modal:", error));
     }
 
 

@@ -73,9 +73,6 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
 
     }
 
-
-
-
     [HttpPost("create")]
     public async Task<IActionResult> CreateMember(MemberCreateForm form, int pageSize = 6)
     {
@@ -142,7 +139,8 @@ public class MembersController(IMemberService memberService, ILogger<MembersCont
                 TotalPages = totalPages
             };
 
-            return PartialView("Partials/Sections/_MemberTableBody", viewmodel);
+            //return PartialView("Partials/Sections/_MemberTableBody", viewmodel);
+            return Json(new { success = true });
 
         }
         catch (Exception ex)
