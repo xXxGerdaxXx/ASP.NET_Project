@@ -13,55 +13,62 @@
             <span>OR</span>
         </div>
 
-        <form asp-action="SignUp" method="post">
+        <form id="signup-form" asp-action="SignUp" method="post" asp-controller="Auth" onsubmit="return validateForm(this)" novalidate>
+
+            @Html.ValidationSummary(true, "", new { @class = "form-validation-summary" })
+
             <div class="input-group">
                 <label>First Name</label>
                 <input asp-for="FirstName" placeholder="Your first name" required />
+                <span asp-validation-for="FirstName" class="field-validation-error"></span>
             </div>
             <div class="input-group">
                 <label>Last Name</label>
                 <input asp-for="LastName" placeholder="Your last name" required />
+                <span asp-validation-for="LastName" class="field-validation-error"></span>
             </div>
 
             <div class="input-group">
                 <label>Email</label>
                 <input asp-for="Email" type="email" placeholder="Your email address" required />
+                <span asp-validation-for="Email" class="field-validation-error"></span>
             </div>
 
             <div class="input-group password-group">
-                <label asp-for="Password" class="form-label">Password</label>
+                <label for="password">Password</label>
                 <div class="password-wrapper">
-                    <input asp-for="Password" class="form-control" type="password" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                    <input id="password" name="Password" asp-for="Password" type="password" placeholder="Your password" required />
+                    <i class="fa-solid fa-eye password-toggle" data-target="password" onclick="togglePasswordByData(this)"></i>
                 </div>
+                <span asp-validation-for="Password" class="field-validation-error"></span>
+                <span id="password-live-feedback" class="field-validation-error"></span>
             </div>
 
             <div class="input-group password-group">
-                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <label for="confirm-password">Confirm Password</label>
                 <div class="password-wrapper">
-                    <input asp-for="ConfirmPassword" class="form-control" type="password" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    <input id="confirm-password" name="ConfirmPassword" asp-for="ConfirmPassword" type="password" placeholder="Confirm your password" required data-val-equalto="Passwords do not match." />
+                    <i class="fa-solid fa-eye password-toggle" data-target="confirm-password" onclick="togglePasswordByData(this)"></i>
                 </div>
+                <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
             </div>
+
+
             <div class="checkbox-group">
                 <label class="checkbox-label">
-                    <input type="checkbox" />
+                    <input asp-for="AcceptTerms" name="AcceptTerms" type="checkbox" data-val="true" data-val-required="You must accept the terms." required />
                     I accept <a href="#">Terms and Conditions</a>
                 </label>
+                <span asp-validation-for="AcceptTerms" class="field-validation-error terms-error"></span>
             </div>
-@*             <div class="checkbox-group">
-                <input type="checkbox" asp-for="AcceptTerms" required />
-                <label>I accept <a href="#">Terms and Conditions</a></label>
-            </div> *@
 
             <button type="submit" class="btn-primary">Create Account</button>
         </form>
 
         <p class="login-link">Already have an account? <a asp-action="SignIn">Login</a></p>
 
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <p class="error-message">@Html.ValidationSummary()</p>
-        }
     </div>
 </div>
+@section Scripts {
+    <script src="~/js/validation.js"></script>
+}

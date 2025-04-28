@@ -1,0 +1,33 @@
+﻿@model AddMemberViewModel
+
+<div id="add-member-modal" class="modal-overlay">
+    <div class="surface-modal">
+        <header>
+            <h2>Add Members</h2>
+            <button id="closeAddMemberModal" class="btn-close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </header>
+
+        <form id="addMemberForm" data-preselected-members='@ViewBag.PreselectedMembersJson' method="post" novalidate>
+            <input type="hidden" name="ProjectId" value="@Model.ProjectId" /> 
+
+            <div class="form-group">
+                <label for="add-member-search">Add Member(s)</label>
+                <div id="add-member-tags" class="form-input form-tag-select">
+                    <input type="text" id="add-member-search" class="form-tag-input" placeholder="Search members..." />
+                    <label for="add-member-search"></label>
+                    <div id="add-member-search-results" class="search-results"></div>
+
+                    <input type="hidden" name="SelectedTeamMemberIds" id="SelectedTeamMemberIds" /> 
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                </div>
+            </div>
+
+            <footer class="modal-footer">
+                <button type="submit" class="btn-blue-submit">Add Members</button>
+            </footer>
+        </form>
+
+    </div>
+</div>

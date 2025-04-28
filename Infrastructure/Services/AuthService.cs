@@ -159,12 +159,15 @@ public class AuthService(
     private readonly INotificationService _notificationService = notificationService;
     private readonly IHubContext<NotificationHub> _notificationHub = notificationHub;
 
-
-
     public async Task<bool> LoginAsync(UserSignInDTO loginDto)
     {
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
+
+        if (user == null)
+            return false;
+
         var result = await _signInManager.PasswordSignInAsync(
-            loginDto.Email,
+            user,
             loginDto.Password,
             loginDto.RememberMe,
             lockoutOnFailure: false
@@ -172,17 +175,14 @@ public class AuthService(
 
         if (result.Succeeded)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user != null)
+            var notification = new NotificationEntity
             {
-                var notification = new NotificationEntity
-                {
-                    Message = $"{user.FirstName} {user.LastName} signed in.",
-                    NotificationTypeId = 1,
-                    NotificationTargetGroupId = 1
-                };
-                await _notificationService.AddNotificationAsync(notification);
-            }
+                Message = $"{user.FirstName} {user.LastName} signed in.",
+                NotificationTypeId = 1,
+                NotificationTargetGroupId = 1
+            };
+
+            await _notificationService.AddNotificationAsync(notification);
         }
 
         return result.Succeeded;
@@ -192,15 +192,17 @@ public class AuthService(
     {
         var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-        if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+        if (user == null)
             return false;
 
         if (!await _userManager.IsInRoleAsync(user, "Admin"))
             return false;
 
-        await _signInManager.SignInAsync(user, loginDto.RememberMe);
-        return true;
+        var result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, loginDto.RememberMe, lockoutOnFailure: false);
+
+        return result.Succeeded;
     }
+
 
     public async Task<ServiceResponse<string>> SignUpAsync(UserSignUpDTO dto)
     {

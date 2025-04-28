@@ -7,7 +7,7 @@ namespace Infrastructure.Entities;
 
 public class ProjectEntity
 {
-    public int Id { get; set; }  // Primary Key
+    public int Id { get; set; } 
 
     [Required]
     public string ProjectName { get; set; } = null!;
@@ -17,15 +17,12 @@ public class ProjectEntity
     public DateTime? EndDate { get; set; }
     public decimal? Budget { get; set; }
 
-    // Foreign Key for User who created the project
     public string CreatedByUserId { get; set; } = null!;
     public UserEntity CreatedByUser { get; set; } = null!;
 
-    // Foreign Key to StatusEntity
     public int? StatusId { get; set; }
     public StatusEntity Status { get; set; } = null!;
 
-    // Foreign Key for Client
     public int? ClientId { get; set; }
     public ClientEntity Client { get; set; } = null!;
 

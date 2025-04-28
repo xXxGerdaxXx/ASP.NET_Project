@@ -30,7 +30,7 @@
         if (addButton) {
             addButton.addEventListener("click", openAddProjectModal);
         }
-        // filtering logic
+
         const filterButtons = document.querySelectorAll(".project-tabs .tab");
         filterButtons.forEach(button => {
             button.addEventListener("click", function () {
@@ -97,18 +97,15 @@
 
                     setupFileUploadPreview("createProjectForm");
 
-                    // If using jQuery unobtrusive validation, reparse the form.
                     if (window.jQuery && $.validator && $.validator.unobtrusive) {
                         $.validator.unobtrusive.parse("#createProjectForm");
                     }
 
-                    // Handle the form submission.
                     const form = modal.querySelector("#createProjectForm");
                     if (form) {
                         form.addEventListener("submit", function (event) {
                             event.preventDefault();
 
-                            // Optionally validate form if you have a validateForm function.
                             if (typeof validateForm === 'function' && !validateForm(form)) return;
 
                             const formData = new FormData(form);
@@ -235,6 +232,81 @@
         }, { once: true });
     }
 
+    window.openAddMemberModal = function (projectId) {
+        fetch(`/projects/addmembermodal/${projectId}`)
+            .then(response => response.text())
+            .then(html => {
+                removeExistingModal("add-member-modal");
+
+                const modalContainer = document.createElement("div");
+                modalContainer.innerHTML = html;
+                document.body.appendChild(modalContainer);
+
+                const modal = document.getElementById("add-member-modal");
+                if (modal) {
+                    modal.classList.add("active");
+                    modal.style.display = "flex";
+
+                    modal.querySelector("#closeAddMemberModal")?.addEventListener("click", function () {
+                        modal.remove();
+                    });
+
+                    const form = modal.querySelector("#addMemberForm");
+
+                    let preSelectedMembers = [];
+                    if (form) {
+                        const preSelectedMembersJson = form.dataset.preselectedMembers;
+                        if (preSelectedMembersJson) {
+                            try {
+                                preSelectedMembers = JSON.parse(preSelectedMembersJson);
+                            } catch (error) {
+                                console.error("Error parsing preselected members JSON", error);
+                            }
+                        }
+                    }
+
+                    initTagSelector({
+                        containerId: 'add-member-tags',
+                        inputId: 'add-member-search',
+                        resultsId: 'add-member-search-results',
+                        searchUrl: (query) => `/admin/members/search?term=${encodeURIComponent(query)}`,
+                        displayProperty: 'tagName',
+                        imageProperty: 'avatar',
+                        tagClass: 'tag',
+                        tagType: 'member',
+                        avatarFolder: '',
+                        emptyMessage: 'No members found.',
+                        preselected: preSelectedMembers, 
+                        hiddenInputId: 'SelectedTeamMemberIds'
+                    });
+
+                    if (form) {
+                        form.addEventListener("submit", function (event) {
+                            event.preventDefault();
+
+                            const formData = new FormData(form);
+                            fetch(`/projects/addmembers`, {
+                                method: 'POST',
+                                body: formData
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        showSuccessMessage("Member(s) added successfully!");
+                                        modal.remove();
+                                        loadProjects();
+                                    } else {
+                                        showErrorMessage(data.message || "Failed to add members.");
+                                    }
+                                })
+                                .catch(error => console.error("Error adding members:", error));
+                        });
+                    }
+                }
+            })
+            .catch(error => console.error("Error loading add member modal:", error));
+    };
+
     window.showProjectDeleteModal = function (projectId) {
         const modal = document.getElementById("deleteConfirmationModal");
         const confirmBtn = document.getElementById("confirmDelete");
@@ -268,7 +340,6 @@
             modal.style.display = "none";
         };
     };
-
 
     function setupFileUploadPreview(formId) {
         const fileInput = document.querySelector(`#${formId} input[type='file']`);

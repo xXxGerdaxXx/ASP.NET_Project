@@ -380,4 +380,59 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         await viewResult.View.RenderAsync(viewContext);
         return sw.ToString();
     }
+
+    [HttpGet("addmembermodal/{projectId}")]
+    public async Task<IActionResult> AddMemberModal(int projectId)
+    {
+        var project = await _projectService.GetProjectByIdAsync(projectId);
+        if (project == null)
+        {
+            return NotFound();
+        }
+
+        var preselected = project.ProjectMembers.Select(pm => new
+        {
+            id = pm.MemberId,
+            tagName = $"{pm.Member.FirstName} {pm.Member.LastName}",
+            avatar = string.IsNullOrWhiteSpace(pm.Member.AvatarUrl) ? "/images/avatar.svg" : pm.Member.AvatarUrl
+        }).ToList();
+
+        ViewBag.PreselectedTeamMembersJson = JsonSerializer.Serialize(preselected);
+
+        var model = new AddMemberViewModel
+        {
+            ProjectId = project.Id,
+            ProjectName = project.ProjectName
+        };
+
+        return PartialView("~/Views/Shared/Partials/Sections/_AddMemberModal.cshtml", model);
+    }
+
+
+    [HttpPost("addmembers")]
+    public async Task<IActionResult> AddMembers([FromForm] Infrastructure.DTOs.AddMembersRequest request)
+    {
+        if (request.ProjectId <= 0 || request.SelectedTeamMemberIds == null || !request.SelectedTeamMemberIds.Any())
+        {
+            return BadRequest(new { success = false, message = "Invalid project or members." });
+        }
+
+        try
+        {
+            await _projectService.AddMembersToProjectAsync(request.ProjectId, request.SelectedTeamMemberIds);
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error adding members to project {ProjectId}", request.ProjectId);
+            return StatusCode(500, new { success = false, message = "Error adding members." });
+        }
+    }
+
+
+
+
+
+
+
 }

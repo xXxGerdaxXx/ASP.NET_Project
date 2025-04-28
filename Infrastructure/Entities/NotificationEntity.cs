@@ -16,7 +16,7 @@ public class NotificationEntity
 
     public string Icon { get; set; } = null!;
     public string Message { get; set; } = null!;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     public ICollection<NotificationDismissedEntity> DismissedNotifications { get; set; } = new List<NotificationDismissedEntity>();
 

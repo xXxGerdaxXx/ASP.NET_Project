@@ -34,7 +34,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.HttpOnly = true;
     options.SlidingExpiration = true;
-    options.ExpireTimeSpan = TimeSpan.FromHours(1); 
+    options.ExpireTimeSpan = TimeSpan.FromHours(5); 
 });
 
 // MVC

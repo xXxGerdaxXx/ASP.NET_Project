@@ -13,7 +13,6 @@
         return { updateHiddenInput: () => { } };
     }
 
-    // Load preselected
     if (Array.isArray(config.preselected)) {
         config.preselected.forEach(item => addTag(item));
     }

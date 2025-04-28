@@ -37,5 +37,5 @@ public class ClientCreateFormModel
     [MaxLength(300)]
     public string? Address { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 }

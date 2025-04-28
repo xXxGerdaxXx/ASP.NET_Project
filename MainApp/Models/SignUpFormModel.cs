@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-namespace MainApp.Models;
 
+namespace MainApp.Models;
 
 public class SignUpFormModel
 {
@@ -12,6 +12,7 @@ public class SignUpFormModel
 
     [DataType(DataType.EmailAddress)]
     [Required(ErrorMessage = "You must enter your email address.")]
+    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid email format.")]
     public string Email { get; set; } = null!;
 
     [DataType(DataType.Password)]
@@ -19,10 +20,10 @@ public class SignUpFormModel
     public string Password { get; set; } = null!;
 
     [DataType(DataType.Password)]
-    [Required(ErrorMessage = "You must confirm your password.")]
+    [Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; } = null!;
 
-    [Required]
+    [Required(ErrorMessage = "You must accept the terms.")]
     public bool AcceptTerms { get; set; }
 
 }

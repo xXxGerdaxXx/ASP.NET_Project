@@ -1,56 +1,56 @@
-﻿@model SignInFormModel
+﻿@model AdminSignInFormModel
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
 
 <div class="form-wrapper">
+
     <div class="form-container">
         <div class="form-box">
             <h2>Log In</h2>
-
-            @await Html.PartialAsync("_ExternalAuthenticationPartial", Model)
-
-
+            @await Html.PartialAsync("_AdminExternalAuthenticationPartial", Model)
             <div class="divider">
+
                 <span>OR</span>
             </div>
-            @Html.ValidationSummary(true, "", new { @class = "form-validation-summary" })
 
-            <form id="signin-form" onsubmit="return validateForm(this)" asp-action="SignIn" method="post" asp-controller="Auth" novalidate>
+            <form id="signin-form" asp-action="AdminSignIn" method="post" asp-controller="Admin" onsubmit="return validateForm(this)" novalidate>
+                @Html.ValidationSummary(true, "", new { @class = "form-validation-summary" })
+
                 <div class="input-group">
                     <label>Email</label>
                     <input asp-for="Email" name="Email" type="email" placeholder="Your email address" required />
                     <span asp-validation-for="Email" class="field-validation-error"></span>
                 </div>
-
                 <div class="input-group password-group">
                     <label for="password">Password</label>
                     <div class="password-wrapper">
+
                         <input id="password" name="Password" asp-for="Password" type="password" placeholder="Enter your password" required />
                         <i class="fa-solid fa-eye password-toggle" data-target="password" onclick="togglePasswordByData(this)"></i>
                     </div>
                     <span asp-validation-for="Password" class="field-validation-error"></span>
                 </div>
 
-
                 <div class="checkbox-group justify-between">
-                    <div>
-                        <label class="checkbox-label">
-                            <input asp-for="RememberMe" type="checkbox" />
-                            Remember Me
-                        </label>
-                        <span asp-validation-for="RememberMe" class="field-validation-error"></span>
-                    </div>
+                    <label for="RememberMe" class="checkbox-label">
+                        <input asp-for="RememberMe" type="checkbox" name="RememberMe" />
+
+                        Remember Me
+                    </label>
                     <a href="#" class="forgot-password">Forgot Password?</a>
                 </div>
 
-
-
                 <button type="submit" class="btn-primary">Log In</button>
-            </form>
 
-            <p class="login-link">Don't have an account? <a asp-action="SignUp">Sign Up</a></p>
+            </form>
 
         </div>
     </div>
 </div>
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script src="~/js/validation.js"></script>
 }

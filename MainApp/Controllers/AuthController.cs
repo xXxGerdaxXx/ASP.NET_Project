@@ -434,6 +434,8 @@ public class AuthController(
         return RedirectToAction("SignIn");
     }
 
+
+
     [HttpGet]
     public IActionResult SignUp()
     {
@@ -444,26 +446,37 @@ public class AuthController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SignUp(SignUpFormModel model)
     {
-        if (!ModelState.IsValid) return View(model);
+        if (!ModelState.IsValid)
+            return View(model);
 
-        var result = await _authService.SignUpAsync(new UserSignUpDTO
+        var user = new UserEntity
         {
+            UserName = model.Email,
             Email = model.Email,
-            Password = model.Password,
-            FullName = $"{model.FirstName} {model.LastName}",
-            AcceptTerms = true 
-        });
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            AvatarUrl = "/images/default-avatar.png"
+        };
 
-        if (!result.Success)
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded)
         {
-            ModelState.AddModelError("", result.Message);
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
             return View(model);
         }
 
-        return RedirectToAction("SignIn");
+        if (!await _roleManager.RoleExistsAsync("User"))
+        {
+            await _roleManager.CreateAsync(new IdentityRole("User"));
+        }
+
+        await _userManager.AddToRoleAsync(user, "User");
+
+        return RedirectToAction("Index", "Dashboard");
     }
-
-
 
 
         [HttpGet]
@@ -550,34 +563,8 @@ public class AuthController(
         return View();
     }
 
-    [HttpGet]
-    public IActionResult AdminSignIn()
-    {
-        return View();
-    }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AdminSignIn(SignInFormModel model)
-    {
-        if (!ModelState.IsValid)
-            return View(model);
 
-        var success = await _authService.AdminLoginAsync(new AdminLoginDTO
-        {
-            Email = model.Email,
-            Password = model.Password,
-            RememberMe = model.RememberMe
-        });
-
-        if (!success)
-        {
-            ModelState.AddModelError("", "Invalid credentials or not an admin.");
-            return View(model);
-        }
-
-        return RedirectToAction("Dashboard", "Admin");
-    }
     #region External Logins
 
     [HttpPost]

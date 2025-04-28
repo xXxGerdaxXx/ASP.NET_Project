@@ -4,6 +4,34 @@
     attachGeneralEventListeners();
     initializeThemeToggle();
     initializeDropdowns();
+    initializePasswordValidation(); // ✨ Add this line
+
+    function initializePasswordValidation() {
+        const passwordInput = document.querySelector("#password");
+        const liveFeedback = document.querySelector("#password-live-feedback");
+
+        if (!passwordInput || !liveFeedback) return;
+
+        passwordInput.addEventListener("input", function () {
+            const val = passwordInput.value;
+
+            let message = "";
+            if (val.length < 8) message = "Password must be at least 8 characters.";
+            else if (!/[A-Z]/.test(val)) message = "Must include at least one uppercase letter.";
+            else if (!/\d/.test(val)) message = "Must include at least one digit.";
+            else if (!/[^a-zA-Z0-9]/.test(val)) message = "Must include at least one special character.";
+
+            if (message) {
+                liveFeedback.textContent = message;
+                liveFeedback.style.display = "block";
+                passwordInput.classList.add("input-validation-error");
+            } else {
+                liveFeedback.textContent = "";
+                liveFeedback.style.display = "none";
+                passwordInput.classList.remove("input-validation-error");
+            }
+        });
+    }
 
     function attachGeneralEventListeners() {
         console.log("Attaching general event listeners...");

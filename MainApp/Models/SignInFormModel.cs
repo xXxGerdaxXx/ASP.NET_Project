@@ -12,7 +12,6 @@ public class SignInFormModel
     [Required(ErrorMessage = "You must enter a password.")]
     public string Password { get; set; } = null!;
 
-    [Required]
     public bool RememberMe { get; set; }
 
 }

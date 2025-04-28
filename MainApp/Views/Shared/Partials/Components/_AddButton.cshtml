@@ -1,8 +1,7 @@
 ﻿@model string
 
 @{
-    // Generate a unique ID based on the button text
-    var modalId = Model.Replace(" ", ""); // Example: "Add Project" → "AddProject"
+    var modalId = Model.Replace(" ", ""); 
 }
 
 <button class="btn btn-add" data-modal-target="add-project-modal">

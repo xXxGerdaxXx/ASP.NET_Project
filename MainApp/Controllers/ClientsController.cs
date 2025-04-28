@@ -112,7 +112,7 @@ public class ClientsController : Controller
             Email = form.Email,
             PhoneNumber = form.PhoneNumber ?? "N/A",
             Address = form.Address ?? "Unknown",
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.Now,
             AvatarUrl = avatarUrl
         };
 

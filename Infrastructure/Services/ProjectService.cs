@@ -46,12 +46,10 @@ namespace Infrastructure.Services
                 CreatedByUserId = dto.CreatedByUserId
             };
 
-            // Step 1: Create the project
             var createdProject = await _projectRepository.CreateAsync(newProject);
             if (createdProject == null)
                 return null;
 
-            // Step 2: Save team members to ProjectMemberEntity table
             if (dto.ProjectMemberIds != null && dto.ProjectMemberIds.Any())
             {
                 createdProject.ProjectMembers = dto.ProjectMemberIds.Select(memberId => new ProjectMemberEntity
@@ -60,7 +58,6 @@ namespace Infrastructure.Services
                     MemberId = memberId
                 }).ToList();
 
-                // Update the project with the associated members
                 await _projectRepository.UpdateAsync(createdProject);
             }
 
@@ -76,7 +73,6 @@ namespace Infrastructure.Services
                 return false;
             }
 
-            // Update project properties
             project.ProjectName = dto.ProjectName;
             project.Description = dto.Description;
             project.StartDate = dto.StartDate;
@@ -86,7 +82,6 @@ namespace Infrastructure.Services
             project.StatusId = dto.StatusId;
             project.AvatarUrl = dto.AvatarUrl;
 
-            // Update team members:
             project.ProjectMembers.Clear();
             if (dto.TeamMemberIds != null && dto.TeamMemberIds.Any())
             {
@@ -119,5 +114,45 @@ namespace Infrastructure.Services
 
             return await _projectRepository.DeleteAsync(projectId);
         }
+
+
+
+
+
+
+
+        public async Task<bool> AddMembersToProjectAsync(int projectId, List<int> memberIds)
+        {
+            var project = await _projectRepository.GetByIdAsync(projectId);
+            if (project == null)
+            {
+                Console.WriteLine("Project not found.");
+                return false;
+            }
+
+            if (memberIds == null || !memberIds.Any())
+            {
+                Console.WriteLine("No members provided.");
+                return false;
+            }
+
+            var existingMemberIds = project.ProjectMembers.Select(pm => pm.MemberId).ToList();
+
+            var newMembers = memberIds
+                .Where(id => !existingMemberIds.Contains(id))
+                .Select(id => new ProjectMemberEntity
+                {
+                    ProjectId = project.Id,
+                    MemberId = id
+                }).ToList();
+
+            if (newMembers.Any())
+            {
+                project.ProjectMembers.AddRange(newMembers);
+                return await _projectRepository.UpdateAsync(project);
+            }
+            return true;
+        }
+
     }
 }

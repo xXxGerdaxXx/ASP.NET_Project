@@ -17,5 +17,5 @@ public class NotificationDismissedEntity
     public string UserId { get; set; } = null!;
     public UserEntity User { get; set; } = null!;
 
-    public DateTime DismissedAt { get; set; } = DateTime.UtcNow;
+    public DateTime DismissedAt { get; set; } = DateTime.Now;
 }

@@ -11,4 +11,5 @@ public interface IProjectService
     Task<ProjectEntity?> CreateProjectAsync(ProjectDTO dto);
     Task<bool> UpdateProjectAsync(ProjectUpdateDTO dto);
     Task<bool> DeleteProjectAsync(int id);
+    Task<bool> AddMembersToProjectAsync(int projectId, List<int> memberIds);
 }

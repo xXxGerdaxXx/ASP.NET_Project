@@ -7,8 +7,6 @@
     var isOverdue = validEndDate && totalDaysLeft < 0;
 }
 
-
-
 <div class="project-card">
     <div class="card-header">
         <div class="card-logo">
@@ -35,11 +33,9 @@
                     <i class="fa-solid fa-pen-to-square"></i> Edit Project
                 </button>
 
-                <form method="post" asp-action="AddMember" asp-controller="Projects" asp-route-projectId="@Model.Id">
-                    <button type="submit" class="dropdown-item">
-                        <i class="fa-solid fa-user-plus"></i> Add Member
-                    </button>
-                </form>
+                <button class="dropdown-item" data-project-id="@Model.Id" onclick="openAddMemberModal(@Model.Id)">
+                    <i class="fa-solid fa-user-plus"></i> Add Member
+                </button>
 
                 <button onclick="showProjectDeleteModal('@Model.Id')" class="dropdown-item text-danger">
                     <i class="fa-solid fa-trash"></i> Delete Project
