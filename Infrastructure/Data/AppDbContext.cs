@@ -111,8 +111,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
         modelBuilder.Entity<NotificationTypeEntity>().HasData(
             new NotificationTypeEntity { Id = 1, Name = "UserLogin" },
-            new NotificationTypeEntity { Id = 2, Name = "UserLogout" },
-            new NotificationTypeEntity { Id = 3, Name = "FileUploaded" }
+            new NotificationTypeEntity { Id = 2, Name = "UserSignup" },   
+            new NotificationTypeEntity { Id = 3, Name = "ProjectAdded" }  
         );
 
         modelBuilder.Entity<FileEntity>()

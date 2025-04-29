@@ -8,7 +8,9 @@ namespace Infrastructure.DTOs;
 
 public class NotificationDto
 {
+    public int NotificationTypeId { get; set; }
     public string Message { get; set; } = null!;
     public string? Icon { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public int NotificationTargetGroupId { get; set; }
 }
+

@@ -22,7 +22,7 @@ public class UserEntity : IdentityUser
 
     public List<ProjectEntity>? CreatedProjects { get; set; } = [];
 
-    public List<NotificationEntity> UserNotifications { get; set; } = [];
+    //public List<NotificationEntity> UserNotifications { get; set; } = [];
 
     public ICollection<NotificationDismissedEntity> DismissedNotifications { get; set; } = [];
 

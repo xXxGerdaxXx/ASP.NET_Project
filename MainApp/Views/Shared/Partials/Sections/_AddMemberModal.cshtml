@@ -9,7 +9,7 @@
             </button>
         </header>
 
-        <form id="addMemberForm" data-preselected-members='@ViewBag.PreselectedMembersJson' method="post" novalidate>
+        <form id="addMemberForm" data-preselected-members='@Html.Raw(ViewBag.PreselectedTeamMembersJson)' method="post" novalidate>
             <input type="hidden" name="ProjectId" value="@Model.ProjectId" /> 
 
             <div class="form-group">

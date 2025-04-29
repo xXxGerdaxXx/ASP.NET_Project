@@ -435,7 +435,6 @@ public class AuthController(
     }
 
 
-
     [HttpGet]
     public IActionResult SignUp()
     {

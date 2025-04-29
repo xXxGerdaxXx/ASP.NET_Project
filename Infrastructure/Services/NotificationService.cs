@@ -12,83 +12,38 @@ namespace Infrastructure.Services
         private readonly AppDbContext _context = context;
         private readonly IHubContext<NotificationHub> _notificationHub = notificationHub;
 
-        //public async Task AddNotificationAsync(NotificationEntity notificationEntity, string userId = "anonymous")
-        //{
-        //    if (string.IsNullOrEmpty(notificationEntity.Icon))
-        //    {
-        //        switch (notificationEntity.NotificationTypeId)
-        //        {
-        //            case 1:
-        //                notificationEntity.Icon = "/images/user-template.svg";
-        //                break;
-        //            case 2:
-        //                notificationEntity.Icon = "~/images/project-template.svg";
-        //                break;
-        //            case 3:
-        //                notificationEntity.Icon = "~/images/user-template.svg";
-        //                break;
-        //        }
-        //    }
-
-        //    _context.Add(notificationEntity);
-        //    await _context.SaveChangesAsync();
-
-        //    var notifications = await GetNotificationsAsync(userId);
-        //    var newNotification = notifications.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
-        //    if (newNotification != null)
-        //    {
-        //        await _notificationHub.Clients.All.SendAsync("ReceiveNotification", newNotification);
-        //    }
-
-        //}
-
-
-        public async Task AddNotificationAsync(NotificationEntity notificationEntity, string userId = "anonymous")
+        public async Task AddNotificationAsync(NotificationEntity notificationEntity)
         {
             if (string.IsNullOrEmpty(notificationEntity.Icon))
             {
                 switch (notificationEntity.NotificationTypeId)
                 {
-                    case 1:
+                    case 1: // UserLogin
+                    case 2: // UserSignup
                         notificationEntity.Icon = "~/images/user-template.svg";
                         break;
-
-                    case 2:
+                    case 3: // ProjectAdded
                         notificationEntity.Icon = "~/images/project-template.svg";
                         break;
                 }
             }
 
-          
 
             _context.Add(notificationEntity);
             await _context.SaveChangesAsync();
 
-            var notifications = await GetNotificationsAsync(userId);
-            var newNotification = notifications.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
-
-            if (newNotification != null)
+            if (notificationEntity.NotificationTargetGroupId == 1) 
             {
-                await _notificationHub.Clients.All.SendAsync("ReceiveNotification", newNotification);
+                await _notificationHub.Clients.Group("Admins").SendAsync("ReceiveNotification", notificationEntity);
             }
-
+            else if (notificationEntity.NotificationTargetGroupId == 2) 
+            {
+                await _notificationHub.Clients.Group("Users").SendAsync("ReceiveNotification", notificationEntity);
+            }
         }
 
 
-        //public async Task AddNotificationAsync(int notificationTypeId, string message, string? image = null, int notificationTargetGroup = 1)
-        //{
-        //    var notification = new NotificationEntity
-        //    {
-        //        NotificationTypeId = notificationTypeId,
-        //        Message = message,
-        //        Icon = image, 
-        //        NotificationTargetGroupId = notificationTargetGroup,
-        //        CreatedAt = DateTime.UtcNow
-        //    };
-
-        //    await AddNotificationAsync(notification);
-        //}
-        public async Task<IEnumerable<NotificationEntity>> GetNotificationsAsync(string userId, int take = 10)
+        public async Task<IEnumerable<NotificationEntity>> GetNotificationsAsync(string userId, int targetGroupId, int take = 10)
         {
             var dismissedIds = await _context.DismissedNotifications
                 .Where(x => x.UserId == userId)
@@ -96,7 +51,7 @@ namespace Infrastructure.Services
                 .ToListAsync();
 
             var notifications = await _context.Notifications
-                .Where(x => !dismissedIds.Contains(x.Id))
+                .Where(x => !dismissedIds.Contains(x.Id) && x.NotificationTargetGroupId == targetGroupId)
                 .OrderByDescending(x => x.CreatedAt)
                 .Take(take)
                 .ToListAsync();
@@ -149,7 +104,5 @@ namespace Infrastructure.Services
                 await _context.SaveChangesAsync();
             }
         }
-
-
     }
 }

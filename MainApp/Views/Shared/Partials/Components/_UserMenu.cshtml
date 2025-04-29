@@ -18,7 +18,9 @@
 
 
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
-    var notifications = await notificationService.GetNotificationsAsync(userId);
+    var targetGroupId = User.IsInRole("Admin") ? 1 : 2;
+    var notifications = await notificationService.GetNotificationsAsync(userId, targetGroupId);
+
     notifications = notifications.OrderByDescending(x => x.CreatedAt);
 }
 

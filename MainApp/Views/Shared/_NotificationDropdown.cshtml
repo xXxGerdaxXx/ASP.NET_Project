@@ -1,10 +1,13 @@
 ﻿@using Infrastructure.Entities
 @model IEnumerable<NotificationEntity>
-    @{
+@*     @{
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
     var notifications = await notificationService.GetNotificationsAsync(userId);
     notifications = notifications.OrderByDescending(x => x.CreatedAt);
-    }
+    } *@
+@{
+    var notifications = Model.OrderByDescending(x => x.CreatedAt);
+}
 
 <div class="notification-dropdown-container">
     <button id="notification-dropdown-button" data-type="dropdown" data-target="#notification-dropdown" class="btn-notification fa-solid fa-bell">

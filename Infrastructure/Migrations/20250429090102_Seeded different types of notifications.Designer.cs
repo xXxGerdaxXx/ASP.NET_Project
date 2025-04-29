@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250429090102_Seeded different types of notifications")]
+    partial class Seededdifferenttypesofnotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,11 +202,16 @@ namespace Infrastructure.Migrations
                     b.Property<int>("NotificationTypeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserEntityId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NotificationTargetGroupId");
 
                     b.HasIndex("NotificationTypeId");
+
+                    b.HasIndex("UserEntityId");
 
                     b.ToTable("Notifications");
                 });
@@ -642,6 +650,10 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Infrastructure.Entities.UserEntity", null)
+                        .WithMany("UserNotifications")
+                        .HasForeignKey("UserEntityId");
+
                     b.Navigation("NotificationType");
 
                     b.Navigation("TargetGroup");
@@ -786,6 +798,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("DismissedNotifications");
 
                     b.Navigation("Files");
+
+                    b.Navigation("UserNotifications");
                 });
 #pragma warning restore 612, 618
         }

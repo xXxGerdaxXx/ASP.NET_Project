@@ -4,7 +4,7 @@
     attachGeneralEventListeners();
     initializeThemeToggle();
     initializeDropdowns();
-    initializePasswordValidation(); // ✨ Add this line
+    initializePasswordValidation(); 
 
     function initializePasswordValidation() {
         const passwordInput = document.querySelector("#password");

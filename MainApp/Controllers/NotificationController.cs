@@ -5,6 +5,7 @@ using Infrastructure.Hubs;
 using Infrastructure.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Infrastructure.DTOs;
 
 namespace MainApp.Controllers;
 
@@ -17,20 +18,21 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
     private readonly INotificationService _notificationService = notificationService;
 
     [HttpPost]
-    public async Task<IActionResult> CreateNotification(NotificationEntity notificationEntity)
+    public async Task<IActionResult> CreateNotification(NotificationDto dto)
     {
-        await _notificationService.AddNotificationAsync(notificationEntity); 
+        var notificationEntity = new NotificationEntity
+        {
+            NotificationTypeId = dto.NotificationTypeId,
+            Message = dto.Message,
+            Icon = dto.Icon,
+            NotificationTargetGroupId = dto.NotificationTargetGroupId,
+            CreatedAt = DateTime.Now
+        };
 
-        //var notifications = await _notificationService.GetNotificationsAsync("anonymous");
-        //var newNotification = notifications.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
-
-        //if (newNotification != null)
-        //{
-        //    await _notificationHub.Clients.All.SendAsync("ReceiveNotification", newNotification);
-        //}
-
+        await _notificationService.AddNotificationAsync(notificationEntity);
         return Ok(new { success = true });
     }
+
 
     [HttpGet]
     public async Task<IActionResult> GetNotifications()
@@ -39,10 +41,11 @@ public class NotificationController(IHubContext<NotificationHub> notificationHub
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
-        var notifications = await _notificationService.GetNotificationsAsync(userId);
+        var targetGroupId = User.IsInRole("Admin") ? 1 : 2;
+        var notifications = await _notificationService.GetNotificationsAsync(userId, targetGroupId);
+
         return Ok(notifications);
     }
-
 
   
     [HttpPost("dismiss/{id}")]

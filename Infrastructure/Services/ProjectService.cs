@@ -96,7 +96,6 @@ namespace Infrastructure.Services
         }
 
 
-
         public async Task<bool> DeleteProjectAsync(int projectId)
         {
             if (projectId <= 0)
@@ -114,12 +113,6 @@ namespace Infrastructure.Services
 
             return await _projectRepository.DeleteAsync(projectId);
         }
-
-
-
-
-
-
 
         public async Task<bool> AddMembersToProjectAsync(int projectId, List<int> memberIds)
         {

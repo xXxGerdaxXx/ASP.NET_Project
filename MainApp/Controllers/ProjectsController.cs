@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 namespace MainApp.Controllers;
 
 [Route("projects")]
-public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, IFileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService, ICompositeViewEngine viewEngine) : Controller
+public class ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger, IFileService fileService, IClientService clientService, IMemberService memberService, IStatusService statusService, ICompositeViewEngine viewEngine, INotificationService notificationService) : Controller
 {
     private readonly IProjectService _projectService = projectService;
     private readonly ILogger<ProjectsController> _logger = logger;
@@ -24,6 +24,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
     private readonly IMemberService _memberService = memberService;
     private readonly IStatusService _statusService = statusService;
     private readonly ICompositeViewEngine _viewEngine = viewEngine;
+    private readonly INotificationService _notificationService = notificationService;
 
 
     [HttpGet("list")]
@@ -146,7 +147,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             StartDate = form.StartDate,
             EndDate = form.EndDate,
             Budget = form.Budget,
-            ProjectMemberIds = form.SelectedTeamMemberIds,  
+            ProjectMemberIds = form.SelectedTeamMemberIds,
             ClientId = form.ClientId ?? 0,
             StatusId = form.StatusId ?? 0,
             AvatarUrl = avatarUrl,
@@ -158,6 +159,15 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             await _projectService.CreateProjectAsync(dto);
             _logger.LogInformation("Project Created Successfully: {@DTO}", dto);
 
+            // Create a notification for users
+            await _notificationService.AddNotificationAsync(new NotificationEntity
+            {
+                NotificationTypeId = 3, 
+                Message = $"A new project '{dto.ProjectName}' has been created!",
+                NotificationTargetGroupId = 2, 
+                CreatedAt = DateTime.Now
+            });
+
             return Json(new { success = true });
         }
         catch (Exception ex)
@@ -166,6 +176,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             return StatusCode(500, new { success = false, message = "Internal Server Error" });
         }
     }
+
 
     [HttpGet("edit/{id}")]
     public async Task<IActionResult> Edit(int id)

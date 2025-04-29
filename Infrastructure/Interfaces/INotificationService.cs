@@ -4,9 +4,7 @@ namespace Infrastructure.Interfaces;
 
 public interface INotificationService
 {
-    Task<IEnumerable<NotificationEntity>> GetNotificationsAsync(string userId, int take = 10);
-    Task AddNotificationAsync(NotificationEntity notificationEntity, string userId = "anonymous");
-
+    Task<IEnumerable<NotificationEntity>> GetNotificationsAsync(string userId, int targetGroupId, int take = 10);
+    Task AddNotificationAsync(NotificationEntity notificationEntity/*, string userId = "anonymous"*/);
     Task DismissNotificationAsync(string notificationId, string userId);
-
 }

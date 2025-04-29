@@ -11,8 +11,14 @@ public class NotificationsController(INotificationService notificationService) :
     public async Task<IActionResult> GetDropdown()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var notifications = await _notificationService.GetNotificationsAsync(userId);
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized(); // Protect: only logged-in users can fetch notifications
+
+        // Decide if Admin or User
+        var targetGroupId = User.IsInRole("Admin") ? 1 : 2;
+
+        var notifications = await _notificationService.GetNotificationsAsync(userId, targetGroupId);
         return PartialView("_NotificationDropdown", notifications);
     }
-
 }
+
