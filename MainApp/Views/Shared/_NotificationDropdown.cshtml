@@ -1,10 +1,6 @@
 ﻿@using Infrastructure.Entities
 @model IEnumerable<NotificationEntity>
-@*     @{
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
-    var notifications = await notificationService.GetNotificationsAsync(userId);
-    notifications = notifications.OrderByDescending(x => x.CreatedAt);
-    } *@
+
 @{
     var notifications = Model.OrderByDescending(x => x.CreatedAt);
 }

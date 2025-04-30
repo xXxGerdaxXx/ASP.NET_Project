@@ -440,10 +440,4 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         }
     }
 
-
-
-
-
-
-
 }

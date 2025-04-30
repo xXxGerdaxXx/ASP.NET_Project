@@ -1,0 +1,61 @@
+﻿<div id="cookieModal">
+    <div class="card">
+        <div class="content">
+            <h3>Du har kontroll över dina uppgifter</h3>
+            <p>Vi och våra affärspartners använder teknik, inklusive cookies, för att samla in information om dig för olika ändamål, inklusive: personalisering av innehåll och annonser, analysera vår trafik och ge tillgång till funktioner.</p>
+            <p>Genom att klicka ”Godkänn” ger du ditt samtycke till samtliga syften. Du kan också välja att uppge vilka syften du samtycker till genom att klicka i rutan bredvid syftet och sedan ”Spara valda inställningar”.</p>
+            <p>Du kan när som helst ta tillbaka ditt samtycke genom att klicka på den lilla ikonen i det nedre vänstra hörnet på sidan.</p>
+            <p>Klicka på länken för att läsa mer om hur vi använder kakor och andra tekniska lösningar och hur vi inhämtar och behandlar personuppgifter.</p>
+            <p><a href="#">Läs mer här</a></p>
+        </div>
+        <form id="cookieConsentForm" class="settings">
+            <h4>Cookies</h4>
+            <div class="options">
+                <div class="option">
+                    <label class="switch-label" for="cookieEssential">
+                        Nödvändiga (alltid aktiva)
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="cookieEssential" name="essential" checked disabled>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label class="switch-label" for="cookieFunctional">
+                        Funktionella
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="cookieFunctional" name="functional">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label class="switch-label" for="cookieAnalytics">
+                        Analys & Statistik
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="cookieAnalytics" name="analytics">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="option">
+                    <label class="switch-label" for="cookieMarknadsföring">
+                        Marknadsföring
+                    </label>
+                    <label class="switch">
+                        <input type="checkbox" id="cookieMarknadsföring" name="marketing">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="button-group-cookies">
+                <button type="button" onclick="acceptAll()">Godkänn alla</button>
+                <button type="button" onclick="acceptSelected()">Spara valda</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="cookieConsentIcon" onclick="openCookieConsentBanner()">
+    <i class="fa-solid fa-cookie-bite"></i>
+</div>

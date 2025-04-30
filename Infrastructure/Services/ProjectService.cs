@@ -5,14 +5,9 @@ using Infrastructure.Repositories;
 
 namespace Infrastructure.Services
 {
-    public class ProjectService : IProjectService
+    public class ProjectService(IProjectRepository projectRepository) : IProjectService
     {
-        private readonly IProjectRepository _projectRepository;
-
-        public ProjectService(IProjectRepository projectRepository)
-        {
-            _projectRepository = projectRepository;
-        }
+        private readonly IProjectRepository _projectRepository = projectRepository;
 
         public async Task<List<ProjectEntity>> GetAllProjectsAsync()
         {

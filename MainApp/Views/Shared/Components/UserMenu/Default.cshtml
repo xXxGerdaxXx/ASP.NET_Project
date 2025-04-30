@@ -1,31 +1,7 @@
-﻿@* @using Infrastructure.Entities
-@using Infrastructure.Interfaces
-@inject INotificationService notificationService
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<UserEntity> UserManager
-
-
-
-@{
-    var user = await UserManager.GetUserAsync(User);
-    var fullName = user?.FirstName + " " + user?.LastName;
-
-    var avatarFileName = string.IsNullOrWhiteSpace(user?.AvatarUrl)
-        ? "images/default-avatar.png"
-        : user.AvatarUrl.TrimStart('/'); 
-
-    var avatarPath = Url.Content("~/" + avatarFileName);
-
-
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
-    var targetGroupId = User.IsInRole("Admin") ? 1 : 2;
-    var notifications = await notificationService.GetNotificationsAsync(userId, targetGroupId);
-
-    notifications = notifications.OrderByDescending(x => x.CreatedAt);
-}
+﻿@model MainApp.Models.UserMenuViewModel
 
 <div class="user-menu">
-    @await Html.PartialAsync("_NotificationDropdown", notifications)
+    @await Html.PartialAsync("_NotificationDropdown", Model.Notifications)
 
     <div class="profile-dropdown">
         <button class="icon-button" id="settingsButton">
@@ -34,9 +10,9 @@
 
         <div class="dropdown-content" id="userDropdown">
             <div class="dropdown-item dropdown-header">
-                <img src="@avatarPath" class="dropdown-avatar" alt="User Avatar" />
+                <img src="@Model.AvatarPath" class="dropdown-avatar" alt="User Avatar" />
                 <a asp-controller="Auth" asp-action="EditProfile" class="dropdown-user-name">
-                    @fullName
+                    @Model.FullName
                 </a>
             </div>
 
@@ -61,9 +37,6 @@
     </div>
     <div class="vertical-divider"></div>
     <div class="avatar-display">
-        <img src="@avatarPath" alt="User Avatar" />
-
+        <img src="@Model.AvatarPath" alt="User Avatar" />
     </div>
 </div>
-
- *@

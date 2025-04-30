@@ -1,28 +1,25 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace MainApp.Controllers;
 
-public class HomeController : Controller
+public class HomeController(ILogger<HomeController> logger) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<HomeController> _logger = logger;
 
     public IActionResult Index()
     {
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Dashboard");
+
+        Response.Cookies.Append("SessionCookie", "Essential", new CookieOptions
+        {
+            IsEssential = true,
+            Expires = DateTimeOffset.UtcNow.AddYears(1),
+            Path = "/",
+            SameSite = SameSiteMode.Lax
+        });
+
         return View();
     }
-
-
-
-    //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    //public IActionResult Error()
-    //{
-    //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    //}
 }

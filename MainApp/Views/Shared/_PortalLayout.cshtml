@@ -25,7 +25,9 @@
         </div>
         <div class="top">
             @await Html.PartialAsync("Partials/Components/_SearchBar")
-            @await Html.PartialAsync("Partials/Components/_UserMenu")
+@*             @await Html.PartialAsync("Partials/Components/_UserMenu") *@
+            @await Component.InvokeAsync("UserMenu")
+
 
         </div>
         <div id="createSuccessNotification" class="global-notification success" style="display: none;">
@@ -40,6 +42,7 @@
         </div>
         <div id="modalContainer"></div>
     </div>
+    @await Html.PartialAsync("_CookieConsent")
 
 
 @*     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
@@ -49,9 +52,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.js" integrity="sha512-FzakzcmrNSXS5+DuuYSO6+5DcUZ417Na0vH1oAIo49mMBA8rHSgkKSjE2ALFOxdQ/kPqF3HZRzb0HQ+AvwXttg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/clients.js"></script>
-    <script src="~/js/members.js"></script>
+@*     <script src="~/js/clients.js"></script>
+    <script src="~/js/members.js"></script> *@
     <script src="~/js/validation.js"></script>
+    <script src="~/js/cookie-consent.js"></script>
 
 
 

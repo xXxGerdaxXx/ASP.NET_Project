@@ -11,45 +11,55 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//  Logging
+// -------------------- Logging --------------------
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// Register DbContext
-builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
+// -------------------- Database --------------------
+builder.Services.AddDbContext<AppDbContext>(x =>
+    x.UseSqlServer(builder.Configuration.GetConnectionString("AlphaDB")));
 
-// Register Identity
+// -------------------- Identity --------------------
 builder.Services.AddIdentity<UserEntity, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 8;
     options.User.RequireUniqueEmail = true;
-
-}).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/auth/signin";
     options.AccessDeniedPath = "/auth/denied";
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.HttpOnly = true;
     options.SlidingExpiration = true;
-    options.ExpireTimeSpan = TimeSpan.FromHours(5); 
+    options.ExpireTimeSpan = TimeSpan.FromDays(90);
 });
 
-// MVC
+// -------------------- Cookie Policy --------------------
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context =>
+        !context.Request.Cookies.ContainsKey("cookieConsent");
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+});
+
+// -------------------- MVC / Razor / SignalR --------------------
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 
-
-// Infrastructure - Repositories
+// -------------------- Repositories --------------------
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 
-// Business - Services
+// -------------------- Business Services --------------------
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -57,18 +67,10 @@ builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileService, FileService>();
-
-
-// ? Utility Services
-//builder.Services.AddScoped<FileService>();
-//builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<ProjectService>();
-
-
-
+builder.Services.AddScoped<ProjectService>(); // If needed separately
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddSignalR();
 
+// -------------------- Authentication --------------------
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -76,40 +78,40 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddGoogle(options =>
 {
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!; 
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
     options.CallbackPath = "/signin-google";
 });
 
 var app = builder.Build();
 
-// Seed Admin User & Role
+// -------------------- Seed Data --------------------
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await DbInitializer.SeedAdminAsync(services);
 }
 
-// Middleware
-app.UseHsts();
+// -------------------- Middleware --------------------
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    MinimumSameSitePolicy = SameSiteMode.Lax, 
-});
-app.UseAuthentication(); 
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
 
-// Routing
+// -------------------- Routing --------------------
 app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 app.MapRazorPages();
 app.MapHub<NotificationHub>("/notificationHub");
