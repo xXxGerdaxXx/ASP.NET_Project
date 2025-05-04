@@ -14,9 +14,3 @@ public interface IAuthService
     Task<ServiceResponse<object>> ExternalLoginCallbackAsync(ExternalLoginInfo info);
 }
 
-//public interface IAuthService
-//{
-//    Task<bool> LoginAsync(UserSignInDTO loginDto);
-//    Task<bool> AdminLoginAsync(AdminLoginDTO adminLoginDto);
-//    Task<ServiceResponse<string>> SignUpAsync(UserSignUpDTO registerDto);
-//}

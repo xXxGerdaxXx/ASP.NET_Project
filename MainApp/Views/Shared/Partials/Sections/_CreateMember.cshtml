@@ -55,7 +55,6 @@
                 </div>
             </div>
 
-            <!-- Job Title -->
             <div class="select-wrapper">
                 <label asp-for="JobTitle"></label>
                     <select asp-for="JobTitle" asp-items="@EnumExtensions.GetEnumSelectListWithDescription<JobTitle>()" class="form-control">
@@ -65,9 +64,6 @@
                     <span asp-validation-for="JobTitle" class="text-danger"></span>
             </div>
 
-
-
-            <!-- Address -->
             <div class="form-group">
                 <label asp-for="Address"></label>
                 <div class="field-group">
@@ -76,7 +72,14 @@
                 </div>
             </div>
 
-            <!-- Date of Birth -->
+    @* 
+    This section lets the user select their date of birth using three dropdowns:
+    one for day, one for month, and one for year (from current year down to 1900).
+    It uses standard Razor and works with ASP.NET Core model validation.
+    I got this from ChatGPT.
+    *@
+
+
             <div class="form-group">
                 <label>Date of Birth</label>
                 <div class="date-inputs">

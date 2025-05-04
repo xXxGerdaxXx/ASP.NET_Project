@@ -67,7 +67,7 @@ builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<ProjectService>(); // If needed separately
+builder.Services.AddScoped<ProjectService>(); 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // -------------------- Authentication --------------------

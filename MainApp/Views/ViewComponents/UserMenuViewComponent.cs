@@ -6,6 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace MainApp.Views.ViewComponents;
+/// <summary>
+/// This view component loads the user menu with the user's name, avatar, and their latest notifications.
+///  It gets the current user and their ID, checks if they are an Admin or not to decide which group of notifications to show,
+///  and then builds a view model with all the needed data.
+///  The view model is passed to a Razor View that renders the user dropdown.
+ 
+///  I used ChatGPT to help me write and structure this component more clearly.
+/// </summary>
 
 public class UserMenuViewComponent : ViewComponent
 {

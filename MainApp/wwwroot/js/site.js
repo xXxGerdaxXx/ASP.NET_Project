@@ -4,7 +4,7 @@
     attachGeneralEventListeners();
     initializeThemeToggle();
     initializeDropdowns();
-    initializePasswordValidation(); 
+    initializePasswordValidation();
 
     function initializePasswordValidation() {
         const passwordInput = document.querySelector("#password");
@@ -200,7 +200,7 @@ window.dismissNotification = async function (notificationId) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include' 
+            credentials: 'include'
         });
 
         if (!response.ok) {
@@ -227,5 +227,4 @@ function updateNotificationCount() {
     if (numberDisplay) numberDisplay.textContent = items.length;
     if (dot) dot.style.display = items.length > 0 ? "block" : "none";
 }
-
 

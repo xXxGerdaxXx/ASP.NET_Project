@@ -121,9 +121,9 @@
         selectedIds.forEach(id => {
             const input = document.createElement("input");
             input.type = "hidden";
-            input.name = config.hiddenInputId; 
+            input.name = config.hiddenInputId;
             input.value = id;
-            tagContainer.appendChild(input); 
+            tagContainer.appendChild(input);
         });
 
         console.log("Updated hidden inputs:", selectedIds);

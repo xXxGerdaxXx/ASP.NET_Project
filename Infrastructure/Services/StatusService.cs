@@ -11,7 +11,7 @@ public class StatusService(IStatusRepository _statusRepository) : IStatusService
         return statuses.Select(s => new StatusDTO
         {
             Id = s.Id,
-            StatusName = s.StatusName // 👈 also corrected this property
+            StatusName = s.StatusName 
         });
     }
 
@@ -23,7 +23,7 @@ public class StatusService(IStatusRepository _statusRepository) : IStatusService
         return new StatusDTO
         {
             Id = status.Id,
-            StatusName = status.StatusName // 👈 match the property name from entity
+            StatusName = status.StatusName 
         };
     }
 }

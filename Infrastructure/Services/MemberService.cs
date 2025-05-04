@@ -13,8 +13,6 @@ namespace Infrastructure.Services
             _memberRepository = memberRepository;
         }
 
-
-
         /* Added this for pagination */
         public async Task<IEnumerable<MemberEntity>> GetMembersAsync(int page = 1, int pageSize = 6)
         {
@@ -24,11 +22,6 @@ namespace Infrastructure.Services
         {
             return await _memberRepository.GetCountAsync();
         }
-
-
-
-
-
 
         public async Task<List<MemberEntity>> GetAllMembersAsync()
         {

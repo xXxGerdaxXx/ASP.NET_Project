@@ -57,15 +57,25 @@
             });
         });
     }
+/*
+* This function is triggered when the "Add Project" button is pressed. It opens a modal for creating a new project and 
+* loads the HTML from partial view. 
+* 
+* I used ChatGPT to help me generate and understand this function. I asked for advice on how to dynamically load a modal
+* with Razor content, initialize form components like Quill and a custom tag selector, and handle AJAX form submissions
+* using `fetch`. Then I customized it fit the structure of my app.
+*/
 
     function openAddProjectModal() {
+/* `fetch('/projects/create')` sends a GET request to load the partial view that contains the create form */
         fetch('/projects/create')
+ /* converts the HTML response into a string so it can be injected into the DOM */
             .then(response => response.text())
             .then(html => {
-
+/* removes any existing "add-project-modal" */
                 const existingModal = document.getElementById("add-project-modal");
                 if (existingModal) existingModal.remove();
-
+/* Creates a new container for the modal and injects HTML */
                 const modalContainer = document.createElement("div");
                 modalContainer.innerHTML = html;
                 document.body.appendChild(modalContainer);
@@ -74,9 +84,11 @@
                 if (modal) {
                     modal.classList.add("active");
                     modal.style.display = "flex";
+/* initializes the Quill rich text editor*/
                     initQuillEditor();
-
+/* adds close button functionality*/
                     modal.querySelector("#closeAddProjectModal")?.addEventListener("click", () => {
+
                         modal.remove();
                     });
 
@@ -94,13 +106,13 @@
                         preselected: [],
                         hiddenInputId: 'SelectedTeamMemberIds'
                     });
-
+/* sets up image file preview */
                     setupFileUploadPreview("createProjectForm");
-
+/* applies jQuery validation rules if available */
                     if (window.jQuery && $.validator && $.validator.unobtrusive) {
                         $.validator.unobtrusive.parse("#createProjectForm");
                     }
-
+/* handle form submission */
                     const form = modal.querySelector("#createProjectForm");
                     if (form) {
                         form.addEventListener("submit", function (event) {
@@ -117,6 +129,7 @@
                                 .then(data => {
                                     if (data.success) {
                                         showSuccessMessage("Project created successfully!");
+/* Reload page to reflect new project */
                                         location.reload();
                                     } else {
                                         if (data.errors) {
@@ -276,7 +289,7 @@
                         tagType: 'member',
                         avatarFolder: '',
                         emptyMessage: 'No members found.',
-                        preselected: preSelectedMembers, 
+                        preselected: preSelectedMembers,
                         hiddenInputId: 'SelectedTeamMemberIds'
                     });
 
@@ -329,7 +342,7 @@
                     if (data.success) {
                         showSuccessMessage("Project deleted successfully.");
                         modal.style.display = "none";
-                        loadProjects(); 
+                        loadProjects();
                     } else {
                         showErrorMessage("Error: " + data.message);
                     }

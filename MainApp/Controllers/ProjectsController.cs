@@ -34,12 +34,12 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
         var viewModels = projects.Select(project => new ProjectViewModel
         {
             Id = project.Id,
-            AvatarUrl = project.AvatarUrl, 
+            AvatarUrl = project.AvatarUrl,
             Name = project.ProjectName,
             Company = project.Client?.ClientName ?? "Unknown",
             Description = project.Description,
             Status = project.Status?.StatusName ?? "N/A",
-            EndDate = project.EndDate, 
+            EndDate = project.EndDate,
             Deadline = DateHelper.FormatDeadline(project.EndDate),
             TeamMembers = project.ProjectMembers.Select(pm => new TeamMember
             {
@@ -73,7 +73,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             Company = project.Client?.ClientName ?? "Unknown",
             Description = project.Description,
             Status = project.Status?.StatusName ?? "N/A",
-            EndDate = project.EndDate, 
+            EndDate = project.EndDate,
             Deadline = DateHelper.FormatDeadline(project.EndDate),
             TeamMembers = project.ProjectMembers.Select(pm => new TeamMember
             {
@@ -82,13 +82,13 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             }).ToList()
         }).ToList();
 
-        return View(viewModels); 
+        return View(viewModels);
     }
 
     [HttpPost("upload-avatar")]
     public async Task<IActionResult> UploadProjectAvatar(IFormFile file)
     {
-        string? fileUrl = await _fileService.SaveFileAsync(file, "projects"); 
+        string? fileUrl = await _fileService.SaveFileAsync(file, "projects");
         if (fileUrl == null)
         {
             return BadRequest("Error uploading file.");
@@ -162,9 +162,9 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
             // Create a notification for users
             await _notificationService.AddNotificationAsync(new NotificationEntity
             {
-                NotificationTypeId = 3, 
+                NotificationTypeId = 3,
                 Message = $"A new project '{dto.ProjectName}' has been created!",
-                NotificationTargetGroupId = 2, 
+                NotificationTargetGroupId = 2,
                 CreatedAt = DateTime.Now
             });
 
@@ -267,7 +267,7 @@ public class ProjectsController(IProjectService projectService, ILogger<Projects
                 Budget = form.Budget,
                 ClientId = form.ClientId ?? 0,
                 StatusId = form.StatusId ?? 0,
-                AvatarUrl = project.AvatarUrl, 
+                AvatarUrl = project.AvatarUrl,
                 TeamMemberIds = form.SelectedTeamMemberIds,
                 CreatedByUserId = project.CreatedByUserId
             };

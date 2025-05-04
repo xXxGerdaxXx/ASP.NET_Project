@@ -18,12 +18,9 @@ public class MemberEntity
     public DateTime DateOfBirth { get; set; }
     [Required]
     public JobTitle? JobTitle { get; set; }
-
-
-    // Many-to-Many: Members ↔ Projects (via join table)
     public List<ProjectMemberEntity> ProjectMembers { get; set; } = new();
 
-    // **Computed Property: Age (Not stored in DB)**
+    // In case i wanted to display members age later 
     public int Age
     {
         get

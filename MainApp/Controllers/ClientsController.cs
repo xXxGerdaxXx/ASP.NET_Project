@@ -12,19 +12,11 @@ namespace MainApp.Controllers;
 
 [Authorize(Roles = "Admin")]
 [Route("admin/clients")]
-public class ClientsController : Controller
+public class ClientsController(IClientService clientService, ILogger<ClientsController> logger, IFileService fileService) : Controller
 {
-    private readonly IClientService _clientService;
-    private readonly ILogger<ClientsController> _logger;
-    private readonly IFileService _fileService;
-
-    public ClientsController(IClientService clientService, ILogger<ClientsController> logger, IFileService fileService)
-    {
-        _clientService = clientService;
-        _logger = logger;
-        _fileService = fileService;
-    }
-
+    private readonly IClientService _clientService = clientService;
+    private readonly ILogger<ClientsController> _logger = logger;
+    private readonly IFileService _fileService = fileService;
 
     [HttpGet("list")]
     public async Task<IActionResult> GetClientsList()
@@ -32,7 +24,7 @@ public class ClientsController : Controller
         var clients = await _clientService.GetAllClientsAsync();
         if (clients == null || !clients.Any())
         {
-            _logger.LogWarning(clients == null ? "Clients list is NULL!" : "Clients list is EMPTY!");
+            _logger.LogWarning(clients == null ? "Clients list is NULL!" : "Clients list is empty.");
             clients = new List<ClientEntity>();
         }
         else

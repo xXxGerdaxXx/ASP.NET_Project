@@ -60,34 +60,6 @@ namespace Infrastructure.Services
         }
 
 
-
-        //public async Task<bool> DismissNotificationAsync(string notificationId, string userId)
-        //{
-        //    var notification = await _context.Notifications
-        //        .AsNoTracking()
-        //        .FirstOrDefaultAsync(n => n.Id == notificationId);
-
-        //    if (notification == null)
-        //        return false;
-
-        //    var alreadyDismissed = await _context.DismissedNotifications
-        //        .AnyAsync(x => x.NotificationId == notificationId && x.UserId == userId);
-
-        //    if (alreadyDismissed)
-        //        return true; 
-
-        //    var dismissed = new NotificationDismissedEntity
-        //    {
-        //        NotificationId = notificationId,
-        //        UserId = userId,
-        //        DismissedAt = DateTime.UtcNow
-        //    };
-
-        //    _context.DismissedNotifications.Add(dismissed);
-        //    await _context.SaveChangesAsync();
-        //    return true;
-        //}
-
         public async Task DismissNotificationAsync(string notificationId, string userId)
         {
             var alreadyDismissed = await _context.DismissedNotifications

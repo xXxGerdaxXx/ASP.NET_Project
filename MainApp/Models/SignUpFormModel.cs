@@ -23,7 +23,7 @@ public class SignUpFormModel
     [Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; } = null!;
 
-    [Required(ErrorMessage = "You must accept the terms.")]
+    [Range(typeof(bool), "true", "true", ErrorMessage = "You must accept the terms and conditions to use this site.")]
     public bool AcceptTerms { get; set; }
 
 }

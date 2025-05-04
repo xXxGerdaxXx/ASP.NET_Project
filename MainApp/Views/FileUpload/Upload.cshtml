@@ -3,6 +3,8 @@
 @{
     ViewBag.Title = "File Upload";
 }
+
+
 <div class="surface">
     @if (ViewBag.Message != null)
     {
@@ -31,32 +33,43 @@
 </div>
 
 <script>
+    // I used Chat GPT to generate and explain this JavaScript code
+    // Wait for the page to fully load before running this code
     document.addEventListener("DOMContentLoaded", () => {
+
+        // Find every element with the class "image-previewer" (if there are more than one)
         document.querySelectorAll('.image-previewer').forEach(previewer => {
+
+            // Get the file input and image preview elements inside this previewer
             const input = previewer.querySelector('input[type="file"]');
             const img = previewer.querySelector('.image-preview');
 
+            // If either element is missing, skip this block
             if (!input || !img) return;
 
+            // When the user selects a new image file...
             input.addEventListener('change', (e) => {
-                const file = e.target.files[0];
+                const file = e.target.files[0]; // Get the selected file
                 if (file) {
+                    // Create a FileReader to load the image file as a DataURL
                     const reader = new FileReader();
                     reader.onload = (event) => {
+                        // Set the image preview to show the selected image
                         img.src = event.target.result;
-                        img.classList.remove("d-none");
-                        previewer.classList.add("selected"); 
+                        img.classList.remove("d-none"); // Make the image visible
+                        previewer.classList.add("selected"); // Add styling to show something is selected
                     };
-                    reader.readAsDataURL(file);
+                    reader.readAsDataURL(file); // Start reading the file
                 } else {
+                    // If no file is selected, reset the image preview
                     img.src = "";
-                    img.classList.add("d-none");
-                    previewer.classList.remove("selected"); 
+                    img.classList.add("d-none"); // Hide the image
+                    previewer.classList.remove("selected");
                 }
             });
 
+            // When the user clicks on the preview area, trigger the file input
             previewer.addEventListener("click", () => input.click());
         });
     });
- 
 </script>
